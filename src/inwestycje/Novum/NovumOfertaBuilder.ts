@@ -92,10 +92,10 @@ function stronaSwiataValMapper(val: string): KierunkiSwiata | { raw: string } {
     }
 }
 
-function standardMapper(detale?: INovumDetails): { lista: IStandard, raw?: string[] } {
-    const result: { lista: IStandard, raw?: string[] } = {
-        lista: NovumDataProvider.standard,
-        raw: []
+function standardMapper(detale?: INovumDetails): { data: IStandard, raw?: string[] } {
+    const result = {
+        data: { ...NovumDataProvider.standard.data },
+        raw: [...NovumDataProvider.standard.raw || []]
     };
 
     detale?.udogodnienia
@@ -104,7 +104,7 @@ function standardMapper(detale?: INovumDetails): { lista: IStandard, raw?: strin
         .forEach(val => {
             const partial = standardValMapper(val);
             if (partial) {
-                result.lista = { ...result.lista, ...partial };
+                result.data = { ...result.data, ...partial };
             }
             else {
                 result.raw?.push(val)

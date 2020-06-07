@@ -5,7 +5,7 @@ export interface IDataProvider<T extends IListElement = IListElement, D = any> {
     nazwa: string;
     developer: string;
     url: string,
-    standard: IStandard,
+    standard: { data: Partial<IStandard>, raw?: string[] },
 
     listUrlProvider: () => Promise<string[]>,
     listMapper: (rawHtml: string) => T[];

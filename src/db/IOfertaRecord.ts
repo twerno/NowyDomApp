@@ -24,7 +24,7 @@ export interface IOfertaDane {
     lpPokoj?: number;
     pietro?: number;
     kierunek?: Array<KierunkiSwiata | { raw: string }>;
-    standard: { lista: Partial<IStandard>, raw?: string[] };
+    standard: { data: Partial<IStandard>, raw?: string[] };
 
     status: Status | { raw: string };
     odbior: string | { rok: number, kwartal: number } | { rok: number, miesiac: number };
