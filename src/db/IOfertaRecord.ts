@@ -23,10 +23,10 @@ export interface IOfertaDane {
     metraz: number;
     lpPokoj?: number;
     pietro?: number;
-    kierunek?: KierunkiSwiata[];
-    standard: { lista: Partial<IStandard>, add?: string[] };
+    kierunek?: Array<KierunkiSwiata | { raw: string }>;
+    standard: { lista: Partial<IStandard>, raw?: string[] };
 
-    status: Status;
+    status: Status | { raw: string };
     odbior: string | { rok: number, kwartal: number } | { rok: number, miesiac: number };
     cena?: number;
     cenaZaMetr?: number;

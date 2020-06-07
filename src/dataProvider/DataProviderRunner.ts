@@ -75,43 +75,49 @@ function parseOfferList<T extends IListElement>(
 
 // pobranie detali oferty
 async function downloadOfferDetails<T extends IListElement>(offerList: T[], errors: any[]) {
+
+    const offerMapper: (offer: T) => Promise<{ offer: T, html?: string } | null> =
+        (offer: T) => !!offer.detailsUrl
+            ? WebDownloader.download(offer.detailsUrl)
+                .then(html => ({ offer, html }))
+                .catch(err => {
+                    errors.push(({ err, detailsUrl: offer.detailsUrl }));
+                    return null;
+                })
+            : Promise.resolve({ offer });
+
     return Promise.all(
         offerList
-            .filter(offer => !!offer && !!offer.detailsUrl)
-            .map(offer =>
-                WebDownloader.download(offer.detailsUrl)
-                    .then(html => ({ html, offer }))
-                    .catch(err => {
-                        errors.push(({ err, detailsUrl: offer.detailsUrl }));
-                        return null;
-                    })
-            )
+            .map(offerMapper)
     );
 }
 
 // przetworzenie detali
 function parseDetails<T extends IListElement, D = any>(
-    lista: Array<{ offer: T, html: string } | null>,
+    lista: Array<{ offer: T, html?: string } | null>,
     mapper: (html: string, offer: T) => Promise<D>,
     errors: any[]
 ) {
+    const detailsMapper: (props: { offer: T, html?: string }) => Promise<{ offer: T, details?: D } | null> =
+        ({ offer, html }) => !!html
+            ? mapper(html, offer)
+                .then(details => ({ offer, details }))
+                .catch(err => {
+                    errors.push(({ offer, err }));
+                    return null;
+                })
+            : Promise.resolve({ offer });
+
     return Promise.all(
         lista
             .filter(TypeUtils.notEmpty)
-            .map(({ html, offer }) =>
-                mapper(html, offer)
-                    .then(details => ({ offer, details }))
-                    .catch(err => {
-                        errors.push(({ offer, err }));
-                        return null;
-                    })
-            )
+            .map(detailsMapper)
     );
 }
 
 // przepisanie lokalnych danych na obiekt
 function buildOffer<T extends IListElement, D = any>(
-    offersWithDetails: ({ offer: T, details: D } | null)[],
+    offersWithDetails: ({ offer: T, details?: D } | null)[],
     dataProvider: IDataProvider<T, D>,
     errors: any[]
 ) {

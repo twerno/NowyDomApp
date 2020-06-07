@@ -8,6 +8,9 @@ export const NovumDataProvider: IDataProvider<INovumListElement, INovumDetails> 
     nazwa: 'Novum',
     developer: 'HS',
     url: 'https://novumrumia.pl',
+    standard: {
+        winda: true,
+    },
 
     listUrlProvider: async () => ['https://novumrumia.pl/mieszkania/'],
 
@@ -17,7 +20,7 @@ export const NovumDataProvider: IDataProvider<INovumListElement, INovumDetails> 
 
     detailsMapper: NovumMapper.detailMapper,
 
-    planUrlProvider: (_, detale: INovumDetails) => detale.pdfUrl,
+    planUrlProvider: (_, detale?: INovumDetails) => detale?.pdfUrl,
 
     ofertaBuilder: NovumOfertaBuilder
 }

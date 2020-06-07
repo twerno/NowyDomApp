@@ -1,10 +1,11 @@
-import { IOfertaDane } from "db/IOfertaRecord";
+import { IOfertaDane, IStandard } from "db/IOfertaRecord";
 import { IOfertaRepoKey } from "db/OfertaRecordRepo";
 
 export interface IDataProvider<T extends IListElement = IListElement, D = any> {
     nazwa: string;
     developer: string;
     url: string,
+    standard: IStandard,
 
     listUrlProvider: () => Promise<string[]>,
     listMapper: (rawHtml: string) => T[];
@@ -12,7 +13,7 @@ export interface IDataProvider<T extends IListElement = IListElement, D = any> {
     detailsUrlProvider: (listItem: T) => string;
     detailsMapper: (rawHtml: string, listItem: T) => Promise<D>;
 
-    planUrlProvider: (listItem: T, detale: D) => string | undefined;
+    planUrlProvider: (listItem: T, detale?: D) => string | undefined;
 
     ofertaBuilder: (listItem: T, detale?: D, pdfUrl?: string) => { id: string, dane: IOfertaDane };
 }

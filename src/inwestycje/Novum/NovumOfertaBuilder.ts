@@ -1,13 +1,14 @@
 import { IOfertaDane, IStandard, KierunkiSwiata, Status, Typ } from '../../db/IOfertaRecord';
 import { INovumDetails, INovumListElement } from './NovumSchema';
+import { NovumDataProvider } from './NovumDataProvider';
 
 export default (listItem: INovumListElement, detale?: INovumDetails, pdfUrl?: string): { id: string, dane: IOfertaDane } => {
 
     //TODO - mapowanie
 
-    const kierunek: KierunkiSwiata[] = [];
-    const standard: { lista: IStandard, add?: string[] } = { lista: {} };
-    const status: Status = Status.WOLNE;
+    const kierunek = kierunekMapper(detale);
+    const standard = standardMapper(detale);
+    const status = statusMapper(listItem);
     const odbior = odbiorMapper(listItem);
     const cenaZaMetr = listItem.cena ? listItem.cena / listItem.metraż : undefined;
 
@@ -31,6 +32,10 @@ export default (listItem: INovumListElement, detale?: INovumDetails, pdfUrl?: st
 
     return { id: listItem.id, dane: result };
 }
+
+// ========================================
+// private
+// ========================================
 
 const odbiorRegExpr = /(I|II|III|IV) kwartał (\d{4})/;
 
@@ -56,4 +61,63 @@ function rzymskie2arabskie(liczbaRzymska: string): number {
     }
 
     throw new Error(`"${liczbaRzymska}" nie jest rozpoznawalną liczbą rzymską.`);
+}
+
+function statusMapper(listItem: INovumListElement): Status | { raw: string } {
+    switch (listItem.status) {
+        case 'wolne': return Status.WOLNE;
+        case 'zarezerwowane': return Status.ZAREZERWOWANE;
+        default: return { raw: listItem.status };
+    }
+}
+
+function kierunekMapper(detale?: INovumDetails): Array<KierunkiSwiata | { raw: string }> {
+    if (!detale) {
+        return [];
+    }
+
+    return detale.stronyŚwiata
+        .split(',')
+        .map(v => v.trim())
+        .map(stronaSwiataValMapper);
+}
+
+function stronaSwiataValMapper(val: string): KierunkiSwiata | { raw: string } {
+    switch (val) {
+        case 'Północ': return KierunkiSwiata.PÓŁNOC;
+        case 'Południe': return KierunkiSwiata.POŁUDNIE;
+        case 'Wschód': return KierunkiSwiata.WSCHÓD;
+        case 'Zachód': return KierunkiSwiata.ZACHÓD;
+        default: return { raw: val };
+    }
+}
+
+function standardMapper(detale?: INovumDetails): { lista: IStandard, raw?: string[] } {
+    const result: { lista: IStandard, raw?: string[] } = {
+        lista: NovumDataProvider.standard,
+        raw: []
+    };
+
+    detale?.udogodnienia
+        .split(',')
+        .map(v => v.trim())
+        .forEach(val => {
+            const partial = standardValMapper(val);
+            if (partial) {
+                result.lista = { ...result.lista, ...partial };
+            }
+            else {
+                result.raw?.push(val)
+            }
+        })
+
+    return result;
+}
+
+function standardValMapper(val: string): Partial<IStandard> | null {
+    switch (val) {
+        case 'balkon': return { balkon: true };
+        case 'taras': return { taras: true };
+        default: return null;
+    }
 }
