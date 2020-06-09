@@ -1,23 +1,23 @@
 import { IOfertaDane, IStandard } from "db/IOfertaRecord";
-import { IOfertaRepoKey } from "db/OfertaRecordRepo";
 
 export interface IDataProvider<T extends IListElement = IListElement, D = any> {
-    nazwa: string;
-    developer: string;
+    inwestycjaId: string;
+    developerId: string;
     url: string,
     standard: { data: Partial<IStandard>, raw?: string[] },
 
-    listUrlProvider: () => Promise<string[]>,
-    listMapper: (rawHtml: string) => T[];
+    listUrlProvider: () => Promise<Set<string>>,
+    listHtmlParser: (html: string) => T[];
 
-    detailsUrlProvider: (listItem: T) => string;
-    detailsMapper: (rawHtml: string, listItem: T) => Promise<D>;
+    offerDetailsUrlProvider: (listItem: T) => Set<string>;
+    offerDetailsHtmlParser: (html: string) => Promise<D>;
+    offerDetailsMerger?: (source1: D, source2: D) => D;
 
-    planUrlProvider: (listItem: T, detale?: D) => string | undefined;
+    offerCardUrlProvider: (listItem: T, detale?: D) => string | undefined;
 
-    ofertaBuilder: (listItem: T, detale?: D, pdfUrl?: string) => { id: string, dane: IOfertaDane };
+    offerBuilder: (listItem: T, details?: D, offerCardUrl?: string) => { id: string, dane: IOfertaDane };
 }
 
-export interface IListElement extends Required<IOfertaRepoKey> {
-    detailsUrl: string;
+export interface IListElement {
+    id: string;
 }

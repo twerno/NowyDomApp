@@ -1,5 +1,8 @@
 import cheerio from 'cheerio';
-import { INovumListElement, INovumDetails } from './NovumSchema';
+import { IRawData } from 'db/IOfertaRecord';
+import CheerioHelper from 'utils/CheerioHelper';
+import { NovumDataProvider } from './NovumDataProvider';
+import { INovumDetails, INovumListElement } from './NovumSchema';
 
 export default {
     listMapper,
@@ -18,13 +21,15 @@ function listMapper(html: string): INovumListElement[] {
     return result;
 }
 
-async function detailMapper(html: string, listItem: INovumListElement): Promise<INovumDetails> {
+async function detailMapper(html: string): Promise<INovumDetails> {
     const rows = cheerio.load(html)('.single__flat__table.row').children();
 
     const udogodnienia = rows
-        .filter((_, item) => item.lastChild?.lastChild?.nodeValue === 'Udogodnienia')?.next()?.text();
+        .filter((_, item) => cheerio(item).text() === 'Udogodnienia')?.next()?.text();
+
     const stronyŚwiata = rows
-        .filter((_, item) => item.lastChild?.lastChild?.nodeValue === 'Ekspozycja okien')?.next()?.text();
+        .filter((_, item) => cheerio(item).text() === 'Ekspozycja okien')?.next()?.text();
+
     const pdfUrl = cheerio.load(html)('[title="Pobierz PDF"]')?.attr('href');
 
     const result: INovumDetails = {
@@ -44,26 +49,28 @@ function rowMapper(rowIdx: number, row: CheerioElement): INovumListElement {
 
     const result: INovumListElement = {
         id: 'tmp_id',
-        inwestycjaId: 'tmp_inwestycjaId',
-        budynek: row.children[0]?.lastChild?.nodeValue,
-        nrLokalu: row.children[1]?.lastChild?.nodeValue,
-        piętro: Number.parseInt(row.children[2]?.lastChild?.nodeValue),
-        metraż: Number.parseFloat(row.children[3]?.lastChild?.nodeValue),
-        liczbaPokoi: Number.parseInt(row.children[4]?.lastChild?.nodeValue),
-        odbiór: row.children[5]?.lastChild?.nodeValue,
-        status: row.children[6]?.lastChild?.nodeValue,
-        cena: cenaParser(row.children[7]?.lastChild?.nodeValue),
+        inwestycjaId: NovumDataProvider.inwestycjaId,
+        budynek: CheerioHelper.loadString(row.children[0]),
+        nrLokalu: CheerioHelper.loadString(row.children[1]),
+        piętro: CheerioHelper.loadInt(row.children[2]),
+        metraż: CheerioHelper.loadFloat(row.children[3]),
+        liczbaPokoi: CheerioHelper.loadInt(row.children[4]),
+        odbiór: CheerioHelper.loadString(row.children[5]),
+        status: CheerioHelper.loadString(row.children[6]),
+        cena: cenaParser(CheerioHelper.loadString(row.children[7])),
         detailsUrl: row.children[9]?.lastChild?.attribs['href']
     };
 
-    result.id = `${result.budynek}-${result.nrLokalu}`;
+    result.id = `${result.inwestycjaId}-${result.budynek}-${result.nrLokalu}`;
 
     return result;
 }
 
-function cenaParser(rawCena: string | null): number | undefined {
-    const cenaStr = rawCena?.replace(/zł|\s/, '');
-    return cenaStr
-        ? Number.parseInt(cenaStr)
-        : undefined;
+function cenaParser(raw: string): number | IRawData {
+    const cenaStr = raw?.replace(/zł|\s/, '');
+    const result = Number.parseInt(cenaStr);
+
+    return isNaN(result)
+        ? { raw }
+        : result;
 }

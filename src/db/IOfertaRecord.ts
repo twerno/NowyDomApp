@@ -17,21 +17,28 @@ export interface IOfertaOpe {
 }
 
 export interface IOfertaDane {
-    typ: Typ;
-    budynek: string;
-    nrLokalu?: string;
-    metraz: number;
-    lpPokoj?: number;
-    pietro?: number;
-    kierunek?: Array<KierunkiSwiata | { raw: string }>;
+    typ: Typ | IRawData;
+    budynek: string | IRawData;
+    nrLokalu?: string | IRawData;
+    metraz: number | IRawData;
+    lpPokoj?: number | IRawData;
+    pietro?: number | IRawData;
+    kierunek?: Array<KierunkiSwiata | IRawData>;
     standard: { data: Partial<IStandard>, raw?: string[] };
 
-    status: Status | { raw: string };
-    odbior: string | { rok: number, kwartal: number } | { rok: number, miesiac: number };
-    cena?: number;
-    cenaZaMetr?: number;
+    status: Status | IRawData;
+    odbior: { rok: number, kwartal: number } | { rok: number, miesiac: number } | IRawData;
+    cena?: number | IRawData;
 
     plan?: string;
+}
+
+export function isRawData(x: any): x is IRawData {
+    return typeof x === 'object' && typeof x.raw === 'string';
+}
+
+export interface IRawData {
+    raw: string;
 }
 
 export enum KierunkiSwiata {

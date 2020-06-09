@@ -2,11 +2,12 @@ import { IDataProvider } from "../../dataProvider/IOfertaProvider";
 import { INovumDetails, INovumListElement } from "./NovumSchema";
 import NovumOfertaBuilder from "./NovumOfertaBuilder";
 import NovumMapper from "./NovumMapper";
+import TypeUtils from "../../utils/TypeUtils";
 
 export const NovumDataProvider: IDataProvider<INovumListElement, INovumDetails> = {
 
-    nazwa: 'Novum',
-    developer: 'HS',
+    inwestycjaId: 'Novum',
+    developerId: 'HS',
     url: 'https://novumrumia.pl',
     standard: {
         data: { winda: true, },
@@ -21,13 +22,18 @@ export const NovumDataProvider: IDataProvider<INovumListElement, INovumDetails> 
 
     listUrlProvider: async () => ['https://novumrumia.pl/mieszkania/'],
 
-    listMapper: NovumMapper.listMapper,
+    listHtmlParser: NovumMapper.listMapper,
 
-    detailsUrlProvider: (listItem: INovumListElement) => listItem.detailsUrl,
+    offerDetailsUrlProvider: (listItem: INovumListElement) => new Set([
+        listItem.detailsUrl,
+        `https://novumrumia.pl/mieszkanie/${listItem.budynek.toLowerCase()}-${listItem.nrLokalu.toLowerCase()}/`
+    ]),
 
-    detailsMapper: NovumMapper.detailMapper,
+    offerDetailsHtmlParser: NovumMapper.detailMapper,
 
-    planUrlProvider: (_, detale?: INovumDetails) => detale?.pdfUrl,
+    offerCardUrlProvider: (_, detale?: INovumDetails) => detale?.pdfUrl,
 
-    ofertaBuilder: NovumOfertaBuilder
+    offerBuilder: NovumOfertaBuilder,
+
+    offerDetailsMerger: (source1, source2) => TypeUtils.swallowMerge(source1, source2)
 }

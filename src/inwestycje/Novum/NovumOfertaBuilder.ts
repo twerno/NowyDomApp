@@ -1,16 +1,13 @@
-import { IOfertaDane, IStandard, KierunkiSwiata, Status, Typ } from '../../db/IOfertaRecord';
+import { IOfertaDane, IStandard, KierunkiSwiata, Status, Typ, isRawData } from '../../db/IOfertaRecord';
 import { INovumDetails, INovumListElement } from './NovumSchema';
 import { NovumDataProvider } from './NovumDataProvider';
 
 export default (listItem: INovumListElement, detale?: INovumDetails, pdfUrl?: string): { id: string, dane: IOfertaDane } => {
 
-    //TODO - mapowanie
-
     const kierunek = kierunekMapper(detale);
     const standard = standardMapper(detale);
     const status = statusMapper(listItem);
     const odbior = odbiorMapper(listItem);
-    const cenaZaMetr = listItem.cena ? listItem.cena / listItem.metraż : undefined;
 
     const result: IOfertaDane = {
         typ: Typ.MIESZKANIE,
@@ -25,7 +22,6 @@ export default (listItem: INovumListElement, detale?: INovumDetails, pdfUrl?: st
         status,
         odbior,
         cena: listItem.cena,
-        cenaZaMetr,
 
         plan: pdfUrl
     };
@@ -76,10 +72,12 @@ function kierunekMapper(detale?: INovumDetails): Array<KierunkiSwiata | { raw: s
         return [];
     }
 
-    return detale.stronyŚwiata
+    const result = detale.stronyŚwiata
         .split(',')
         .map(v => v.trim())
         .map(stronaSwiataValMapper);
+
+    return result;
 }
 
 function stronaSwiataValMapper(val: string): KierunkiSwiata | { raw: string } {

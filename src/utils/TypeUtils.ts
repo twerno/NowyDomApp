@@ -1,6 +1,7 @@
 export default {
     notEmpty,
-    deepEqual
+    deepEqual,
+    swallowMerge
 }
 
 function notEmpty<TValue>(value: TValue | null | undefined): value is TValue {
@@ -26,4 +27,13 @@ function deepEqual(a: any, b: any) {
     else {
         return a === b;
     }
+}
+
+function swallowMerge<T extends object>(source1: T, source2: T): T {
+    for (const key in source2) {
+        if (source2[key] !== undefined) {
+            source1[key] = source2[key];
+        }
+    }
+    return source1;
 }

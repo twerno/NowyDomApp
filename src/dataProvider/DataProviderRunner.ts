@@ -6,7 +6,9 @@ import WebDownloader from "../utils/WebDownloader";
 import { IListElement, IDataProvider } from "./IOfertaProvider";
 
 export async function run<T extends IListElement, D>(dataProvider: IDataProvider<T, D>) {
-    const offersWithDetails = await provideOfferWithDetails(dataProvider);
+    const errors: any[] = [];
+
+    const offersWithDetails = await provideOfferWithDetails(dataProvider, errors);
     const oferty = buildOffer(offersWithDetails, dataProvider, []);
 
     // TODO - pdf
@@ -14,15 +16,18 @@ export async function run<T extends IListElement, D>(dataProvider: IDataProvider
     const ofertyStan = await pobierzOfertyZInwestycji(dataProvider);
     const ofertaZmiana = wyliczOfertyZmiana(ofertyStan, oferty, dataProvider);
     await zapiszOfertyDoBazy(ofertaZmiana);
+
+    return { errors, ofertyStan, ofertaZmiana };
 }
 
 // =======================================
 // private
 // =======================================
 
-async function provideOfferWithDetails<T extends IListElement, D>(dataProvider: IDataProvider<T, D>) {
-    const errors: any[] = [];
-
+async function provideOfferWithDetails<T extends IListElement, D>(
+    dataProvider: IDataProvider<T, D>,
+    errors: any[]
+) {
     // przygotowanie url zawierających listę ofert
     const urls = await dataProvider.listUrlProvider();
 
@@ -31,87 +36,108 @@ async function provideOfferWithDetails<T extends IListElement, D>(dataProvider: 
     // zachomikuj html-e na s3
     // TODO - html + url + data
 
-    const offerList = parseOfferList(listHtml, dataProvider.listMapper, errors);
-    offerList.forEach(o => o.inwestycjaId = dataProvider.nazwa);
+    const offerList = parseOfferList(listHtml, dataProvider, errors);
 
-    const detailsHtml = await downloadOfferDetails(offerList, errors);
+    const detailsHtml = await downloadDetails(offerList, dataProvider, errors);
 
     // zachomikuj html-e na s3
     // TODO - html + url + data
 
-    const offerWithDetails = parseDetails(detailsHtml, dataProvider.detailsMapper, errors);
+    const offersWithDetails = parseDetails(detailsHtml, dataProvider, errors);
 
     // zachomikuj błędy na s3
     // TODO - errors + data
 
-    return offerWithDetails;
+    return offersWithDetails;
 }
 
 // pobranie stron zawierających listy ofert z przygotowanych url-i
-async function downloadLists(urls: string[], errors: any[]) {
+async function downloadLists(urls: Set<string>, errors: any[]) {
     return Promise.all(
-        urls.map(url =>
-            WebDownloader.download(url)
-                .then(html => ({ url, html }))
-                .catch(err => {
-                    errors.push(({ err, url }));
-                    return null;
-                })
-        )
+        Array.from(urls)
+            .map(url =>
+                WebDownloader.download(url)
+                    .then(html => ({ url, html }))
+                    .catch(err => {
+                        errors.push(JSON.stringify({ method: 'downloadLists', err, url }));
+                        return null;
+                    })
+            )
     );
 }
 
 // przetworzenie pobranych stron i wyciągnięcie z nich listy ofert
-function parseOfferList<T extends IListElement>(
+function parseOfferList<T extends IListElement, D>(
     lista: Array<{ url: string, html: string } | null>,
-    mapper: (html: string) => T[],
+    dataProvider: IDataProvider<T, D>,
     errors: any[]
 ) {
     return lista
         .filter(TypeUtils.notEmpty)
-        .map(({ html }) => mapper(html))
+        .map(({ html }) => dataProvider.listHtmlParser(html))
         .reduce((prev, curr) => [...prev, ...curr], []);
 }
 
 // pobranie detali oferty
-async function downloadOfferDetails<T extends IListElement>(offerList: T[], errors: any[]) {
-
-    const offerMapper: (offer: T) => Promise<{ offer: T, html?: string } | null> =
-        (offer: T) => !!offer.detailsUrl
-            ? WebDownloader.download(offer.detailsUrl)
-                .then(html => ({ offer, html }))
-                .catch(err => {
-                    errors.push(({ err, detailsUrl: offer.detailsUrl }));
-                    return null;
-                })
-            : Promise.resolve({ offer });
+async function downloadDetails<T extends IListElement, D>(
+    offerList: T[],
+    dataProvider: IDataProvider<T, D>,
+    errors: any[]
+) {
+    const offerMapper: (props: { offer: T, urls: string[] }) => Promise<{ offer: T, htmlList?: string[] }> =
+        ({ offer, urls }) => urls.length === 0
+            ? Promise.resolve({ offer })
+            : Promise.all(
+                urls.map(url => WebDownloader.download(url)
+                    .catch(err => {
+                        errors.push(JSON.stringify({ method: 'downloadOfferDetails', err, detailsUrl: url }));
+                        return null;
+                    }))
+            ).then(htmlList => (
+                {
+                    offer,
+                    htmlList: htmlList.filter(TypeUtils.notEmpty)
+                }));
 
     return Promise.all(
         offerList
+            .map(offer => (
+                {
+                    offer,
+                    urls: Array.from(dataProvider.offerDetailsUrlProvider(offer))
+                        .filter(TypeUtils.notEmpty)
+                }
+            ))
             .map(offerMapper)
     );
 }
 
 // przetworzenie detali
 function parseDetails<T extends IListElement, D = any>(
-    lista: Array<{ offer: T, html?: string } | null>,
-    mapper: (html: string, offer: T) => Promise<D>,
+    lista: { offer: T, htmlList?: string[] }[],
+    dataProvider: IDataProvider<T, D>,
     errors: any[]
 ) {
-    const detailsMapper: (props: { offer: T, html?: string }) => Promise<{ offer: T, details?: D } | null> =
-        ({ offer, html }) => !!html
-            ? mapper(html, offer)
-                .then(details => ({ offer, details }))
-                .catch(err => {
-                    errors.push(({ offer, err }));
-                    return null;
-                })
-            : Promise.resolve({ offer });
+    const detailsMerger = (offer: T, htmlList?: string[]) =>
+        htmlList === undefined || htmlList.length === 0
+            ? Promise.resolve({ offer })
+            : Promise.all(
+                htmlList.map(html =>
+                    dataProvider.offerDetailsHtmlParser(html)
+                        .catch(err => {
+                            errors.push(JSON.stringify({ method: 'parseDetails', offer, err, html }));
+                            return null;
+                        })
+                )
+            ).then(result => result
+                .filter(TypeUtils.notEmpty)
+                .reduce<D>((prev, curr) => dataProvider.offerDetailsMerger(prev, curr), {} as any)
+            ).then(details => ({ offer, details }));
 
     return Promise.all(
         lista
             .filter(TypeUtils.notEmpty)
-            .map(detailsMapper)
+            .map(({ offer, htmlList }) => detailsMerger(offer, htmlList))
     );
 }
 
@@ -126,14 +152,14 @@ function buildOffer<T extends IListElement, D = any>(
         .map(({ offer, details }) => ({
             offer,
             details,
-            planUrl: dataProvider.planUrlProvider(offer, details)
+            planUrl: dataProvider.offerCardUrlProvider(offer, details)
         }))
-        .map(({ offer, details, planUrl }) => dataProvider.ofertaBuilder(offer, details, planUrl));
+        .map(({ offer, details, planUrl }) => dataProvider.offerBuilder(offer, details, planUrl));
 }
 
 // pobranie ofert z bazy
 async function pobierzOfertyZInwestycji<T extends IListElement, D>(dataProvider: IDataProvider<T, D>) {
-    return ofertyRepo.queryByPartitionKey(dataProvider.nazwa);
+    return ofertyRepo.queryByPartitionKey(dataProvider.inwestycjaId);
 }
 
 async function zapiszOfertyDoBazy(oferty: IOfertaRecord[]) {
@@ -218,8 +244,8 @@ function nowyRekord<T extends IListElement, D>(
         id,
         createdAt,
         data,
-        developerId: dataProvider.developer,
-        inwestycjaId: dataProvider.nazwa,
+        developerId: dataProvider.developerId,
+        inwestycjaId: dataProvider.inwestycjaId,
         updates: [{ data, updatedAt: createdAt, updatedBy: 'developer' }]
     };
 
