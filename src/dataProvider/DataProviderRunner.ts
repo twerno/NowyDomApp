@@ -1,30 +1,30 @@
-import { IOfertaDane, IOfertaOpe, IOfertaRecord, Status } from "../db/IOfertaRecord";
-import { ofertyRepo } from "../db/OfertaRecordRepo";
+import { IOfertaDane, IOfertaRecord, Status, IOfertaRecordOpe } from "./IOfertaRecord";
+import { ofertaRepo } from "../db/OfertaRecordRepo";
 import { IStringMap } from "../utils/IMap";
 import TypeUtils from "../utils/TypeUtils";
 import WebDownloader from "../utils/WebDownloader";
 import { IListElement, IDataProvider } from "./IOfertaProvider";
+import { ofertaOpeRepo } from "../db/OfertaRecordOpeRepo";
 
 export async function run<T extends IListElement, D>(dataProvider: IDataProvider<T, D>) {
     const errors: any[] = [];
 
-    const offersWithDetails = await provideOfferWithDetails(dataProvider, errors);
-    const oferty = buildOffer(offersWithDetails, dataProvider, []);
+    const oferty = await provideOfferList(dataProvider, errors);
 
     // TODO - pdf
 
     const ofertyStan = await pobierzOfertyZInwestycji(dataProvider);
-    const ofertaZmiana = wyliczOfertyZmiana(ofertyStan, oferty, dataProvider);
-    await zapiszOfertyDoBazy(ofertaZmiana);
+    const ofertaOperList = wyliczOfertaOper(ofertyStan, oferty, dataProvider);
+    await zapiszOper(ofertaOperList);
 
-    return { errors, ofertyStan, ofertaZmiana };
+    return { errors, ofertyStan, ofertaZmiana: ofertaOperList };
 }
 
 // =======================================
 // private
 // =======================================
 
-async function provideOfferWithDetails<T extends IListElement, D>(
+async function provideOfferList<T extends IListElement, D>(
     dataProvider: IDataProvider<T, D>,
     errors: any[]
 ) {
@@ -43,12 +43,14 @@ async function provideOfferWithDetails<T extends IListElement, D>(
     // zachomikuj html-e na s3
     // TODO - html + url + data
 
-    const offersWithDetails = parseDetails(detailsHtml, dataProvider, errors);
+    const offersWithDetails = await parseDetails(detailsHtml, dataProvider, errors);
 
     // zachomikuj błędy na s3
     // TODO - errors + data
 
-    return offersWithDetails;
+    const oferty = buildOffer(offersWithDetails, dataProvider, []);
+
+    return oferty;
 }
 
 // pobranie stron zawierających listy ofert z przygotowanych url-i
@@ -118,27 +120,47 @@ function parseDetails<T extends IListElement, D = any>(
     dataProvider: IDataProvider<T, D>,
     errors: any[]
 ) {
-    const detailsMerger = (offer: T, htmlList?: string[]) =>
-        htmlList === undefined || htmlList.length === 0
-            ? Promise.resolve({ offer })
-            : Promise.all(
-                htmlList.map(html =>
-                    dataProvider.offerDetailsHtmlParser(html)
-                        .catch(err => {
-                            errors.push(JSON.stringify({ method: 'parseDetails', offer, err, html }));
-                            return null;
-                        })
-                )
-            ).then(result => result
-                .filter(TypeUtils.notEmpty)
-                .reduce<D>((prev, curr) => dataProvider.offerDetailsMerger(prev, curr), {} as any)
-            ).then(details => ({ offer, details }));
-
     return Promise.all(
         lista
             .filter(TypeUtils.notEmpty)
-            .map(({ offer, htmlList }) => detailsMerger(offer, htmlList))
+            .map(({ offer, htmlList }) => parseDetail(offer, htmlList, dataProvider, errors))
     );
+}
+
+async function parseDetail<T extends IListElement, D = any>(
+    offer: T,
+    htmlList: string[] | undefined,
+    dataProvider: IDataProvider<T, D>,
+    errors: any[]
+): Promise<{ offer: T, detail?: D }> {
+
+    if (htmlList === undefined || htmlList.length === 0) {
+        return { offer };
+    }
+
+    const details = await Promise.all(
+        htmlList.map(html =>
+            dataProvider.offerDetailsHtmlParser(html)
+                .catch(err => {
+                    errors.push(JSON.stringify({ method: 'parseDetail', offer, err, html }));
+                    return null;
+                })
+        )
+    ).then(list => list.filter(TypeUtils.notEmpty));
+
+    if (details.length <= 1) {
+        const detail = details[0];
+        return { offer, detail };
+    }
+
+    const offerDetailsMerger = dataProvider.offerDetailsMerger;
+    if (offerDetailsMerger === undefined) {
+        errors.push(JSON.stringify({ method: 'parseDetail', offer, err: 'wiele wyników do zmergowania, ale nie zdefiniowano mergera!', details }))
+        return { offer, detail: details[0] };
+    } else {
+        const detail = details.reduce((curr, prev) => offerDetailsMerger(curr, prev), {} as D);
+        return { offer, detail };
+    }
 }
 
 // przepisanie lokalnych danych na obiekt
@@ -159,14 +181,15 @@ function buildOffer<T extends IListElement, D = any>(
 
 // pobranie ofert z bazy
 async function pobierzOfertyZInwestycji<T extends IListElement, D>(dataProvider: IDataProvider<T, D>) {
-    return ofertyRepo.queryByPartitionKey(dataProvider.inwestycjaId);
+    return ofertaRepo.queryByPartitionKey(dataProvider.inwestycjaId);
 }
 
-async function zapiszOfertyDoBazy(oferty: IOfertaRecord[]) {
-    return Promise.all(oferty.map(o => ofertyRepo.put(o)));
+async function zapiszOper(oferty: { rekord: IOfertaRecord, ope: IOfertaRecordOpe }[]) {
+    await Promise.all(oferty.map(o => ofertaOpeRepo.put(o.ope)));
+    return Promise.all(oferty.map(o => ofertaRepo.put(o.rekord)));
 }
 
-function wyliczOfertyZmiana<T extends IListElement, D>(
+function wyliczOfertaOper<T extends IListElement, D>(
     stan: IOfertaRecord[],
     przetworzoneOferty: { id: string, dane: IOfertaDane }[],
     dataProvider: IDataProvider<T, D>
@@ -174,12 +197,12 @@ function wyliczOfertyZmiana<T extends IListElement, D>(
     const stanMap: IStringMap<IOfertaRecord> = {};
     const ofertyMap: IStringMap<IOfertaDane> = {};
 
-    stan.forEach(e => stanMap[e.id] = e);
+    stan.forEach(e => stanMap[e.ofertaId] = e);
     przetworzoneOferty.forEach(e => ofertyMap[e.id] = e.dane);
 
     const keys = new Set([...Object.keys(stanMap), ...Object.keys(ofertyMap)]);
 
-    const result: IOfertaRecord[] = [];
+    const result: { rekord: IOfertaRecord, ope: IOfertaRecordOpe }[] = [];
     for (const id of keys) {
         const zmiana = wyliczZmiana(id, stanMap[id] || null, ofertyMap[id] || null, dataProvider);
         if (zmiana !== null) {
@@ -195,61 +218,106 @@ function wyliczZmiana<T extends IListElement, D>(
     stan: IOfertaRecord | null,
     oferta: IOfertaDane | null,
     dataProvider: IDataProvider<T, D>
-): IOfertaRecord | null {
+): { rekord: IOfertaRecord, ope: IOfertaRecordOpe } | null {
 
-    if (stan === null && oferta === null) {
-        return null;
-    }
-
-    // nowy rekord
-    if (stan === null && oferta !== null) {
-        return nowyRekord(id, oferta, dataProvider);
+    if (stan === null) {
+        return oferta === null
+            ? null
+            : nowyRekord(id, oferta, dataProvider)
     }
 
     // usunięty
-    if (stan !== null && oferta === null) {
-        const operation: IOfertaOpe = {
-            data: { status: Status.USUNIETA },
-            updatedBy: 'developer',
-            updatedAt: new Date().toJSON(),
-        };
-        return { ...stan, updates: [...stan.updates, operation] };
+    if (oferta === null) {
+        return usunietyRekord(stan);
     }
 
     // wylicz zmiane
-    if (stan !== null && oferta !== null) {
-        const delta = wyliczDelta(stan, oferta);
-        if (delta !== null) {
-            const operation: IOfertaOpe = {
-                data: delta,
-                updatedBy: 'developer',
-                updatedAt: new Date().toJSON(),
-            };
-            return { ...stan, updates: [...stan.updates, operation], data: oferta };
-        }
-
-    }
-
-    // nie było zmiany
-    return null;
+    return zmienionyRekord(stan, oferta);
 }
 
 function nowyRekord<T extends IListElement, D>(
     id: string,
     data: IOfertaDane,
     dataProvider: IDataProvider<T, D>
-): IOfertaRecord {
-    const createdAt = new Date().toJSON();
+): { rekord: IOfertaRecord, ope: IOfertaRecordOpe } {
+    const timestamp = new Date().getTime();
+
     const rekord: IOfertaRecord = {
-        id,
-        createdAt,
-        data,
+        inwestycjaId: dataProvider.inwestycjaId, // partition_key
+        ofertaId: id, // sort_key
         developerId: dataProvider.developerId,
-        inwestycjaId: dataProvider.inwestycjaId,
-        updates: [{ data, updatedAt: createdAt, updatedBy: 'developer' }]
+        version: 1,
+        created_at: timestamp,
+        updated_at: timestamp,
+        data,
     };
 
-    return rekord;
+    const ope: IOfertaRecordOpe = {
+        ofertaId: id,  // partition_key
+        version: 1, // sort_key
+        timestamp,
+        data,
+        updatedBy: 'developer'
+    };
+
+    return { rekord, ope };
+}
+
+function usunietyRekord(
+    stan: IOfertaRecord
+): { rekord: IOfertaRecord, ope: IOfertaRecordOpe } {
+    const timestamp = new Date().getTime();
+
+    const rekord: IOfertaRecord = {
+        ...stan,
+        version: stan.version + 1,
+        data: {
+            ...stan.data,
+            status: Status.USUNIETA
+        }
+    };
+
+    const ope: IOfertaRecordOpe = {
+        ofertaId: stan.ofertaId,  // partition_key
+        version: stan.version + 1, // sort_key
+        timestamp,
+        data: { status: Status.USUNIETA },
+        updatedBy: 'developer'
+    }
+
+    return { rekord, ope };
+}
+
+function zmienionyRekord(
+    stan: IOfertaRecord,
+    oferta: IOfertaDane,
+): { rekord: IOfertaRecord, ope: IOfertaRecordOpe } | null {
+    const timestamp = new Date().getTime();
+
+    const delta = wyliczDelta(stan, oferta);
+
+    if (delta === null) {
+        return null;
+    }
+
+    const rekord: IOfertaRecord = {
+        ...stan,
+        version: stan.version + 1,
+        data: {
+            ...stan.data,
+            ...delta
+        }
+    };
+
+    const ope: IOfertaRecordOpe = {
+        ofertaId: stan.ofertaId,  // partition_key
+        version: stan.version + 1, // sort_key
+        timestamp,
+        data: delta,
+        updatedBy: 'developer'
+    }
+
+    return { rekord, ope };
 }
 
 function wyliczDelta<T extends IOfertaDane, S extends { data: T }>(stan: S, oferta: T) {

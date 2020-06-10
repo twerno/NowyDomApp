@@ -1,9 +1,9 @@
 import { DynamoDBRepo } from "../utils/DynamoDBRepo";
-import { IOfertaRecord } from "./IOfertaRecord";
+import { IOfertaRecord } from "../dataProvider/IOfertaRecord";
 
 export interface IOfertaRepoKey extends
     Pick<IOfertaRecord, 'inwestycjaId'>,
-    Partial<Pick<IOfertaRecord, 'id'>> {
+    Partial<Pick<IOfertaRecord, 'ofertaId'>> {
 }
 
-export const ofertyRepo = new DynamoDBRepo<IOfertaRepoKey, IOfertaRecord>('Oferty', 'inwestycjaId');
+export const ofertaRepo = new DynamoDBRepo<IOfertaRepoKey, IOfertaRecord>('Oferta', 'inwestycjaId');

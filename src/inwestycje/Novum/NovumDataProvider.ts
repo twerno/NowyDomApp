@@ -10,7 +10,10 @@ export const NovumDataProvider: IDataProvider<INovumListElement, INovumDetails> 
     developerId: 'HS',
     url: 'https://novumrumia.pl',
     standard: {
-        data: { winda: true, },
+        data: {
+            winda: true,
+            taras: false
+        },
         raw: [
             'ściany pokryte gładzią szpachlowaną i malowaną w kolorze białym',
             'drzwi anywłamaniowe',
@@ -20,7 +23,7 @@ export const NovumDataProvider: IDataProvider<INovumListElement, INovumDetails> 
         ]
     },
 
-    listUrlProvider: async () => ['https://novumrumia.pl/mieszkania/'],
+    listUrlProvider: async () => new Set(['https://novumrumia.pl/mieszkania/']),
 
     listHtmlParser: NovumMapper.listMapper,
 

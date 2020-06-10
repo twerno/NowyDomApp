@@ -1,4 +1,4 @@
-import { IOfertaDane, IStandard, KierunkiSwiata, Status, Typ, isRawData } from '../../db/IOfertaRecord';
+import { IOfertaDane, IStandard, KierunkiSwiata, Status, Typ, isRawData, IRawData } from '../../dataProvider/IOfertaRecord';
 import { INovumDetails, INovumListElement } from './NovumSchema';
 import { NovumDataProvider } from './NovumDataProvider';
 
@@ -23,7 +23,7 @@ export default (listItem: INovumListElement, detale?: INovumDetails, pdfUrl?: st
         odbior,
         cena: listItem.cena,
 
-        plan: pdfUrl
+        kartaOfertyUrl: pdfUrl
     };
 
     return { id: listItem.id, dane: result };
@@ -35,7 +35,7 @@ export default (listItem: INovumListElement, detale?: INovumDetails, pdfUrl?: st
 
 const odbiorRegExpr = /(I|II|III|IV) kwartał (\d{4})/;
 
-function odbiorMapper(listItem: INovumListElement): string | { rok: number, kwartal: number } {
+function odbiorMapper(listItem: INovumListElement): IRawData | { rok: number, kwartal: number } {
     const val = odbiorRegExpr.exec(listItem.odbiór);
 
     if (val) {
@@ -45,7 +45,7 @@ function odbiorMapper(listItem: INovumListElement): string | { rok: number, kwar
         };
     }
 
-    return listItem.odbiór;
+    return { raw: listItem.odbiór };
 }
 
 function rzymskie2arabskie(liczbaRzymska: string): number {

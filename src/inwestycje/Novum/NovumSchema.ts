@@ -1,5 +1,5 @@
 import { IListElement } from "dataProvider/IOfertaProvider";
-import { IRawData } from "../../db/IOfertaRecord";
+import { IRawData } from "../../dataProvider/IOfertaRecord";
 
 export interface INovumListElement extends IListElement {
     budynek: string;

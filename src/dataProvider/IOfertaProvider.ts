@@ -1,4 +1,4 @@
-import { IOfertaDane, IStandard } from "db/IOfertaRecord";
+import { IOfertaDane, IStandard } from "dataProvider/IOfertaRecord";
 
 export interface IDataProvider<T extends IListElement = IListElement, D = any> {
     inwestycjaId: string;

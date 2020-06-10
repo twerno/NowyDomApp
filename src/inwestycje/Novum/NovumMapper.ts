@@ -1,6 +1,6 @@
 import cheerio from 'cheerio';
-import { IRawData } from 'db/IOfertaRecord';
-import CheerioHelper from 'utils/CheerioHelper';
+import { IRawData } from '../../dataProvider/IOfertaRecord';
+import CheerioHelper from '../../utils/CheerioHelper';
 import { NovumDataProvider } from './NovumDataProvider';
 import { INovumDetails, INovumListElement } from './NovumSchema';
 
@@ -49,7 +49,6 @@ function rowMapper(rowIdx: number, row: CheerioElement): INovumListElement {
 
     const result: INovumListElement = {
         id: 'tmp_id',
-        inwestycjaId: NovumDataProvider.inwestycjaId,
         budynek: CheerioHelper.loadString(row.children[0]),
         nrLokalu: CheerioHelper.loadString(row.children[1]),
         piętro: CheerioHelper.loadInt(row.children[2]),
@@ -61,7 +60,7 @@ function rowMapper(rowIdx: number, row: CheerioElement): INovumListElement {
         detailsUrl: row.children[9]?.lastChild?.attribs['href']
     };
 
-    result.id = `${result.inwestycjaId}-${result.budynek}-${result.nrLokalu}`;
+    result.id = `${NovumDataProvider.inwestycjaId}-${result.budynek}-${result.nrLokalu}`;
 
     return result;
 }

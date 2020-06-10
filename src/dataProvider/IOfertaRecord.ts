@@ -1,19 +1,22 @@
 export interface IOfertaRecord {
-    id: string;
+    inwestycjaId: string; // partition_key
     developerId: string;
-    inwestycjaId: string;
+    ofertaId: string; // sort_key
 
-    createdAt: string;
+    version: number;
+    created_at: number;
+    updated_at: number;
 
     data: IOfertaDane;
-
-    updates: IOfertaOpe[];
 }
 
-export interface IOfertaOpe {
-    updatedAt: string,
-    updatedBy: 'developer',
-    data: Partial<IOfertaDane>,
+export interface IOfertaRecordOpe {
+    ofertaId: string;  // partition_key
+    version: number; // sort_key
+
+    timestamp: number;
+    updatedBy: 'developer';
+    data: Partial<IOfertaDane>;
 }
 
 export interface IOfertaDane {
@@ -30,7 +33,7 @@ export interface IOfertaDane {
     odbior: { rok: number, kwartal: number } | { rok: number, miesiac: number } | IRawData;
     cena?: number | IRawData;
 
-    plan?: string;
+    kartaOfertyUrl?: string;
 }
 
 export function isRawData(x: any): x is IRawData {
