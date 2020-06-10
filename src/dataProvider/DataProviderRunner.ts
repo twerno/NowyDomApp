@@ -36,18 +36,22 @@ async function provideOfferList<T extends IListElement, D>(
     // zachomikuj html-e na s3
     // TODO - html + url + data
 
+    console.log('pobieranie listy ofert');
     const offerList = parseOfferList(listHtml, dataProvider, errors);
 
+    console.log('pobieranie detali');
     const detailsHtml = await downloadDetails(offerList, dataProvider, errors);
 
     // zachomikuj html-e na s3
     // TODO - html + url + data
 
+    console.log('parsowanie detali');
     const offersWithDetails = await parseDetails(detailsHtml, dataProvider, errors);
 
     // zachomikuj błędy na s3
     // TODO - errors + data
 
+    console.log('budowanie ofert');
     const oferty = buildOffer(offersWithDetails, dataProvider, []);
 
     return oferty;

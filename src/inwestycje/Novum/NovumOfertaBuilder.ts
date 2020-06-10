@@ -1,4 +1,4 @@
-import { IOfertaDane, IStandard, KierunkiSwiata, Status, Typ, isRawData, IRawData } from '../../dataProvider/IOfertaRecord';
+import { IOfertaDane, ICechy, StronySwiata, Status, Typ, isRawData, IRawData } from '../../dataProvider/IOfertaRecord';
 import { INovumDetails, INovumListElement } from './NovumSchema';
 import { NovumDataProvider } from './NovumDataProvider';
 
@@ -16,8 +16,8 @@ export default (listItem: INovumListElement, detale?: INovumDetails, pdfUrl?: st
         metraz: listItem.metraż,
         lpPokoj: listItem.liczbaPokoi,
         pietro: listItem.piętro,
-        kierunek,
-        standard,
+        stronySwiata: kierunek,
+        cechy: standard,
 
         status,
         odbior,
@@ -67,7 +67,7 @@ function statusMapper(listItem: INovumListElement): Status | { raw: string } {
     }
 }
 
-function kierunekMapper(detale?: INovumDetails): Array<KierunkiSwiata | { raw: string }> {
+function kierunekMapper(detale?: INovumDetails): Array<StronySwiata | { raw: string }> {
     if (!detale) {
         return [];
     }
@@ -80,17 +80,17 @@ function kierunekMapper(detale?: INovumDetails): Array<KierunkiSwiata | { raw: s
     return result;
 }
 
-function stronaSwiataValMapper(val: string): KierunkiSwiata | { raw: string } {
+function stronaSwiataValMapper(val: string): StronySwiata | { raw: string } {
     switch (val) {
-        case 'Północ': return KierunkiSwiata.PÓŁNOC;
-        case 'Południe': return KierunkiSwiata.POŁUDNIE;
-        case 'Wschód': return KierunkiSwiata.WSCHÓD;
-        case 'Zachód': return KierunkiSwiata.ZACHÓD;
+        case 'Północ': return StronySwiata.PÓŁNOC;
+        case 'Południe': return StronySwiata.POŁUDNIE;
+        case 'Wschód': return StronySwiata.WSCHÓD;
+        case 'Zachód': return StronySwiata.ZACHÓD;
         default: return { raw: val };
     }
 }
 
-function standardMapper(detale?: INovumDetails): { data: IStandard, raw?: string[] } {
+function standardMapper(detale?: INovumDetails): { data: ICechy, raw?: string[] } {
     const result = {
         data: { ...NovumDataProvider.standard.data },
         raw: [...NovumDataProvider.standard.raw || []]
@@ -112,7 +112,7 @@ function standardMapper(detale?: INovumDetails): { data: IStandard, raw?: string
     return result;
 }
 
-function standardValMapper(val: string): Partial<IStandard> | null {
+function standardValMapper(val: string): Partial<ICechy> | null {
     switch (val) {
         case 'balkon': return { balkon: true };
         case 'taras': return { taras: true };

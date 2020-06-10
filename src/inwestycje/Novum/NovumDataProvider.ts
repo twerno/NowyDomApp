@@ -12,7 +12,6 @@ export const NovumDataProvider: IDataProvider<INovumListElement, INovumDetails> 
     standard: {
         data: {
             winda: true,
-            taras: false
         },
         raw: [
             'ściany pokryte gładzią szpachlowaną i malowaną w kolorze białym',
@@ -37,6 +36,4 @@ export const NovumDataProvider: IDataProvider<INovumListElement, INovumDetails> 
     offerCardUrlProvider: (_, detale?: INovumDetails) => detale?.pdfUrl,
 
     offerBuilder: NovumOfertaBuilder,
-
-    offerDetailsMerger: (source1, source2) => TypeUtils.swallowMerge(source1, source2)
 }

@@ -8,7 +8,7 @@ export default {
 }
 
 function loadString(element: CheerioElement): string {
-    return cheerio(element)?.text() || '';
+    return cheerio(element)?.text()?.trim() || '';
 }
 
 function loadInt(element: CheerioElement): number | IRawData {
@@ -20,9 +20,15 @@ function loadInt(element: CheerioElement): number | IRawData {
         : result;
 }
 
+const floatRegExpr = /([\d,.]+)/;
+
 function loadFloat(element: CheerioElement): number | IRawData {
     const text = cheerio(element)?.text();
-    const result = Number.parseFloat(text);
+    const float = floatRegExpr.exec(text);
+    if (float === null || float[0] === null) {
+        return { raw: text || '' }
+    }
+    const result = Number.parseFloat(float[0].replace(/,/g, '.'));
 
     return isNaN(result)
         ? { raw: text || '' }

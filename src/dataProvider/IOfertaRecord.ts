@@ -26,11 +26,11 @@ export interface IOfertaDane {
     metraz: number | IRawData;
     lpPokoj?: number | IRawData;
     pietro?: number | IRawData;
-    kierunek?: Array<KierunkiSwiata | IRawData>;
-    standard: { data: Partial<IStandard>, raw?: string[] };
+    stronySwiata?: Array<StronySwiata | IRawData>;
+    cechy: { data: Partial<ICechy>, raw?: string[] };
 
     status: Status | IRawData;
-    odbior: { rok: number, kwartal: number } | { rok: number, miesiac: number } | IRawData;
+    odbior?: { rok: number, kwartal: number } | { rok: number, miesiac: number } | IRawData;
     cena?: number | IRawData;
 
     kartaOfertyUrl?: string;
@@ -44,7 +44,7 @@ export interface IRawData {
     raw: string;
 }
 
-export enum KierunkiSwiata {
+export enum StronySwiata {
     'PÓŁNOC',
     'PÓŁNOCNY-WSCHÓD',
     'WSCHÓD',
@@ -55,7 +55,21 @@ export enum KierunkiSwiata {
     'PÓŁNOCNY-ZACHÓD'
 }
 
-export interface IStandard {
+export function stronySwiataMaper(raw: string): StronySwiata | IRawData {
+    switch (raw.toUpperCase().trim()) {
+        case 'PÓŁNOC': return StronySwiata.PÓŁNOC;
+        case 'PÓŁNOCNY-WSCHÓD': return StronySwiata["PÓŁNOCNY-WSCHÓD"];
+        case 'WSCHÓD': return StronySwiata.WSCHÓD;
+        case 'POŁUDNIOWY-WSCHÓD': return StronySwiata["POŁUDNIOWY-WSCHÓD"];
+        case 'POŁUDNIE': return StronySwiata.POŁUDNIE;
+        case 'POŁUDNIOWY-ZACHÓD': return StronySwiata["POŁUDNIOWY-ZACHÓD"];
+        case 'ZACHÓD': return StronySwiata.ZACHÓD;
+        case 'PÓŁNOCNY-ZACHÓD': return StronySwiata["PÓŁNOCNY-ZACHÓD"];
+        default: return { raw };
+    }
+}
+
+export interface ICechy {
     ogrzewanie?: 'miejskie' | 'gazowe';
     winda?: boolean;
     balkon?: boolean;

@@ -1,10 +1,10 @@
-import { IOfertaDane, IStandard } from "dataProvider/IOfertaRecord";
+import { IOfertaDane, ICechy } from "dataProvider/IOfertaRecord";
 
 export interface IDataProvider<T extends IListElement = IListElement, D = any> {
     inwestycjaId: string;
     developerId: string;
     url: string,
-    standard: { data: Partial<IStandard>, raw?: string[] },
+    standard: { data: Partial<ICechy>, raw?: string[] },
 
     listUrlProvider: () => Promise<Set<string>>,
     listHtmlParser: (html: string) => T[];
