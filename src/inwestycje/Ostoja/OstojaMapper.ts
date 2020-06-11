@@ -123,7 +123,7 @@ function stronySwiataParser(element: CheerioElement): Array<StronySwiata | IRawD
 function odbiorParser(raw: string): { rok: number, miesiac: number } | IRawData {
     const exprResult = /(\d{2}\.(\d{2})\.(\d{4}))/.exec(raw);
 
-    if (!exprResult || !exprResult[0]) {
+    if (!exprResult || !exprResult[1]) {
         return { raw };
     }
 

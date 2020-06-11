@@ -10,9 +10,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/mime-types": "^2.1.0",
     "aws-sdk": "^2.690.0",
     "axios": "^0.19.2",
     "cheerio": "^1.0.0-rc.3",
+    "mime-types": "^2.1.27",
     "module-alias": "^2.2.2"
   },
   "devDependencies": {

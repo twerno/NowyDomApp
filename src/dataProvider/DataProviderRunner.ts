@@ -1,21 +1,23 @@
-import { IOfertaDane, IOfertaRecord, Status, IOfertaRecordOpe } from "./IOfertaRecord";
+import Axios, { AxiosResponse } from "axios";
+import { extension } from 'mime-types';
+import S3Utils from "utils/S3Utils";
+import { ofertaOpeRepo } from "../db/OfertaRecordOpeRepo";
 import { ofertaRepo } from "../db/OfertaRecordRepo";
 import { IStringMap } from "../utils/IMap";
 import TypeUtils from "../utils/TypeUtils";
 import WebDownloader from "../utils/WebDownloader";
-import { IListElement, IDataProvider } from "./IOfertaProvider";
-import { ofertaOpeRepo } from "../db/OfertaRecordOpeRepo";
+import { IDataProvider, IListElement } from "./IOfertaProvider";
+import { IOfertaDane, IOfertaRecord, IOfertaRecordOpe, Status } from "./IOfertaRecord";
 
 export async function run<T extends IListElement, D>(dataProvider: IDataProvider<T, D>) {
     const errors: any[] = [];
 
     const oferty = await provideOfferList(dataProvider, errors);
 
-    // TODO - pdf
-
     const ofertyStan = await pobierzOfertyZInwestycji(dataProvider);
     const ofertaOperList = wyliczOfertaOper(ofertyStan, oferty, dataProvider);
     await zapiszOper(ofertaOperList);
+    await pobierzKartyOfert(ofertaOperList);
 
     return { errors, ofertyStan, ofertaZmiana: ofertaOperList };
 }
@@ -344,4 +346,45 @@ function wyliczDelta<T extends IOfertaDane, S extends { data: T }>(stan: S, ofer
     }
 
     return hasChange ? result : null;
+}
+
+async function pobierzKartyOfert(oferty: { rekord: IOfertaRecord, ope: IOfertaRecordOpe }[]) {
+    const kartyDoPobrania = oferty
+        .filter(o => o.rekord.version === 1 && !!o.rekord.data.kartaOfertyUrl)
+        .map(o => ({
+            url: o.rekord.data.kartaOfertyUrl || '',
+            inwestycjaId: o.rekord.inwestycjaId,
+            ofertaId: o.rekord.ofertaId
+        }));
+
+    for (const karta of kartyDoPobrania) {
+        await pobierzKarte(karta);
+    }
+}
+
+async function pobierzKarte(karta: { url: string, inwestycjaId: string, ofertaId: string }) {
+    const file = await Axios({ responseType: 'arraybuffer', url: karta.url });
+    const filenameOrExt = readFilenameOrExt(file);
+    const filename = filenameOrExt
+        && (filenameOrExt.filename || `${karta.ofertaId}.${filenameOrExt.ext}`)
+        || 'plik_bez_nazwy';
+    await S3Utils.putFile(karta.inwestycjaId, 'plany', filename, file.data);
+}
+
+function readFilenameOrExt(file: AxiosResponse<any>): { filename?: string, ext?: string } | null {
+    const filenameRegExt = /filename="(.+)"/
+        .exec(file.headers['content-disposition']);
+
+    const filename = filenameRegExt && filenameRegExt[1];
+    if (filename) {
+        return { filename };
+    }
+
+    const contentType = file.headers['content-type'];
+    const ext = extension(contentType);
+    if (ext) {
+        return { ext };
+    }
+
+    return null;
 }

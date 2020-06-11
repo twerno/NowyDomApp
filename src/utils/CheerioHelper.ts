@@ -25,10 +25,10 @@ const floatRegExpr = /([\d,.]+)/;
 function loadFloat(element: CheerioElement): number | IRawData {
     const text = cheerio(element)?.text();
     const float = floatRegExpr.exec(text);
-    if (float === null || float[0] === null) {
+    if (float === null || float[1] === null) {
         return { raw: text || '' }
     }
-    const result = Number.parseFloat(float[0].replace(/,/g, '.'));
+    const result = Number.parseFloat(float[1].replace(/,/g, '.'));
 
     return isNaN(result)
         ? { raw: text || '' }
