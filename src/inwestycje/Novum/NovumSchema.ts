@@ -10,11 +10,11 @@ export interface INovumListElement extends IListElement {
     odbiór: string;
     status: string;
     cena?: number | IRawData;
-    detailsUrl: string;
+    offerDetailsUrl: string;
 }
 
 export interface INovumDetails {
     udogodnienia: string;
     stronyŚwiata: string;
-    pdfUrl?: string;
+    sourceOfertaPdfUrl?: string;
 }

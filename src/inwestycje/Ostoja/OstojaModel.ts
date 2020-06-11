@@ -9,12 +9,12 @@ export interface IOstojaListElement extends IListElement {
     lpPokoj: number | IRawData;
     status: Status;
     cena?: number | IRawData;
-    detailsUrl?: string;
+    offerDetailsUrl?: string;
     cechy: { data: Partial<ICechy>, raw?: string[] };
     stronySwiata: Array<StronySwiata | IRawData>;
 }
 
 export interface IOstojaOfferDetails {
     odbior: { rok: number, miesiac: number } | IRawData;
-    pdfUrl?: string;
+    sourceOfertaPdfUrl?: string;
 }

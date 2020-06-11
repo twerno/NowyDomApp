@@ -27,13 +27,13 @@ export const NovumDataProvider: IDataProvider<INovumListElement, INovumDetails> 
     listHtmlParser: NovumMapper.listMapper,
 
     offerDetailsUrlProvider: (listItem: INovumListElement) => new Set([
-        listItem.detailsUrl,
+        listItem.offerDetailsUrl,
         `https://novumrumia.pl/mieszkanie/${listItem.budynek.toLowerCase()}-${listItem.nrLokalu.toLowerCase()}/`
     ]),
 
     offerDetailsHtmlParser: NovumMapper.detailMapper,
 
-    offerCardUrlProvider: (_, detale?: INovumDetails) => detale?.pdfUrl,
+    offerCardUrlProvider: (_, detale?: INovumDetails) => detale?.sourceOfertaPdfUrl,
 
     offerBuilder: NovumOfertaBuilder,
 }

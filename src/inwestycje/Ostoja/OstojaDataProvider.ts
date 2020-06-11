@@ -22,13 +22,13 @@ export const OstojaDataProvider: IDataProvider<IOstojaListElement, IOstojaOfferD
 
     offerDetailsUrlProvider: (listItem: IOstojaListElement) =>
         new Set(
-            [listItem.detailsUrl]
+            [listItem.offerDetailsUrl]
                 .filter(TypeUtils.notEmpty)
         ),
 
     offerDetailsHtmlParser: OstojaMapper.detailMapper,
 
-    offerCardUrlProvider: (_, detale?: IOstojaOfferDetails) => detale?.pdfUrl,
+    offerCardUrlProvider: (_, detale?: IOstojaOfferDetails) => detale?.sourceOfertaPdfUrl,
 
     offerBuilder: OstojaOfertaBuilder
 }

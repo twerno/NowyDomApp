@@ -1,6 +1,6 @@
-import { IOfertaDane, ICechy, StronySwiata, Status, Typ, isRawData, IRawData } from '../../dataProvider/IOfertaRecord';
-import { INovumDetails, INovumListElement } from './NovumSchema';
+import { ICechy, IOfertaDane, IRawData, Status, StronySwiata, Typ } from '../../dataProvider/IOfertaRecord';
 import { NovumDataProvider } from './NovumDataProvider';
+import { INovumDetails, INovumListElement } from './NovumSchema';
 
 export default (listItem: INovumListElement, detale?: INovumDetails, pdfUrl?: string): { id: string, dane: IOfertaDane } => {
 
@@ -23,7 +23,8 @@ export default (listItem: INovumListElement, detale?: INovumDetails, pdfUrl?: st
         odbior,
         cena: listItem.cena,
 
-        kartaOfertyUrl: pdfUrl
+        offerDetailsUrl: listItem.offerDetailsUrl,
+        sourceOfertaPdfUrl: pdfUrl
     };
 
     return { id: listItem.id, dane: result };

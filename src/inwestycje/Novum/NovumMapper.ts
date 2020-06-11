@@ -35,7 +35,7 @@ async function detailMapper(html: string): Promise<INovumDetails> {
     const result: INovumDetails = {
         udogodnienia,
         stronyŚwiata,
-        pdfUrl
+        sourceOfertaPdfUrl: pdfUrl
     };
 
     return result;
@@ -57,7 +57,7 @@ function rowMapper(rowIdx: number, row: CheerioElement): INovumListElement {
         odbiór: CheerioHelper.loadString(row.children[5]),
         status: CheerioHelper.loadString(row.children[6]),
         cena: cenaParser(CheerioHelper.loadString(row.children[7])),
-        detailsUrl: row.children[9]?.lastChild?.attribs['href']
+        offerDetailsUrl: row.children[9]?.lastChild?.attribs['href']
     };
 
     result.id = `${NovumDataProvider.inwestycjaId}-${result.budynek}-${result.nrLokalu}`;

@@ -15,7 +15,7 @@ export interface IOfertaRecordOpe {
     version: number; // sort_key
 
     timestamp: number;
-    updatedBy: 'developer';
+    updatedBy: 'developer' | 'server';
     data: Partial<IOfertaDane>;
 }
 
@@ -33,7 +33,10 @@ export interface IOfertaDane {
     odbior?: { rok: number, kwartal: number } | { rok: number, miesiac: number } | IRawData;
     cena?: number | IRawData;
 
-    kartaOfertyUrl?: string;
+    offerDetailsUrl?: string;
+    sourceOfertaPdfUrl?: string;
+    // nazwa pliku zapisana na s3
+    ofertaPdf?: string;
 }
 
 export function isRawData(x: any): x is IRawData {

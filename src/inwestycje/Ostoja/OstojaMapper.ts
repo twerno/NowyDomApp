@@ -29,11 +29,11 @@ async function detailMapper(html: string): Promise<IOstojaOfferDetails> {
         .text();
 
 
-    const pdfUrl = cheerio.load(html)('a.pdf')?.attr('href');
+    const sourceOfertaPdfUrl = cheerio.load(html)('a.pdf')?.attr('href');
 
     const result: IOstojaOfferDetails = {
         odbior: odbiorParser(zakonczenieRaw),
-        pdfUrl
+        sourceOfertaPdfUrl,
     };
 
     return result;
@@ -56,7 +56,7 @@ function rowMapper(rowIdx: number, row: CheerioElement): IOstojaListElement {
         nrLokalu: CheerioHelper.loadString(cols[3]),
         cena: cenaParser(cols[5]),
         status: Status.WOLNE,
-        detailsUrl: detaleUrlParser(cols[3]),
+        offerDetailsUrl: detaleUrlParser(cols[3]),
         cechy: cechyParser(cols[6]),
         stronySwiata: stronySwiataParser(cols[6]),
     };
