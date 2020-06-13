@@ -15,7 +15,7 @@ export interface IDataProvider<T extends IListElement = IListElement, D = any> {
 
     offerCardUrlProvider: (listItem: T, detale?: D) => string | undefined;
 
-    offerBuilder: (listItem: T, details?: D, offerCardUrl?: string) => { id: string, dane: IOfertaDane };
+    offerBuilder: (listItem: T, details?: D) => { id: string, dane: IOfertaDane };
 }
 
 export interface IListElement {

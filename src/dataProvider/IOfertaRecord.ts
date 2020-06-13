@@ -34,9 +34,12 @@ export interface IOfertaDane {
     cena?: number | IRawData;
 
     offerDetailsUrl?: string;
-    sourceOfertaPdfUrl?: string;
-    // nazwa pliku zapisana na s3
-    ofertaPdf?: string;
+
+    // id zasobu x url 
+    zasobyDoPobrania: { id: string, url: string }[];
+
+    // id zasobu x sciazka na s3
+    zasobyPobrane: { id: string, s3Filename: string }[];
 }
 
 export function isRawData(x: any): x is IRawData {
