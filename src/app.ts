@@ -16,4 +16,4 @@ AsyncTaskRunner(
         concurency: 10
     }, errors)
     .catch(err => console.error(err, errors))
-    .then(v => console.log('done', v));
+    .then(v => console.log('done'));
