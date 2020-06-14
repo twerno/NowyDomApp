@@ -10,14 +10,15 @@ class ProvideOfferTask4<T extends IListElement = IListElement, D = any> extends 
     public constructor(
         private ofertaId: string,
         private stan: IOfertaRecord,
-        dataProvider: IDataProvider<T, D>) {
+        dataProvider: IDataProvider<T, D>,
+        public readonly priority?: number) {
         super(dataProvider);
     }
 
     public async run(errors: any[]) {
 
         const doPobrania = this.stan.data.zasobyDoPobrania
-            .filter(this.zasobNieZostalPobrany);
+            .filter(() => this.zasobNieZostalPobrany);
 
         // wywolywanie operacji synchroniczne
         for (const res of doPobrania) {

@@ -110,7 +110,10 @@ abstract class AbstractZapiszZmianyTask<T extends IListElement = IListElement, D
     ): { rekord: IOfertaRecord, ope: IOfertaRecordOpe } | null {
         const timestamp = new Date().getTime();
 
-        const delta = this.wyliczDelta(stan, oferta);
+        // zmienna "zasoby pobrane" nie jest czascia oferty - nadpisujemy ja wersja ze stanu, zeby nie generowac falszywych zmian
+        const safeOferta = { ...oferta, zasobyPobrane: stan.data.zasobyPobrane };
+
+        const delta = this.wyliczDelta(stan, safeOferta);
 
         if (delta === null) {
             return null;

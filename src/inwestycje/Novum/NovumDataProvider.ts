@@ -33,7 +33,5 @@ export const NovumDataProvider: IDataProvider<INovumListElement, INovumDetails> 
 
     offerDetailsHtmlParser: NovumMapper.detailMapper,
 
-    offerCardUrlProvider: (_, detale?: INovumDetails) => detale?.sourceOfertaPdfUrl,
-
     offerBuilder: NovumOfertaBuilder,
 }

@@ -9,7 +9,8 @@ class ProvideOfferTask2<T extends IListElement = IListElement, D = any> implemen
 
     public constructor(
         private offer: T,
-        private readonly dataProvider: IDataProvider<T, D>) {
+        private readonly dataProvider: IDataProvider<T, D>,
+        public readonly priority?: number) {
     }
 
     public async run(errors: any[]) {
@@ -20,7 +21,7 @@ class ProvideOfferTask2<T extends IListElement = IListElement, D = any> implemen
 
         const oferta = this.buildOffer(detail, errors);
 
-        return new ProvideOfferTask3(oferta.id, oferta.dane, this.dataProvider);
+        return new ProvideOfferTask3(oferta.id, oferta.dane, this.dataProvider, this.priority);
     }
 
     private async downloadDetails(errors: any[]) {
@@ -69,15 +70,7 @@ class ProvideOfferTask2<T extends IListElement = IListElement, D = any> implemen
         detail: D | undefined,
         errors: any[]
     ) {
-        const kartaOfertyUrl = this.dataProvider.offerCardUrlProvider(this.offer, detail);
-
-        const oferta = this.dataProvider.offerBuilder(this.offer, detail);
-
-        if (kartaOfertyUrl) {
-            oferta.dane.zasobyDoPobrania['kartaOfertyUrl'] = kartaOfertyUrl;
-        }
-
-        return oferta;
+        return this.dataProvider.offerBuilder(this.offer, detail);
     }
 
 }

@@ -28,7 +28,5 @@ export const OstojaDataProvider: IDataProvider<IOstojaListElement, IOstojaOfferD
 
     offerDetailsHtmlParser: OstojaMapper.detailMapper,
 
-    offerCardUrlProvider: (_, detale?: IOstojaOfferDetails) => detale?.sourceOfertaPdfUrl,
-
     offerBuilder: OstojaOfertaBuilder
 }

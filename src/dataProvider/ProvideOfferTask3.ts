@@ -8,7 +8,8 @@ class ProvideOfferTask3<T extends IListElement = IListElement, D = any> extends 
     public constructor(
         private ofertaId: string,
         private ofertaData: IOfertaDane | null,
-        dataProvider: IDataProvider<T, D>) {
+        dataProvider: IDataProvider<T, D>,
+        public readonly priority?: number) {
         super(dataProvider);
     }
 
@@ -17,7 +18,7 @@ class ProvideOfferTask3<T extends IListElement = IListElement, D = any> extends 
 
         return zmiana === null
             ? []
-            : new ProvideOfferTask4(this.ofertaId, zmiana.rekord, this.dataProvider)
+            : new ProvideOfferTask4(this.ofertaId, zmiana.rekord, this.dataProvider, this.priority)
     }
 
 }

@@ -7,7 +7,9 @@ import ProvideOfferTask2 from "./ProvideOfferTask2";
 
 class ProvideOfferTask1<T extends IListElement = IListElement, D = any> implements IAsyncTask {
 
-    public constructor(private readonly dataProvider: IDataProvider<T, D>) {
+    public constructor(
+        private readonly dataProvider: IDataProvider<T, D>,
+        public readonly priority?: number) {
 
     }
 
@@ -20,7 +22,7 @@ class ProvideOfferTask1<T extends IListElement = IListElement, D = any> implemen
         const offerList = this.parseOfferList(listHtml, errors);
 
         return offerList
-            .map(offer => new ProvideOfferTask2(offer, this.dataProvider));
+            .map(offer => new ProvideOfferTask2(offer, this.dataProvider, this.priority));
     }
 
     private async downloadLists(urls: Set<string>, errors: any[]) {

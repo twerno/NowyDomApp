@@ -13,8 +13,6 @@ export interface IDataProvider<T extends IListElement = IListElement, D = any> {
     offerDetailsHtmlParser: (html: string) => Promise<D>;
     offerDetailsMerger?: (source1: D, source2: D) => D;
 
-    offerCardUrlProvider: (listItem: T, detale?: D) => string | undefined;
-
     offerBuilder: (listItem: T, details?: D) => { id: string, dane: IOfertaDane };
 }
 

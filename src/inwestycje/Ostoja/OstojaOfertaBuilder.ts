@@ -3,10 +3,16 @@ import { IOstojaListElement, IOstojaOfferDetails } from './OstojaModel';
 
 export default (listItem: IOstojaListElement, detale?: IOstojaOfferDetails, pdfUrl?: string): { id: string, dane: IOfertaDane } => {
 
+    const zasobyDoPobrania = detale?.sourceOfertaPdfUrl
+        ? [{ id: '', url: detale?.sourceOfertaPdfUrl }]
+        : [];
+
     const result: IOfertaDane = {
         typ: Typ.MIESZKANIE,
         ...listItem,
         ...detale,
+        zasobyDoPobrania,
+        zasobyPobrane: []
     };
 
     return { id: listItem.id, dane: result };

@@ -9,6 +9,10 @@ export default (listItem: INovumListElement, detale?: INovumDetails, pdfUrl?: st
     const status = statusMapper(listItem);
     const odbior = odbiorMapper(listItem);
 
+    const zasobyDoPobrania = detale?.sourceOfertaPdfUrl
+        ? [{ id: '', url: detale?.sourceOfertaPdfUrl }]
+        : [];
+
     const result: IOfertaDane = {
         typ: Typ.MIESZKANIE,
         budynek: listItem.budynek,
@@ -24,7 +28,8 @@ export default (listItem: INovumListElement, detale?: INovumDetails, pdfUrl?: st
         cena: listItem.cena,
 
         offerDetailsUrl: listItem.offerDetailsUrl,
-        sourceOfertaPdfUrl: pdfUrl
+        zasobyDoPobrania,
+        zasobyPobrane: []
     };
 
     return { id: listItem.id, dane: result };
