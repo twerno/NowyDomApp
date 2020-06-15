@@ -3,25 +3,35 @@ import { IRawData, Status, ICechy, StronySwiata, stronySwiataMaper } from '../..
 import CheerioHelper from '../../utils/CheerioHelper';
 import { IOstojaListElement, IOstojaOfferDetails } from './OstojaModel';
 import { OstojaDataProvider } from './OstojaDataProvider';
+import { ISubTaskProps } from '../../dataProvider/IOfertaProvider';
 
 export default {
     listMapper,
     detailMapper
 }
 
-function listMapper(html: string): IOstojaListElement[] {
+function listMapper(
+    html: string,
+    errors: any[],
+    subTaskProps: ISubTaskProps<IOstojaListElement, IOstojaOfferDetails>
+) {
     const rows = cheerio
         .load(html)('form.offer-search .price-list > tbody > tr');
 
-    const result: IOstojaListElement[] = [];
+    const items: IOstojaListElement[] = [];
     rows.each((idx, row) => {
-        result.push(rowMapper(idx, row));
+        items.push(rowMapper(idx, row));
     });
 
-    return result;
+    return { items };
 }
 
-async function detailMapper(html: string): Promise<IOstojaOfferDetails> {
+async function detailMapper(html: string | string[]): Promise<IOstojaOfferDetails> {
+
+    if (html instanceof Array) {
+        throw new Error('maper przenaczony dla pojedynczego rekordu, otrzymano tablicę');
+    }
+
     const rows = cheerio.load(html)('.offer-card-header .row p').children();
 
     const zakonczenieRaw = rows

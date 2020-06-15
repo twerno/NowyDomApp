@@ -17,18 +17,18 @@ export const NovumDataProvider: IDataProvider<INovumListElement, INovumDetails> 
             'drzwi anywłamaniowe',
             'kamienne parapety',
             'trzyszybowa stolarka okienna',
-            'komórka lokatorska do każdego mieszkania (darmowa?)',
+            'komórka lokatorska do każdego mieszkania (obowiązek zakupu)',
         ]
     },
 
-    getListUrl: async () => new Set(['https://novumrumia.pl/mieszkania/']),
+    getListUrl: () => 'https://novumrumia.pl/mieszkania/',
 
     parseListHtml: NovumMapper.listMapper,
 
-    getOfferUrl: (listItem: INovumListElement) => new Set([
+    getOfferUrl: (listItem: INovumListElement) => [
         listItem.offerDetailsUrl,
         `https://novumrumia.pl/mieszkanie/${listItem.budynek.toLowerCase()}-${listItem.nrLokalu.toLowerCase()}/`
-    ]),
+    ],
 
     parseOfferHtml: NovumMapper.detailMapper,
 

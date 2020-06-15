@@ -1,9 +1,8 @@
 import { IAsyncTask } from "../utils/asyncTask/IAsyncTask";
-import { IDataProvider, IListElement } from "./IOfertaProvider";
 import WebDownloader from "../utils/WebDownloader";
-import TaskHelper from './TaskHelper';
-import TypeUtils from "../utils/TypeUtils";
+import { IDataProvider, IListElement } from "./IOfertaProvider";
 import ProvideOfferTask2 from "./ProvideOfferTask2";
+import TaskHelper from './TaskHelper';
 
 /**
  * Task buduje listę ofert ze strony i dla każdej oferty nadziewa kolejny task
@@ -15,40 +14,32 @@ class ProvideOfferTask1<T extends IListElement = IListElement, D = any> implemen
         public readonly priority?: number) {
     }
 
-    public async run(errors: any[]): Promise<IAsyncTask[]> {
-        const urls = await this.dataProvider.getListUrl();
+    public async run(errors: any[]) {
+        const url = this.dataProvider.getListUrl();
 
-        const listHtml = await this.downloadLists(urls, errors);
+        const listHtml = await this.downloadLists(url, errors);
 
-        const offerList = this.parseOfferList(listHtml, errors);
+        const parseResult = this.parseOfferList(listHtml, errors);
 
-        return offerList
-            .map(offer => new ProvideOfferTask2(offer, this.dataProvider, this.priority));
+        const task2List = parseResult
+            ? parseResult.items.map(offer => new ProvideOfferTask2(offer, this.dataProvider, this.priority))
+            : [];
+
+        return [...task2List, ...(parseResult?.tasks || [])];
     }
 
-    private async downloadLists(urls: Set<string>, errors: any[]) {
-        const promises: Promise<{ url: string, html: string } | null>[] = [];
+    private async downloadLists(url: string, errors: any[]) {
+        const promise = WebDownloader.download(url)
+            .catch(TaskHelper.silentErrorReporter(errors, { method: 'downloadLists', url }));
 
-        for (const url of urls) {
-            promises.push(
-                WebDownloader.download(url)
-                    .then(html => ({ url, html }))
-                    .catch(TaskHelper.silentErrorReporter(errors, { method: 'downloadLists', url }))
-            );
-        }
-
-        return Promise.all(promises);
+        return promise;
     }
 
     // przetworzenie pobranych stron i wyciągnięcie z nich listy ofert
-    private parseOfferList(
-        lista: Array<{ url: string, html: string } | null>,
-        errors: any[]
-    ) {
-        return lista
-            .filter(TypeUtils.notEmpty)
-            .map(({ html }) => this.dataProvider.parseListHtml(html))
-            .reduce((prev, curr) => [...prev, ...curr], [] as T[]);
+    private parseOfferList(html: string | null, errors: any[]) {
+        return html
+            ? this.dataProvider.parseListHtml(html, errors, { dataProvider: this.dataProvider, priority: this.priority })
+            : null;
     }
 
 }

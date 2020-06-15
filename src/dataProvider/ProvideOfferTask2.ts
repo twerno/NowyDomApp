@@ -28,8 +28,15 @@ class ProvideOfferTask2<T extends IListElement = IListElement, D = any> implemen
     }
 
     private async downloadDetails(errors: any[]) {
-        const urls = Array.from(this.dataProvider.getOfferUrl(this.offer))
-            .filter(TypeUtils.notEmpty);
+        const rawUrls = this.dataProvider.getOfferUrl(this.offer);
+
+        if (!rawUrls) {
+            return [];
+        }
+
+        const urls = typeof rawUrls === 'string'
+            ? [rawUrls]
+            : Array.from(new Set(rawUrls.filter(TypeUtils.notEmpty)));
 
         if (!urls || urls.length === 0) {
             return [];
@@ -39,38 +46,27 @@ class ProvideOfferTask2<T extends IListElement = IListElement, D = any> implemen
             .catch(TaskHelper.silentErrorReporter(errors, { method: 'downloadDetails', url }))
         )
 
-
         return Promise.all(promises);
     }
 
-    private async parseDetails(htmlList: Array<string | null>, errors: any[]): Promise<D | undefined> {
+    private async parseDetails(htmlList: Array<string | null>, errors: any[]): Promise<D | null> {
+        const htmls = htmlList.filter(TypeUtils.notEmpty);
 
-        const promises = htmlList
-            .filter(TypeUtils.notEmpty)
-            .map(html => this.dataProvider.parseOfferHtml(html)
-                .catch(TaskHelper.silentErrorReporter(errors, { method: 'parseDetails', html, offer: this.offer }))
-            );
-
-        const detailParts = await Promise.all(promises)
-            .then(list => list.filter(TypeUtils.notEmpty));
-
-        if (detailParts.length > 1) {
-            const detailPartReducer = this.dataProvider.offerReducer;
-            if (detailPartReducer === undefined) {
-                TaskHelper.silentErrorReporter(errors, { method: 'parseDetail', offer: this.offer })('wiele wyników do zmergowania, ale nie zdefiniowano mergera!');
-                return detailParts[0];
-            } else {
-                const detail = detailParts.reduce(detailPartReducer, {} as D);
-                return detail;
-            }
+        if (htmls.length === 0) {
+            return null;
         }
 
-        return detailParts[0];
+        return await this.dataProvider
+            .parseOfferHtml(
+                htmls.length === 1 ? htmls[0] : htmls,
+                errors
+            )
+            .catch(TaskHelper.silentErrorReporter(errors, { method: 'parseDetails', htmlList, offer: this.offer }));
     }
 
     // przepisanie lokalnych danych na obiekt
     private buildOffer(
-        detail: D | undefined,
+        detail: D | null,
         errors: any[]
     ) {
         return this.dataProvider.offerBuilder(this.offer, detail);

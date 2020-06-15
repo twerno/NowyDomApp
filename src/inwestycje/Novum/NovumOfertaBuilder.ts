@@ -2,7 +2,7 @@ import { ICechy, IOfertaDane, IRawData, Status, StronySwiata, Typ } from '../../
 import { NovumDataProvider } from './NovumDataProvider';
 import { INovumDetails, INovumListElement } from './NovumSchema';
 
-export default (listItem: INovumListElement, detale?: INovumDetails, pdfUrl?: string): { id: string, dane: IOfertaDane } => {
+export default (listItem: INovumListElement, detale: INovumDetails | null): { id: string, dane: IOfertaDane } => {
 
     const kierunek = kierunekMapper(detale);
     const standard = standardMapper(detale);
@@ -73,7 +73,7 @@ function statusMapper(listItem: INovumListElement): Status | { raw: string } {
     }
 }
 
-function kierunekMapper(detale?: INovumDetails): Array<StronySwiata | { raw: string }> {
+function kierunekMapper(detale: INovumDetails | null): Array<StronySwiata | { raw: string }> {
     if (!detale) {
         return [];
     }
@@ -96,7 +96,7 @@ function stronaSwiataValMapper(val: string): StronySwiata | { raw: string } {
     }
 }
 
-function standardMapper(detale?: INovumDetails): { data: ICechy, raw?: string[] } {
+function standardMapper(detale: INovumDetails | null): { data: ICechy, raw?: string[] } {
     const result = {
         data: { ...NovumDataProvider.standard.data },
         raw: [...NovumDataProvider.standard.raw || []]

@@ -1,7 +1,7 @@
 import { IOfertaDane, Typ } from '../../dataProvider/IOfertaRecord';
 import { IOstojaListElement, IOstojaOfferDetails } from './OstojaModel';
 
-export default (listItem: IOstojaListElement, detale?: IOstojaOfferDetails, pdfUrl?: string): { id: string, dane: IOfertaDane } => {
+export default (listItem: IOstojaListElement, detale: IOstojaOfferDetails | null): { id: string, dane: IOfertaDane } => {
 
     const zasobyDoPobrania = detale?.sourceOfertaPdfUrl
         ? [{ id: 'ofertaPdf', url: detale?.sourceOfertaPdfUrl }]

@@ -53,11 +53,11 @@ async function runNextTask(
         ref.runningTasks++;
         console.log('run task', taskName);
         console.log(`runningTasks: ${ref.runningTasks}`, `pendingTasks: ${tasks.length}`);
-        const result = await task?.run(errors || []) || [];
+        const result = await task?.run(errors) || [];
         tasks.push.apply(tasks, result instanceof Array ? result : [result]);
     }
     catch (err) {
-        TaskHelper.silentErrorReporter(errors || [], { method: 'runNextTask', task })(err);
+        TaskHelper.silentErrorReporter(errors, { method: 'runNextTask', task })(err);
     }
     finally {
         console.log('task finished', taskName);
