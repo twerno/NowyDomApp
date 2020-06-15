@@ -2,7 +2,6 @@ import { IDataProvider } from "../../dataProvider/IOfertaProvider";
 import { INovumDetails, INovumListElement } from "./NovumSchema";
 import NovumOfertaBuilder from "./NovumOfertaBuilder";
 import NovumMapper from "./NovumMapper";
-import TypeUtils from "../../utils/TypeUtils";
 
 export const NovumDataProvider: IDataProvider<INovumListElement, INovumDetails> = {
 
@@ -22,16 +21,16 @@ export const NovumDataProvider: IDataProvider<INovumListElement, INovumDetails> 
         ]
     },
 
-    listUrlProvider: async () => new Set(['https://novumrumia.pl/mieszkania/']),
+    getListUrl: async () => new Set(['https://novumrumia.pl/mieszkania/']),
 
-    listHtmlParser: NovumMapper.listMapper,
+    parseListHtml: NovumMapper.listMapper,
 
-    offerDetailsUrlProvider: (listItem: INovumListElement) => new Set([
+    getOfferUrl: (listItem: INovumListElement) => new Set([
         listItem.offerDetailsUrl,
         `https://novumrumia.pl/mieszkanie/${listItem.budynek.toLowerCase()}-${listItem.nrLokalu.toLowerCase()}/`
     ]),
 
-    offerDetailsHtmlParser: NovumMapper.detailMapper,
+    parseOfferHtml: NovumMapper.detailMapper,
 
     offerBuilder: NovumOfertaBuilder,
 }

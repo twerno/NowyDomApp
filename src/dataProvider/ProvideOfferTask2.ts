@@ -5,6 +5,10 @@ import TaskHelper from './TaskHelper';
 import TypeUtils from "../utils/TypeUtils";
 import ProvideOfferTask3 from "./ProvideOfferTask3";
 
+/**
+ * Pobieranie detali oferty, przygotowanie ofert znormalizowanej IOfertaDane
+ * i nadzienie kolejnego tasku
+ */
 class ProvideOfferTask2<T extends IListElement = IListElement, D = any> implements IAsyncTask {
 
     public constructor(
@@ -16,7 +20,6 @@ class ProvideOfferTask2<T extends IListElement = IListElement, D = any> implemen
     public async run(errors: any[]) {
         const htmlList = await this.downloadDetails(errors);
 
-        console.log('parsowanie detali');
         const detail = await this.parseDetails(htmlList, errors);
 
         const oferta = this.buildOffer(detail, errors);
@@ -25,7 +28,7 @@ class ProvideOfferTask2<T extends IListElement = IListElement, D = any> implemen
     }
 
     private async downloadDetails(errors: any[]) {
-        const urls = Array.from(this.dataProvider.offerDetailsUrlProvider(this.offer))
+        const urls = Array.from(this.dataProvider.getOfferUrl(this.offer))
             .filter(TypeUtils.notEmpty);
 
         if (!urls || urls.length === 0) {
@@ -44,7 +47,7 @@ class ProvideOfferTask2<T extends IListElement = IListElement, D = any> implemen
 
         const promises = htmlList
             .filter(TypeUtils.notEmpty)
-            .map(html => this.dataProvider.offerDetailsHtmlParser(html)
+            .map(html => this.dataProvider.parseOfferHtml(html)
                 .catch(TaskHelper.silentErrorReporter(errors, { method: 'parseDetails', html, offer: this.offer }))
             );
 
@@ -52,7 +55,7 @@ class ProvideOfferTask2<T extends IListElement = IListElement, D = any> implemen
             .then(list => list.filter(TypeUtils.notEmpty));
 
         if (detailParts.length > 1) {
-            const detailPartReducer = this.dataProvider.offerDetailsMerger;
+            const detailPartReducer = this.dataProvider.offerReducer;
             if (detailPartReducer === undefined) {
                 TaskHelper.silentErrorReporter(errors, { method: 'parseDetail', offer: this.offer })('wiele wyników do zmergowania, ale nie zdefiniowano mergera!');
                 return detailParts[0];

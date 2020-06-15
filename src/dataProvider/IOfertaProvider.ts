@@ -6,12 +6,12 @@ export interface IDataProvider<T extends IListElement = IListElement, D = any> {
     url: string,
     standard: { data: Partial<ICechy>, raw?: string[] },
 
-    listUrlProvider: () => Promise<Set<string>>,
-    listHtmlParser: (html: string) => T[];
+    getListUrl: () => Promise<Set<string>>,
+    parseListHtml: (html: string) => T[];
 
-    offerDetailsUrlProvider: (listItem: T) => Set<string>;
-    offerDetailsHtmlParser: (html: string) => Promise<D>;
-    offerDetailsMerger?: (source1: D, source2: D) => D;
+    getOfferUrl: (listItem: T) => Set<string>;
+    parseOfferHtml: (html: string) => Promise<D>;
+    offerReducer?: (source1: D, source2: D) => D;
 
     offerBuilder: (listItem: T, details?: D) => { id: string, dane: IOfertaDane };
 }

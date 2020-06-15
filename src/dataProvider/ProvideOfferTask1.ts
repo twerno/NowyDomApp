@@ -5,20 +5,21 @@ import TaskHelper from './TaskHelper';
 import TypeUtils from "../utils/TypeUtils";
 import ProvideOfferTask2 from "./ProvideOfferTask2";
 
+/**
+ * Task buduje listę ofert ze strony i dla każdej oferty nadziewa kolejny task
+ */
 class ProvideOfferTask1<T extends IListElement = IListElement, D = any> implements IAsyncTask {
 
     public constructor(
         private readonly dataProvider: IDataProvider<T, D>,
         public readonly priority?: number) {
-
     }
 
     public async run(errors: any[]): Promise<IAsyncTask[]> {
-        const urls = await this.dataProvider.listUrlProvider();
+        const urls = await this.dataProvider.getListUrl();
 
         const listHtml = await this.downloadLists(urls, errors);
 
-        console.log('pobieranie listy ofert');
         const offerList = this.parseOfferList(listHtml, errors);
 
         return offerList
@@ -46,8 +47,8 @@ class ProvideOfferTask1<T extends IListElement = IListElement, D = any> implemen
     ) {
         return lista
             .filter(TypeUtils.notEmpty)
-            .map(({ html }) => this.dataProvider.listHtmlParser(html))
-            .reduce((prev, curr) => [...prev, ...curr], []);
+            .map(({ html }) => this.dataProvider.parseListHtml(html))
+            .reduce((prev, curr) => [...prev, ...curr], [] as T[]);
     }
 
 }

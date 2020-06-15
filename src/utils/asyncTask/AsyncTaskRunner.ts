@@ -48,10 +48,11 @@ async function runNextTask(
     callback: () => void
 ) {
     const task = getNextTask(tasks);
+    const taskName = (task as any)?.__proto__?.constructor?.name;
     try {
         ref.runningTasks++;
-        console.log('run task', (task as any)?.__proto__?.constructor?.name);
-        console.log(ref.runningTasks, tasks.length);
+        console.log('run task', taskName);
+        console.log(`runningTasks: ${ref.runningTasks}`, `pendingTasks: ${tasks.length}`);
         const result = await task?.run(errors || []) || [];
         tasks.push.apply(tasks, result instanceof Array ? result : [result]);
     }
@@ -59,7 +60,7 @@ async function runNextTask(
         TaskHelper.silentErrorReporter(errors || [], { method: 'runNextTask', task })(err);
     }
     finally {
-        console.log('task finished', (task as any)?.__proto__?.constructor?.name);
+        console.log('task finished', taskName);
         ref.runningTasks--;
         callback();
     }

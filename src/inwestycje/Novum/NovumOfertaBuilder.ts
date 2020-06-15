@@ -10,7 +10,7 @@ export default (listItem: INovumListElement, detale?: INovumDetails, pdfUrl?: st
     const odbior = odbiorMapper(listItem);
 
     const zasobyDoPobrania = detale?.sourceOfertaPdfUrl
-        ? [{ id: '', url: detale?.sourceOfertaPdfUrl }]
+        ? [{ id: 'ofertaPdf', url: detale?.sourceOfertaPdfUrl }]
         : [];
 
     const result: IOfertaDane = {

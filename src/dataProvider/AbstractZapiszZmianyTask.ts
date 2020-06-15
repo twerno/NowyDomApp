@@ -33,16 +33,16 @@ abstract class AbstractZapiszZmianyTask<T extends IListElement = IListElement, D
     private wyliczZmiane(
         ofertaId: string,
         offerData: IOfertaDane | null,
-        stan: IOfertaRecord | null): { rekord: IOfertaRecord, ope: IOfertaRecordOpe } | null {
+        stan: IOfertaRecord | undefined): { rekord: IOfertaRecord, ope: IOfertaRecordOpe } | null {
 
-        if (stan === null) {
-            return offerData === null
+        if (!stan) {
+            return !offerData
                 ? null
                 : this.nowyRekord(ofertaId, offerData)
         }
 
         // usunięty
-        if (offerData === null) {
+        if (!offerData) {
             return this.usunietyRekord(stan);
         }
 
@@ -110,10 +110,7 @@ abstract class AbstractZapiszZmianyTask<T extends IListElement = IListElement, D
     ): { rekord: IOfertaRecord, ope: IOfertaRecordOpe } | null {
         const timestamp = new Date().getTime();
 
-        // zmienna "zasoby pobrane" nie jest czascia oferty - nadpisujemy ja wersja ze stanu, zeby nie generowac falszywych zmian
-        const safeOferta = { ...oferta, zasobyPobrane: stan.data.zasobyPobrane };
-
-        const delta = this.wyliczDelta(stan, safeOferta);
+        const delta = this.wyliczDelta(stan, oferta);
 
         if (delta === null) {
             return null;

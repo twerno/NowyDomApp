@@ -5,6 +5,9 @@ import AbstractZapiszZmianyTask from "./AbstractZapiszZmianyTask";
 import { IDataProvider, IListElement } from "./IOfertaProvider";
 import { IOfertaRecord } from "./IOfertaRecord";
 
+/**
+ * pobranie dodatkowych zasobów, odłożenie ich na s3 i aktualizacja bazy danych
+ */
 class ProvideOfferTask4<T extends IListElement = IListElement, D = any> extends AbstractZapiszZmianyTask<T, D> {
 
     public constructor(
@@ -45,7 +48,7 @@ class ProvideOfferTask4<T extends IListElement = IListElement, D = any> extends 
         const file = await Axios({ responseType: 'arraybuffer', url: zasob.url });
         const fileExt = this.readFileExt(file);
         const filename = `${this.ofertaId}_${zasob.id}.${fileExt}`;
-        await S3Utils.putFile(this.dataProvider.inwestycjaId, ``, filename, file.data);
+        await S3Utils.putFile(this.dataProvider.inwestycjaId, filename, file.data);
         return filename;
     }
 

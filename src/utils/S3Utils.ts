@@ -7,12 +7,12 @@ export default {
     fileExists
 }
 
-async function putFile(inwestycjaId: string, ofertaId: string, nazwa: string, Body: AWS.S3.Body) {
-    const Key = `${inwestycjaId}/${ofertaId}/${nazwa}`;
+async function putFile(inwestycjaId: string, nazwa: string, Body: AWS.S3.Body) {
+    const Key = `${inwestycjaId}/${nazwa}`;
     return s3.putObject({ Bucket: 'nowydom', Key, Body }).promise();
 }
 
-async function fileExists(inwestycjaId: string, ofertaId: string, nazwa: string, ) {
+async function fileExists(inwestycjaId: string, ofertaId: string, nazwa: string,) {
     const Key = `${inwestycjaId}/${ofertaId}/${nazwa}`;
     return s3.headObject({ Bucket: 'nowydom', Key })
         .promise()

@@ -16,17 +16,17 @@ export const OstojaDataProvider: IDataProvider<IOstojaListElement, IOstojaOfferD
         raw: []
     },
 
-    listUrlProvider: async () => new Set(['https://www.inpro.com.pl/ostoja/cennik']),
+    getListUrl: async () => new Set(['https://www.inpro.com.pl/ostoja/cennik']),
 
-    listHtmlParser: OstojaMapper.listMapper,
+    parseListHtml: OstojaMapper.listMapper,
 
-    offerDetailsUrlProvider: (listItem: IOstojaListElement) =>
+    getOfferUrl: (listItem: IOstojaListElement) =>
         new Set(
             [listItem.offerDetailsUrl]
                 .filter(TypeUtils.notEmpty)
         ),
 
-    offerDetailsHtmlParser: OstojaMapper.detailMapper,
+    parseOfferHtml: OstojaMapper.detailMapper,
 
     offerBuilder: OstojaOfertaBuilder
 }

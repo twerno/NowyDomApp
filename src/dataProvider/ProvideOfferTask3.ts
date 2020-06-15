@@ -3,6 +3,10 @@ import { IDataProvider, IListElement } from "./IOfertaProvider";
 import { IOfertaDane } from "./IOfertaRecord";
 import ProvideOfferTask4 from "./ProvideOfferTask4";
 
+/**
+ * zapisanie zmian w ofercie do bazy
+ * jeśli była zmiana nadzienie kolejnej akcji
+ */
 class ProvideOfferTask3<T extends IListElement = IListElement, D = any> extends AbstractZapiszZmianyTask<T, D> {
 
     public constructor(
