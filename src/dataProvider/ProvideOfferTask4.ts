@@ -1,5 +1,5 @@
 import Axios, { AxiosResponse } from "axios";
-import { extension } from "mime-types";
+import { extension, contentType } from "mime-types";
 import S3Utils from "../utils/S3Utils";
 import AbstractZapiszZmianyTask from "./AbstractZapiszZmianyTask";
 import { IDataProvider, IListElement } from "./IOfertaProvider";
@@ -21,7 +21,7 @@ class ProvideOfferTask4<T extends IListElement = IListElement, D = any> extends 
     public async run(errors: any[]) {
 
         const doPobrania = this.stan.data.zasobyDoPobrania
-            .filter(() => this.zasobNieZostalPobrany);
+            .filter(z => !this.zasobPobrany(z));
 
         // wywolywanie operacji synchroniczne
         for (const res of doPobrania) {
@@ -31,24 +31,26 @@ class ProvideOfferTask4<T extends IListElement = IListElement, D = any> extends 
         return [];
     }
 
-    private zasobNieZostalPobrany(zasob: { id: string; url: string; }) {
-        return !this.stan.data.zasobyPobrane.find(z => z.id === zasob.id);
+    private zasobPobrany(zasob: { id: string }) {
+        return !!this.stan.data.zasobyPobrane
+            && !!this.stan.data.zasobyPobrane.find(z => z.id === zasob.id);
     }
 
     private async pobierzIZapisz(zasob: { id: string; url: string; }, errors: any[]) {
-
+        console.log('pobieranie', JSON.stringify(zasob), this.ofertaId);
         const s3Filename = await this.pobierzIZapiszNaS3(zasob);
 
         const stan = await this.pobierzStan(this.ofertaId);
-        const zmiana = { ...stan.data, zasobyPobrane: [...stan.data.zasobyPobrane, { id: zasob.id, s3Filename }] };
-        await this.wyliczZmianyIZapisz(this.ofertaId, zmiana, errors, stan)
+        const zmiana = { ...stan.data, zasobyPobrane: [...stan.data.zasobyPobrane || [], { id: zasob.id, s3Filename }] };
+        await this.wyliczZmianyIZapisz(this.ofertaId, zmiana, errors, stan);
     }
 
     private async pobierzIZapiszNaS3(zasob: { id: string; url: string; }) {
         const file = await Axios({ responseType: 'arraybuffer', url: zasob.url });
         const fileExt = this.readFileExt(file);
         const filename = `${this.ofertaId}_${zasob.id}.${fileExt}`;
-        await S3Utils.putFile(this.dataProvider.inwestycjaId, filename, file.data);
+        const cType = contentType(fileExt) || undefined;
+        await S3Utils.putFile(this.dataProvider.inwestycjaId, filename, file.data, cType);
         return filename;
     }
 

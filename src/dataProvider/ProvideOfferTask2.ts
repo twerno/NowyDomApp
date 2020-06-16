@@ -24,7 +24,7 @@ class ProvideOfferTask2<T extends IListElement = IListElement, D = any> implemen
 
         const oferta = this.buildOffer(detail, errors);
 
-        return new ProvideOfferTask3(oferta.id, oferta.dane, this.dataProvider, this.priority);
+        return new ProvideOfferTask3(oferta.id, oferta.dane, this.dataProvider, (this.priority || 0) + 1);
     }
 
     private async downloadDetails(errors: any[]) {

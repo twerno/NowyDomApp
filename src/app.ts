@@ -10,26 +10,35 @@ import SemekoOsiedleMarine from './inwestycje/Semeko/SemekoOsiedleMarine';
 import SemekoPortoBianco3 from './inwestycje/Semeko/SemekoPortoBianco3';
 import SemekoPrimaReda from './inwestycje/Semeko/SemekoPrimaReda';
 import SemekoZielonaLaguna2 from './inwestycje/Semeko/SemekoZielonaLaguna2';
+import { IAsyncTask } from 'utils/asyncTask/IAsyncTask';
 
 console.log('start');
 
-const errors: any[] = [];
+const tasks: IAsyncTask[] = [
+    new ProvideOfferTask1(OstojaDataProvider),
+    new ProvideOfferTask1(NovumDataProvider),
+    new ProvideOfferTask1(SemekoAquasfera),
+    new ProvideOfferTask1(SemekoCubic),
+    new ProvideOfferTask1(SemekoHoryzonty),
+    new ProvideOfferTask1(SemekoLightTower),
+    new ProvideOfferTask1(SemekoOsiedleMarine),
+    new ProvideOfferTask1(SemekoPortoBianco3),
+    new ProvideOfferTask1(SemekoPrimaReda),
+    new ProvideOfferTask1(SemekoZielonaLaguna2),
+];
 
-AsyncTaskRunner(
-    [
-        new ProvideOfferTask1(OstojaDataProvider, 1),
-        new ProvideOfferTask1(NovumDataProvider, 2),
-        new ProvideOfferTask1(SemekoAquasfera, 3),
-        new ProvideOfferTask1(SemekoCubic, 4),
-        new ProvideOfferTask1(SemekoHoryzonty, 5),
-        new ProvideOfferTask1(SemekoLightTower, 6),
-        new ProvideOfferTask1(SemekoOsiedleMarine, 7),
-        new ProvideOfferTask1(SemekoPortoBianco3, 8),
-        new ProvideOfferTask1(SemekoPrimaReda, 9),
-        new ProvideOfferTask1(SemekoZielonaLaguna2, 10),
-    ],
-    {
-        concurency: 10,
-    }, errors)
-    .catch(err => console.error(err, errors))
-    .then(v => console.log('done', JSON.stringify(errors)));
+async function runTasksSeq() {
+
+    for (const task of tasks) {
+        const errors: any[] = [];
+        await AsyncTaskRunner([task], {
+            concurency: 10,
+        }, errors)
+            .catch(err => console.error(err, errors, task))
+            .then(v => console.log('done', task, JSON.stringify(errors)));
+    }
+}
+
+runTasksSeq()
+    .then(v => console.log('done'))
+    .catch(err => console.error(err));

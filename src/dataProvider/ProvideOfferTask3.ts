@@ -18,14 +18,17 @@ class ProvideOfferTask3<T extends IListElement = IListElement, D = any> extends 
     }
 
     public async run(errors: any[]) {
-        const zmiana = await this.wyliczZmianyIZapisz(this.ofertaId, this.ofertaData, errors);
 
-        return zmiana === null
-            ? []
-            : new ProvideOfferTask4(this.ofertaId, zmiana.rekord, this.dataProvider, this.priority)
+        const stan = await this.pobierzStan(this.ofertaId);
+
+        const data = this.ofertaData
+            ? { ...this.ofertaData, zasobyPobrane: stan?.data.zasobyPobrane }
+            : null;
+        const zmiana = await this.wyliczZmianyIZapisz(this.ofertaId, data, errors, stan);
+
+        return new ProvideOfferTask4(this.ofertaId, zmiana?.rekord || stan, this.dataProvider, (this.priority || 0) + 1)
     }
 
 }
 
 export default ProvideOfferTask3;
-

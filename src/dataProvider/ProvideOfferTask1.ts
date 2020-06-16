@@ -22,7 +22,7 @@ class ProvideOfferTask1<T extends IListElement = IListElement, D = any> implemen
         const parseResult = this.parseOfferList(listHtml, errors);
 
         const task2List = parseResult
-            ? parseResult.items.map(offer => new ProvideOfferTask2(offer, this.dataProvider, this.priority))
+            ? parseResult.items.map(offer => new ProvideOfferTask2(offer, this.dataProvider, (this.priority || 0) + 1))
             : [];
 
         return [...task2List, ...(parseResult?.tasks || [])];

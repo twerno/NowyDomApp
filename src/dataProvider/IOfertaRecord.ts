@@ -39,7 +39,7 @@ export interface IOfertaDane {
     zasobyDoPobrania: { id: string, url: string }[];
 
     // id zasobu x sciazka na s3
-    zasobyPobrane: { id: string, s3Filename: string }[];
+    zasobyPobrane?: { id: string, s3Filename: string }[];
 }
 
 export function isRawData(x: any): x is IRawData {

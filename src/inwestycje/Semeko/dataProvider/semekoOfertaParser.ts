@@ -20,7 +20,7 @@ export default async (
 }
 
 function getKierunkiSwiata(root: HTMLElement | undefined, errors: any[]): Array<StronySwiata | IRawData> | undefined {
-    const kierunkiSwiataEl = root?.querySelectorAll('div#KartaBox')
+    const kierunkiSwiataEl = root?.querySelectorAll('#KartaBox')
         .filter(i => i.querySelector('div.Left')?.text === 'Strony świata')
         .shift();
 
