@@ -76,12 +76,23 @@ function odbiorParser(raw: string): { rok: number, miesiac: number } | IRawData 
 function cechyParser(el: HTMLElement | undefined): { data: Partial<ICechy>, raw?: string[] } {
     const result: { data: Partial<ICechy>, raw?: string[] } = { data: {}, raw: [] };
 
-    const raw = el?.querySelector('span')?.attributes['title'];
-    if (raw) {
-        result.raw?.push(raw);
-    }
+    const raw = el?.querySelector('span.more4')?.text;
+    const cecha = cechaParser(raw);
+    result.data = { ...result.data, ...cecha.data };
+    result.raw = [...result.raw || [], ...cecha.raw || []];
 
     return result;
+}
+
+function cechaParser(raw: string | undefined): Partial<{ data: Partial<ICechy>, raw?: string[] }> {
+    switch (raw) {
+        case 'o': return { raw: ['ogród'] };
+        case 't/o': return { raw: ['taras/ogród'] };
+        case 'b': return { raw: ['balkon'] };
+        case 'a': return { raw: ['antresola'] };
+        case 'l': return { raw: ['loggia'] };
+        default: return {};
+    }
 }
 
 function getDetailsUrl(el: HTMLElement | undefined, errors: any[]) {
