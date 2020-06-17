@@ -1,11 +1,10 @@
 import { HTMLElement, parse } from 'node-html-parser';
 import { IDataProvider, ISubTaskProps } from "../../../dataProvider/IOfertaProvider";
-import { ICechy, IRawData, Status, OdbiorType } from "../../../dataProvider/IOfertaRecord";
+import { ICechy, IRawData, OdbiorType, Status } from "../../../dataProvider/IOfertaRecord";
 import ProvideOfferTask1 from "../../../dataProvider/ProvideOfferTask1";
 import { IAsyncTask } from "../../../utils/asyncTask/IAsyncTask";
-import NodeHtmlParserHelper from '../../../utils/NodeHtmlParserHelper';
-import { ISemekoDetails, ISemekoListElement } from "./SemekoModel";
 import { HtmlParserHelper } from './HtmlParserHelper';
+import { ISemekoDetails, ISemekoListElement } from "./SemekoModel";
 
 export default (
     html: string,
@@ -18,26 +17,29 @@ export default (
     const tooltips = root.querySelector('#mystickytooltip');
 
     const items: ISemekoListElement[] = [];
-
     rows.forEach((row, idx) => {
-        items.push(rowMapper(idx, row, tooltips, errors, subTaskProps.dataProvider))
+        const h = new HtmlParserHelper<ISemekoListElement>(`${subTaskProps.dataProvider.inwestycjaId} X ${idx}`, errors);
+        items.push(rowMapper(row, tooltips, h, subTaskProps.dataProvider))
     });
 
-    const tasks = buildPostTasks(root, subTaskProps, errors);
+    const h = new HtmlParserHelper<ISemekoListElement>(`${subTaskProps.dataProvider.inwestycjaId} X buildPostTasks`, errors);
+    const tasks = buildPostTasks(root, subTaskProps, h);
 
     return { items, tasks };
 }
 
+// ****************************
+// mapper
+// ****************************
+
 function rowMapper(
-    rowIdx: number,
     row: HTMLElement | undefined,
     tooltips: HTMLElement | undefined,
-    errors: any[],
+    h: HtmlParserHelper<ISemekoListElement>,
     dataProvider: IDataProvider<ISemekoListElement, ISemekoDetails>
 ): ISemekoListElement {
 
-    const zasobyDoPobrania = getZasobyDoPobrania(row, tooltips, errors);
-    const h = new HtmlParserHelper<ISemekoListElement>(`${dataProvider.inwestycjaId} X ${rowIdx}`, errors);
+    const zasobyDoPobrania = getZasobyDoPobrania(row, tooltips, h);
 
     const result: ISemekoListElement = {
         id: 'tmp_id',
@@ -48,9 +50,10 @@ function rowMapper(
         ...h.asInt('liczbaPokoi', row?.querySelector('.c6')),
         ...h.asCustom('odbior', row?.querySelector('.c7'), { mapper: odbiorMapper }),
         status: Status.WOLNE,
-        ...h.asMap("cechy", row?.querySelectorAll('.c9 span.more4'), cechaParser),
-
-        detailsUrl: getDetailsUrl(row?.querySelector('.c1'), errors),
+        ...h.asMap("cechy", row?.querySelectorAll('.c9 span.more4'), cechaParser, { notEmpty: false }),
+        ...h.asCustomWithDefault("detailsUrl", row?.querySelector('.c1'),
+            { fromAttribute: 'onclick', mapper: detailsUrlParser, defaultValue: '', }
+        ),
         zasobyDoPobrania,
     };
 
@@ -58,6 +61,10 @@ function rowMapper(
 
     return result;
 }
+
+// ****************************
+// mapper utils
+// ****************************
 
 function odbiorMapper(raw: string | null): OdbiorType | null {
     const exprResult = /(\d{4})-(\d{2})/.exec(raw || '');
@@ -87,29 +94,8 @@ function cechaParser(raw: string): { data: Partial<ICechy> } | IRawData | null {
     }
 }
 
-function getDetailsUrl(el: HTMLElement | undefined, errors: any[]) {
-    const urlPart = el?.attributes['onclick'];
-    const exprResult = /location\.href=\'(.+)'/.exec(urlPart || '');
-
-    if (exprResult && exprResult[1]) {
-        return `https://www.semeko.pl${exprResult[1]}`;
-    }
-
-    return '';
-}
-
-function getMiniaturkaUrl(el: HTMLElement | undefined, tooltips: HTMLElement | undefined, errors: any[]) {
-    const dataTooltip = el?.querySelector('a')?.attributes['data-tooltip']
-    const src = tooltips?.querySelector(`[id='${dataTooltip}']`)?.querySelector('img')?.attributes['src'];
-
-    return src
-        ? `https://www.semeko.pl${src}`
-        : undefined;
-}
-
-function getNextPageUrl(root: HTMLElement | undefined, errors: any[]) {
-    const urlPart = root?.querySelector('div.next a')?.attributes['onclick'];
-    const exprResult = /='(.+)';/.exec(urlPart || '');
+function detailsUrlParser(raw: string) {
+    const exprResult = /location\.href=\'(.+)'/.exec(raw || '');
 
     if (exprResult && exprResult[1]) {
         return `https://www.semeko.pl${exprResult[1]}`;
@@ -118,24 +104,71 @@ function getNextPageUrl(root: HTMLElement | undefined, errors: any[]) {
     return null;
 }
 
+function getZasobyDoPobrania(row: HTMLElement | undefined, tooltips: HTMLElement | undefined, h: HtmlParserHelper<ISemekoListElement>) {
+    const result: { id: string, url: string }[] = [];
+
+    const miniaturkaUrl = getMiniaturkaUrl(row, tooltips, h);
+    if (miniaturkaUrl) {
+        result.push({ id: 'miniaturka', url: miniaturkaUrl })
+    }
+
+    return result;
+}
+
+function getMiniaturkaUrl(row: HTMLElement | undefined, tooltips: HTMLElement | undefined, h: HtmlParserHelper<ISemekoListElement>) {
+    if (!!!tooltips) {
+        h.addError('zasobyDoPobrania', 'tooltips === undefined');
+        return null;
+    }
+
+    const dataTooltip = h.readTextOf(row?.querySelector('.c111 a'),
+        { fieldName: 'zasobyDoPobrania', comment: 'data-tooltip' },
+        { fromAttribute: 'data-tooltip', notEmpty: true, }
+    );
+
+    const srcPart = h.readTextOf(tooltips?.querySelector(`[id='${dataTooltip}'] img`),
+        { fieldName: 'zasobyDoPobrania', comment: 'src' },
+        { fromAttribute: 'src', notEmpty: true, }
+    );
+
+    return !!srcPart
+        ? `https://www.semeko.pl${srcPart}`
+        : null;
+}
+
+// ****************************
+// post task builder
+// ****************************
+
 function buildPostTasks(
     root: HTMLElement | undefined,
     subTaskProps: ISubTaskProps<ISemekoListElement, ISemekoDetails>,
-    errors: any[]) {
-    const nextPageUrl = getNextPageUrl(root, errors);
+    h: HtmlParserHelper<ISemekoListElement>) {
+    const nextPageUrl = getNextPageUrl(root, h);
 
     return nextPageUrl
         ? [new ProvideOfferTask1({ ...subTaskProps.dataProvider, getListUrl: () => nextPageUrl }, subTaskProps.priority)]
         : [];
 }
 
-function getZasobyDoPobrania(row: HTMLElement | undefined, tooltips: HTMLElement | undefined, errors: any[]) {
-    const result: { id: string, url: string }[] = [];
+// ****************************
+// post task builder utils
+// ****************************
 
-    const miniaturkaUrl = getMiniaturkaUrl(row?.querySelector('.c111'), tooltips, errors);
-    if (miniaturkaUrl) {
-        result.push({ id: 'miniaturka', url: miniaturkaUrl })
+function getNextPageUrl(root: HTMLElement | undefined, h: HtmlParserHelper<ISemekoListElement>) {
+    const urlPart = h.readTextOf(root?.querySelector('div.next a'),
+        { comment: 'getNextPageUrl' },
+        {
+            notEmpty: false,
+            notNull: false,
+            fromAttribute: 'onclick'
+        });
+
+    const exprResult = /='(.+)';/.exec(urlPart || '');
+
+    if (exprResult && exprResult[1]) {
+        return `https://www.semeko.pl${exprResult[1]}`;
     }
 
-    return result;
+    return null;
 }
