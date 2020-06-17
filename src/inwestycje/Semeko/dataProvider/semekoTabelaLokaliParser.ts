@@ -1,10 +1,11 @@
 import { HTMLElement, parse } from 'node-html-parser';
 import { IDataProvider, ISubTaskProps } from "../../../dataProvider/IOfertaProvider";
-import { ICechy, IRawData, Status } from "../../../dataProvider/IOfertaRecord";
+import { ICechy, IRawData, Status, OdbiorType } from "../../../dataProvider/IOfertaRecord";
 import ProvideOfferTask1 from "../../../dataProvider/ProvideOfferTask1";
 import { IAsyncTask } from "../../../utils/asyncTask/IAsyncTask";
 import NodeHtmlParserHelper from '../../../utils/NodeHtmlParserHelper';
 import { ISemekoDetails, ISemekoListElement } from "./SemekoModel";
+import { HtmlParserHelper } from './HtmlParserHelper';
 
 export default (
     html: string,
@@ -36,17 +37,19 @@ function rowMapper(
 ): ISemekoListElement {
 
     const zasobyDoPobrania = getZasobyDoPobrania(row, tooltips, errors);
+    const h = new HtmlParserHelper<ISemekoListElement>(`${dataProvider.inwestycjaId} X ${rowIdx}`, errors);
 
     const result: ISemekoListElement = {
         id: 'tmp_id',
-        budynek: NodeHtmlParserHelper.loadString(row?.querySelector('.c1')),
-        nrLokalu: NodeHtmlParserHelper.loadString(row?.querySelector('.c2')),
-        piętro: NodeHtmlParserHelper.loadInt(row?.querySelector('.c3')),
-        metraz: NodeHtmlParserHelper.loadFloat(row?.querySelector('.c5')),
-        liczbaPokoi: NodeHtmlParserHelper.loadInt(row?.querySelector('.c6')),
-        odbior: odbiorParser(NodeHtmlParserHelper.loadString(row?.querySelector('.c7'))),
+        ...h.asString('budynek', row?.querySelector('.c1')),
+        ...h.asString('nrLokalu', row?.querySelector('.c2')),
+        ...h.asInt('pietro', row?.querySelector('.c3')),
+        ...h.asFloat('metraz', row?.querySelector('.c5')),
+        ...h.asInt('liczbaPokoi', row?.querySelector('.c6')),
+        ...h.asCustom('odbior', row?.querySelector('.c7'), { mapper: odbiorMapper }),
         status: Status.WOLNE,
-        cechy: cechyParser(row?.querySelector('.c9')),
+        ...h.asMap("cechy", row?.querySelectorAll('.c9 span.more4'), cechaParser),
+
         detailsUrl: getDetailsUrl(row?.querySelector('.c1'), errors),
         zasobyDoPobrania,
     };
@@ -56,8 +59,8 @@ function rowMapper(
     return result;
 }
 
-function odbiorParser(raw: string): { rok: number, miesiac: number } | IRawData {
-    const exprResult = /(\d{4})-(\d{2})/.exec(raw);
+function odbiorMapper(raw: string | null): OdbiorType | null {
+    const exprResult = /(\d{4})-(\d{2})/.exec(raw || '');
 
     if (!exprResult || !exprResult[1]) {
         return { raw };
@@ -73,25 +76,14 @@ function odbiorParser(raw: string): { rok: number, miesiac: number } | IRawData 
     return { miesiac, rok };
 }
 
-function cechyParser(el: HTMLElement | undefined): { data: Partial<ICechy>, raw?: string[] } {
-    const result: { data: Partial<ICechy>, raw?: string[] } = { data: {}, raw: [] };
-
-    const raw = el?.querySelector('span.more4')?.text;
-    const cecha = cechaParser(raw);
-    result.data = { ...result.data, ...cecha.data };
-    result.raw = [...result.raw || [], ...cecha.raw || []];
-
-    return result;
-}
-
-function cechaParser(raw: string | undefined): Partial<{ data: Partial<ICechy>, raw?: string[] }> {
+function cechaParser(raw: string): { data: Partial<ICechy> } | IRawData | null {
     switch (raw) {
-        case 'o': return { raw: ['ogród'] };
-        case 't/o': return { raw: ['taras/ogród'] };
-        case 'b': return { raw: ['balkon'] };
-        case 'a': return { raw: ['antresola'] };
-        case 'l': return { raw: ['loggia'] };
-        default: return {};
+        case 'o': return { raw: 'ogród' };
+        case 't/o': return { raw: 'taras/ogród' };
+        case 'b': return { raw: 'balkon' };
+        case 'a': return { raw: 'antresola' };
+        case 'l': return { raw: 'loggia' };
+        default: return null;
     }
 }
 

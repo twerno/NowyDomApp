@@ -1,15 +1,15 @@
 import { IListElement } from "../../../dataProvider/IOfertaProvider";
-import { IRawData, Status, ICechy, StronySwiata } from "../../../dataProvider/IOfertaRecord";
+import { IRawData, Status, ICechy, StronySwiata, OdbiorType, MapWithRawType } from "../../../dataProvider/IOfertaRecord";
 
 export interface ISemekoListElement extends IListElement {
     budynek: string;
     nrLokalu: string;
-    piętro: number | IRawData;
+    pietro: number | IRawData;
     metraz: number | IRawData;
     liczbaPokoi: number | IRawData;
-    odbior: { rok: number, miesiac: number } | IRawData;
+    odbior: OdbiorType;
     status: Status;
-    cechy: { data: Partial<ICechy>, raw?: string[] };
+    cechy: MapWithRawType<ICechy>;
     detailsUrl: string;
     zasobyDoPobrania: { id: string, url: string }[];
 }

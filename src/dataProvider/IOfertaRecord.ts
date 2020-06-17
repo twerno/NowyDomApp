@@ -19,6 +19,9 @@ export interface IOfertaRecordOpe {
     data: Partial<IOfertaDane>;
 }
 
+export type OdbiorType = { rok: number, kwartal: number } | { rok: number, miesiac: number } | IRawData;
+export type MapWithRawType<T extends object> = { data: Partial<T>, raw?: Array<string | null> };
+
 export interface IOfertaDane {
     typ: Typ | IRawData;
     budynek: string | IRawData;
@@ -27,10 +30,10 @@ export interface IOfertaDane {
     lpPokoj?: number | IRawData;
     pietro?: number | IRawData;
     stronySwiata?: Array<StronySwiata | IRawData>;
-    cechy: { data: Partial<ICechy>, raw?: string[] };
+    cechy: MapWithRawType<ICechy>;
 
     status: Status | IRawData;
-    odbior?: { rok: number, kwartal: number } | { rok: number, miesiac: number } | IRawData;
+    odbior?: OdbiorType;
     cena?: number | IRawData;
 
     offerDetailsUrl?: string;
@@ -43,11 +46,12 @@ export interface IOfertaDane {
 }
 
 export function isRawData(x: any): x is IRawData {
-    return typeof x === 'object' && typeof x.raw === 'string';
+    return typeof x === 'object'
+        && (x.raw === null || typeof x.raw === 'string');
 }
 
 export interface IRawData {
-    raw: string;
+    raw: string | null;
 }
 
 export enum StronySwiata {
