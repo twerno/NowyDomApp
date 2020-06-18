@@ -10,11 +10,12 @@ import SemekoOsiedleMarine from './inwestycje/Semeko/SemekoOsiedleMarine';
 import SemekoPortoBianco3 from './inwestycje/Semeko/SemekoPortoBianco3';
 import SemekoPrimaReda from './inwestycje/Semeko/SemekoPrimaReda';
 import SemekoZielonaLaguna2 from './inwestycje/Semeko/SemekoZielonaLaguna2';
-import { IAsyncTask } from 'utils/asyncTask/IAsyncTask';
+import { saveFile, provideDir } from './utils/FileSave';
+import { getEmptyProvideOfferStats, IProvideOfferStats } from './dataProvider/AbstractZapiszZmianyTask';
 
 console.log('start');
 
-const tasks: IAsyncTask[] = [
+const tasks = [
     new ProvideOfferTask1(OstojaDataProvider),
     new ProvideOfferTask1(NovumDataProvider),
     new ProvideOfferTask1(SemekoAquasfera),
@@ -28,17 +29,48 @@ const tasks: IAsyncTask[] = [
 ];
 
 async function runTasksSeq() {
+    const date = new Date;
 
     for (const task of tasks) {
         const errors: any[] = [];
+        const stats = getEmptyProvideOfferStats();
         await AsyncTaskRunner([task], {
             concurency: 10,
+            props: stats
         }, errors)
-            .catch(err => console.error(err, errors, task))
-            .then(v => console.log('done', task, JSON.stringify(errors)));
+            .catch(err => taskLogger({ err, errors, task, date, stats }))
+            .then(() => taskLogger({ errors, task, date, stats }));
     }
 }
 
 runTasksSeq()
     .then(v => console.log('done'))
     .catch(err => console.error(err));
+
+interface ITaskLoggerProps {
+    err?: any,
+    errors: any[],
+    task: ProvideOfferTask1<any, any>,
+    date: Date,
+    stats: IProvideOfferStats
+}
+
+function taskLogger(props: ITaskLoggerProps) {
+
+    const { err, errors, task, date, stats } = props;
+
+
+    const textDay = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+    const textHour = `${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`;
+    const path = `runs/${textDay}/${textHour}`;
+
+    const id = task.dataProvider.developerId + '_' + task.dataProvider.inwestycjaId;
+
+    provideDir(path);
+
+    if (err) {
+        saveFile(`${path}/${id}_exception.txt`, JSON.stringify(err, null, 2));
+    }
+
+    saveFile(`${path}/${id}.txt`, JSON.stringify({ errors, stats }, null, 2));
+}

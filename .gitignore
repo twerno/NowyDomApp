@@ -107,3 +107,4 @@ dist
 /server/properties.yaml
 
 server/shared/lib/**
+/runs/*

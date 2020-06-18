@@ -1,6 +1,6 @@
-export interface IAsyncTask {
+export interface IAsyncTask<P = {}> {
 
     priority?: number;
 
-    run(errors: any[]): Promise<IAsyncTask | IAsyncTask[]>
+    run(errors: any[], props: P): Promise<IAsyncTask<P> | IAsyncTask<P>[]>
 }

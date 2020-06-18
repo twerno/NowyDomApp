@@ -4,6 +4,7 @@ import WebDownloader from "../utils/WebDownloader";
 import TaskHelper from './TaskHelper';
 import TypeUtils from "../utils/TypeUtils";
 import ProvideOfferTask3 from "./ProvideOfferTask3";
+import { IProvideOfferStats } from "./AbstractZapiszZmianyTask";
 
 /**
  * Pobieranie detali oferty, przygotowanie ofert znormalizowanej IOfertaDane

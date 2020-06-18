@@ -7,10 +7,10 @@ export interface ISubTaskProps<T extends IListElement = IListElement, D = any> {
 }
 
 export interface IDataProvider<T extends IListElement = IListElement, D = any> {
-    inwestycjaId: string;
-    developerId: string;
-    url: string,
-    standard: { data: Partial<ICechy>, raw?: string[] },
+    readonly inwestycjaId: string;
+    readonly developerId: string;
+    readonly url: string,
+    readonly standard: { data: Partial<ICechy>, raw?: string[] },
 
     getListUrl: () => string,
     parseListHtml: (html: string, errors: any[], subTaskProps: ISubTaskProps<T, D>) => { items: T[], tasks?: IAsyncTask[] };

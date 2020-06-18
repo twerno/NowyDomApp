@@ -1,4 +1,4 @@
-import AbstractZapiszZmianyTask from "./AbstractZapiszZmianyTask";
+import AbstractZapiszZmianyTask, { IProvideOfferStats } from "./AbstractZapiszZmianyTask";
 import { IDataProvider, IListElement } from "./IOfertaProvider";
 import { IOfertaDane } from "./IOfertaRecord";
 import ProvideOfferTask4 from "./ProvideOfferTask4";
@@ -17,14 +17,14 @@ class ProvideOfferTask3<T extends IListElement = IListElement, D = any> extends 
         super(dataProvider);
     }
 
-    public async run(errors: any[]) {
+    public async run(errors: any[], stats: IProvideOfferStats) {
 
         const stan = await this.pobierzStan(this.ofertaId);
 
         const data = this.ofertaData
             ? { ...this.ofertaData, zasobyPobrane: stan?.data.zasobyPobrane }
             : null;
-        const zmiana = await this.wyliczZmianyIZapisz(this.ofertaId, data, errors, stan);
+        const zmiana = await this.wyliczZmianyIZapisz(this.ofertaId, data, errors, stats, stan);
 
         return new ProvideOfferTask4(this.ofertaId, zmiana?.rekord || stan, this.dataProvider, (this.priority || 0) + 1)
     }

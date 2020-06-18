@@ -5,16 +5,46 @@ import TypeUtils from "../utils/TypeUtils";
 import { IDataProvider, IListElement } from "./IOfertaProvider";
 import { IOfertaDane, IOfertaRecord, IOfertaRecordOpe, Status } from "./IOfertaRecord";
 
-abstract class AbstractZapiszZmianyTask<T extends IListElement = IListElement, D = any> implements IAsyncTask {
+export interface IProvideOfferStats {
+    added: {
+        count: number,
+        records: IOfertaDane[]
+    },
+    updated: {
+        count: number,
+        records: Partial<IOfertaDane>[]
+    },
+    deleted: {
+        count: number,
+        records: IOfertaDane[]
+    },
+};
 
-    public constructor(protected readonly dataProvider: IDataProvider<T, D>) { }
+export const getEmptyProvideOfferStats = (): IProvideOfferStats => (
+    {
+        added: { count: 0, records: [] },
+        updated: { count: 0, records: [] },
+        deleted: { count: 0, records: [] },
+    }
+);
 
-    abstract run(errors: any[]): Promise<IAsyncTask | IAsyncTask[]>;
+abstract class AbstractZapiszZmianyTask<T extends IListElement = IListElement, D = any> implements IAsyncTask<IProvideOfferStats> {
 
-    protected async wyliczZmianyIZapisz(ofertaId: string, offerData: IOfertaDane | null, errors: any[], fixedStan?: IOfertaRecord) {
+    public constructor(
+        protected readonly dataProvider: IDataProvider<T, D>) { }
+
+    abstract run(errors: any[], stats: IProvideOfferStats): Promise<IAsyncTask | IAsyncTask[]>;
+
+    protected async wyliczZmianyIZapisz(
+        ofertaId: string,
+        offerData: IOfertaDane | null,
+        errors: any[],
+        stats: IProvideOfferStats,
+        fixedStan?: IOfertaRecord
+    ) {
         const stan = fixedStan || await this.pobierzStan(ofertaId);
 
-        const zmiana = this.wyliczZmiane(ofertaId, offerData, stan);
+        const zmiana = this.wyliczZmiane(ofertaId, offerData, stan, stats);
 
         if (zmiana) {
             this.zapiszZmiany(zmiana);
@@ -33,21 +63,23 @@ abstract class AbstractZapiszZmianyTask<T extends IListElement = IListElement, D
     private wyliczZmiane(
         ofertaId: string,
         offerData: IOfertaDane | null,
-        stan: IOfertaRecord | undefined): { rekord: IOfertaRecord, ope: IOfertaRecordOpe } | null {
+        stan: IOfertaRecord | undefined,
+        stats: IProvideOfferStats
+    ): { rekord: IOfertaRecord, ope: IOfertaRecordOpe } | null {
 
         if (!stan) {
             return !offerData
                 ? null
-                : this.nowyRekord(ofertaId, offerData)
+                : this.nowyRekord(ofertaId, offerData, stats)
         }
 
         // usunięty
         if (!offerData) {
-            return this.usunietyRekord(stan);
+            return this.usunietyRekord(stan, stats);
         }
 
         // wylicz zmiane
-        return this.zmienionyRekord(stan, offerData);
+        return this.zmienionyRekord(stan, offerData, stats);
     }
 
     protected async zapiszZmiany(zmiany: { rekord: IOfertaRecord, ope: IOfertaRecordOpe }) {
@@ -55,8 +87,15 @@ abstract class AbstractZapiszZmianyTask<T extends IListElement = IListElement, D
         return ofertaRepo.put(zmiany.rekord);
     }
 
-    private nowyRekord(ofertaId: string, offerData: IOfertaDane): { rekord: IOfertaRecord, ope: IOfertaRecordOpe } {
+    private nowyRekord(
+        ofertaId: string,
+        offerData: IOfertaDane,
+        stats: IProvideOfferStats
+    ): { rekord: IOfertaRecord, ope: IOfertaRecordOpe } {
         const timestamp = new Date().getTime();
+
+        stats.added.count++;
+        stats.added.records.push(offerData);
 
         const rekord: IOfertaRecord = {
             inwestycjaId: this.dataProvider.inwestycjaId, // partition_key
@@ -80,7 +119,8 @@ abstract class AbstractZapiszZmianyTask<T extends IListElement = IListElement, D
     }
 
     private usunietyRekord(
-        stan: IOfertaRecord
+        stan: IOfertaRecord,
+        stats: IProvideOfferStats
     ): { rekord: IOfertaRecord, ope: IOfertaRecordOpe } {
         const timestamp = new Date().getTime();
 
@@ -92,6 +132,9 @@ abstract class AbstractZapiszZmianyTask<T extends IListElement = IListElement, D
                 status: Status.USUNIETA
             }
         };
+
+        stats.deleted.count++;
+        stats.deleted.records.push(rekord.data);
 
         const ope: IOfertaRecordOpe = {
             ofertaId: stan.ofertaId,  // partition_key
@@ -107,6 +150,7 @@ abstract class AbstractZapiszZmianyTask<T extends IListElement = IListElement, D
     private zmienionyRekord(
         stan: IOfertaRecord,
         oferta: IOfertaDane,
+        stats: IProvideOfferStats
     ): { rekord: IOfertaRecord, ope: IOfertaRecordOpe } | null {
         const timestamp = new Date().getTime();
 
@@ -115,6 +159,9 @@ abstract class AbstractZapiszZmianyTask<T extends IListElement = IListElement, D
         if (delta === null) {
             return null;
         }
+
+        stats.updated.count++;
+        stats.updated.records.push(delta);
 
         const rekord: IOfertaRecord = {
             ...stan,

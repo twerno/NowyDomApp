@@ -1,11 +1,12 @@
 import { IAsyncTask } from "./IAsyncTask";
 import TaskHelper from "../../dataProvider/TaskHelper";
 
-export interface IAsyncTaskRunnerConfig {
+export interface IAsyncTaskRunnerConfig<P> {
     concurency?: number;
+    props: P
 }
 
-export const AsyncTaskRunner = (tasks: IAsyncTask[], config?: IAsyncTaskRunnerConfig, errors?: any[]) => {
+export const AsyncTaskRunner = <P>(tasks: IAsyncTask<P>[], config: IAsyncTaskRunnerConfig<P>, errors?: any[]) => {
 
     return new Promise<void>((resolve, reject) => {
 
@@ -17,7 +18,7 @@ export const AsyncTaskRunner = (tasks: IAsyncTask[], config?: IAsyncTaskRunnerCo
 
         const taskLimit = config?.concurency || 5;
 
-        runTasks(tasks, taskLimit, ref, errors || [], resolve);
+        runTasks(tasks, taskLimit, config.props, ref, errors || [], resolve);
     });
 
 }
@@ -41,8 +42,9 @@ function getNextTask(tasks: IAsyncTask[]): IAsyncTask | null {
     return nextTask;
 }
 
-async function runNextTask(
+async function runNextTask<P>(
     tasks: IAsyncTask[],
+    props: P,
     ref: { runningTasks: number },
     errors: any[],
     callback: () => void
@@ -53,7 +55,7 @@ async function runNextTask(
         ref.runningTasks++;
         console.log('run task', taskName);
         console.log(`runningTasks: ${ref.runningTasks}`, `pendingTasks: ${tasks.length}`);
-        const result = await task?.run(errors) || [];
+        const result = await task?.run(errors, props) || [];
         tasks.push.apply(tasks, result instanceof Array ? result : [result]);
     }
     catch (err) {
@@ -66,9 +68,10 @@ async function runNextTask(
     }
 }
 
-function runTasks(
+function runTasks<P>(
     tasks: IAsyncTask[],
     taskLimit: number,
+    props: P,
     ref: { runningTasks: number },
     errors: any[],
     callback: () => void
@@ -87,7 +90,7 @@ function runTasks(
     const taskToBeExecuted = Math.min(taskLimit - ref.runningTasks, tasks.length);
 
     for (let i = 0; i < taskToBeExecuted; i++) {
-        runNextTask(tasks, ref, errors, () => runTasks(tasks, taskLimit, ref, errors, callback));
+        runNextTask(tasks, props, ref, errors, () => runTasks(tasks, taskLimit, props, ref, errors, callback));
     }
 
 }

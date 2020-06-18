@@ -1,7 +1,7 @@
 import Axios, { AxiosResponse } from "axios";
 import { extension, contentType } from "mime-types";
 import S3Utils from "../utils/S3Utils";
-import AbstractZapiszZmianyTask from "./AbstractZapiszZmianyTask";
+import AbstractZapiszZmianyTask, { IProvideOfferStats } from "./AbstractZapiszZmianyTask";
 import { IDataProvider, IListElement } from "./IOfertaProvider";
 import { IOfertaRecord } from "./IOfertaRecord";
 
@@ -18,14 +18,14 @@ class ProvideOfferTask4<T extends IListElement = IListElement, D = any> extends 
         super(dataProvider);
     }
 
-    public async run(errors: any[]) {
+    public async run(errors: any[], stats: IProvideOfferStats) {
 
         const doPobrania = this.stan.data.zasobyDoPobrania
             .filter(z => !this.zasobPobrany(z));
 
         // wywolywanie operacji synchroniczne
         for (const res of doPobrania) {
-            await this.pobierzIZapisz(res, errors);
+            await this.pobierzIZapisz(res, errors, stats);
         }
 
         return [];
@@ -36,13 +36,17 @@ class ProvideOfferTask4<T extends IListElement = IListElement, D = any> extends 
             && !!this.stan.data.zasobyPobrane.find(z => z.id === zasob.id);
     }
 
-    private async pobierzIZapisz(zasob: { id: string; url: string; }, errors: any[]) {
+    private async pobierzIZapisz(
+        zasob: { id: string; url: string; },
+        errors: any[],
+        stats: IProvideOfferStats
+    ) {
         console.log('pobieranie', JSON.stringify(zasob), this.ofertaId);
         const s3Filename = await this.pobierzIZapiszNaS3(zasob);
 
         const stan = await this.pobierzStan(this.ofertaId);
         const zmiana = { ...stan.data, zasobyPobrane: [...stan.data.zasobyPobrane || [], { id: zasob.id, s3Filename }] };
-        await this.wyliczZmianyIZapisz(this.ofertaId, zmiana, errors, stan);
+        await this.wyliczZmianyIZapisz(this.ofertaId, zmiana, errors, stats, stan);
     }
 
     private async pobierzIZapiszNaS3(zasob: { id: string; url: string; }) {
