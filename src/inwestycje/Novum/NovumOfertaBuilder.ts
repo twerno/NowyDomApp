@@ -69,6 +69,7 @@ function statusMapper(listItem: INovumListElement): Status | { raw: string } {
     switch (listItem.status) {
         case 'wolne': return Status.WOLNE;
         case 'zarezerwowane': return Status.ZAREZERWOWANE;
+        case 'sprzedane': return Status.SPRZEDANE;
         default: return { raw: listItem.status };
     }
 }

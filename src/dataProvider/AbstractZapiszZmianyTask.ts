@@ -47,10 +47,10 @@ export function add2Summary(dataProvider: IDataProvider<any, any>, stats: IProvi
         summary
         || {
             total: 0,
-            added: 0,
-            deleted: 0,
             unchanged: 0,
+            added: 0,
             updated: 0,
+            deleted: 0,
             byInwestycja: {}
         };
 
