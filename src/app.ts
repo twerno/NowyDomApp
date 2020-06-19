@@ -11,7 +11,7 @@ import SemekoPortoBianco3 from './inwestycje/Semeko/SemekoPortoBianco3';
 import SemekoPrimaReda from './inwestycje/Semeko/SemekoPrimaReda';
 import SemekoZielonaLaguna2 from './inwestycje/Semeko/SemekoZielonaLaguna2';
 import { saveFile, provideDir } from './utils/FileSave';
-import { getEmptyProvideOfferStats, IProvideOfferStats } from './dataProvider/AbstractZapiszZmianyTask';
+import { getEmptyProvideOfferStats, IProvideOfferStats, IIProvideOfferSummary, add2Summary } from './dataProvider/AbstractZapiszZmianyTask';
 
 console.log('start');
 
@@ -31,6 +31,8 @@ const tasks = [
 async function runTasksSeq() {
     const date = new Date;
 
+    let summary: IIProvideOfferSummary | undefined = undefined;
+
     for (const task of tasks) {
         const errors: any[] = [];
         const stats = getEmptyProvideOfferStats();
@@ -38,13 +40,19 @@ async function runTasksSeq() {
             concurency: 10,
             props: stats
         }, errors)
-            .catch(err => taskLogger({ err, errors, task, date, stats }))
-            .then(() => taskLogger({ errors, task, date, stats }));
+            .then(() => taskLogger({ errors, task, date, stats }))
+            .catch(err => taskLogger({ err, errors, task, date, stats }));
+
+        summary = add2Summary(task.dataProvider, stats, summary);
     }
+
+    saveLogFile(date, 'summary.txt', { summary });
+
+    return summary;
 }
 
 runTasksSeq()
-    .then(v => console.log('done'))
+    .then(v => console.log(JSON.stringify(v, null, 2)))
     .catch(err => console.error(err));
 
 interface ITaskLoggerProps {
@@ -56,21 +64,23 @@ interface ITaskLoggerProps {
 }
 
 function taskLogger(props: ITaskLoggerProps) {
-
     const { err, errors, task, date, stats } = props;
 
+    const id = task.dataProvider.developerId + '_' + task.dataProvider.inwestycjaId;
 
+    if (err) {
+        saveLogFile(date, `${id}_exception.txt`, { err });
+    }
+
+    saveLogFile(date, `${id}.txt`, { errors, stats });
+}
+
+function saveLogFile(date: Date, filename: string, body: {}) {
     const textDay = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
     const textHour = `${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`;
     const path = `runs/${textDay}/${textHour}`;
 
-    const id = task.dataProvider.developerId + '_' + task.dataProvider.inwestycjaId;
-
     provideDir(path);
 
-    if (err) {
-        saveFile(`${path}/${id}_exception.txt`, JSON.stringify(err, null, 2));
-    }
-
-    saveFile(`${path}/${id}.txt`, JSON.stringify({ errors, stats }, null, 2));
+    saveFile(`${path}/${filename}`, JSON.stringify(body, null, 2));
 }

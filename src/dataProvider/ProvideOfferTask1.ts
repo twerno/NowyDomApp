@@ -5,8 +5,6 @@ import ProvideOfferTask2 from "./ProvideOfferTask2";
 import TaskHelper from './TaskHelper';
 import { IProvideOfferStats } from "./AbstractZapiszZmianyTask";
 
-
-
 /**
  * Task buduje listę ofert ze strony i dla każdej oferty nadziewa kolejny task
  */

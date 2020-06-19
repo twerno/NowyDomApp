@@ -4,24 +4,77 @@ import { IAsyncTask } from "../utils/asyncTask/IAsyncTask";
 import TypeUtils from "../utils/TypeUtils";
 import { IDataProvider, IListElement } from "./IOfertaProvider";
 import { IOfertaDane, IOfertaRecord, IOfertaRecordOpe, Status } from "./IOfertaRecord";
+import { IStringMap } from "utils/IMap";
 
 export interface IProvideOfferStats {
+    total: number,
+    unchanged: number,
+
     added: {
         count: number,
-        records: IOfertaDane[]
+        records: Array<{ id: string } & IOfertaDane>
     },
     updated: {
         count: number,
-        records: Partial<IOfertaDane>[]
+        records: Array<{ id: string } & Partial<IOfertaDane>>
     },
     deleted: {
         count: number,
-        records: IOfertaDane[]
+        records: { id: string }[]
     },
 };
 
+export interface IIProvideOfferSummary {
+    total: number;
+    unchanged: number,
+    added: number;
+    updated: number;
+    deleted: number;
+
+    byInwestycja: IStringMap<
+        {
+            total: number;
+            unchanged: number,
+            added: number;
+            updated: number;
+            deleted: number;
+        }
+    >;
+}
+
+export function add2Summary(dataProvider: IDataProvider<any, any>, stats: IProvideOfferStats, summary?: IIProvideOfferSummary): IIProvideOfferSummary {
+    const result: IIProvideOfferSummary =
+        summary
+        || {
+            total: 0,
+            added: 0,
+            deleted: 0,
+            unchanged: 0,
+            updated: 0,
+            byInwestycja: {}
+        };
+
+    result.total += stats.total;
+    result.unchanged += stats.unchanged;
+    result.added += stats.added.count;
+    result.updated += stats.updated.count;
+    result.deleted += stats.deleted.count;
+
+    result.byInwestycja[dataProvider.inwestycjaId] = {
+        total: stats.total,
+        unchanged: stats.unchanged,
+        added: stats.added.count,
+        updated: stats.updated.count,
+        deleted: stats.deleted.count,
+    };
+
+    return result;
+}
+
 export const getEmptyProvideOfferStats = (): IProvideOfferStats => (
     {
+        total: 0,
+        unchanged: 0,
         added: { count: 0, records: [] },
         updated: { count: 0, records: [] },
         deleted: { count: 0, records: [] },
@@ -44,10 +97,15 @@ abstract class AbstractZapiszZmianyTask<T extends IListElement = IListElement, D
     ) {
         const stan = fixedStan || await this.pobierzStan(ofertaId);
 
+        stats.total++;
+
         const zmiana = this.wyliczZmiane(ofertaId, offerData, stan, stats);
 
         if (zmiana) {
             this.zapiszZmiany(zmiana);
+        }
+        else {
+            stats.unchanged++;
         }
 
         return zmiana;
@@ -95,7 +153,7 @@ abstract class AbstractZapiszZmianyTask<T extends IListElement = IListElement, D
         const timestamp = new Date().getTime();
 
         stats.added.count++;
-        stats.added.records.push(offerData);
+        stats.added.records.push({ ...offerData, id: ofertaId });
 
         const rekord: IOfertaRecord = {
             inwestycjaId: this.dataProvider.inwestycjaId, // partition_key
@@ -134,7 +192,7 @@ abstract class AbstractZapiszZmianyTask<T extends IListElement = IListElement, D
         };
 
         stats.deleted.count++;
-        stats.deleted.records.push(rekord.data);
+        stats.deleted.records.push({ id: stan.ofertaId });
 
         const ope: IOfertaRecordOpe = {
             ofertaId: stan.ofertaId,  // partition_key
@@ -161,7 +219,7 @@ abstract class AbstractZapiszZmianyTask<T extends IListElement = IListElement, D
         }
 
         stats.updated.count++;
-        stats.updated.records.push(delta);
+        stats.updated.records.push({ id: stan.ofertaId, ...delta });
 
         const rekord: IOfertaRecord = {
             ...stan,
