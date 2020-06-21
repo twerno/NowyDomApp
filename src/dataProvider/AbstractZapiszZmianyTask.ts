@@ -25,6 +25,7 @@ export interface IProvideOfferStats {
 };
 
 export interface IIProvideOfferSummary {
+    totalErrors: number,
     total: number;
     unchanged: number,
     added: number;
@@ -33,6 +34,7 @@ export interface IIProvideOfferSummary {
 
     byInwestycja: IStringMap<
         {
+            errors: any[],
             total: number;
             unchanged: number,
             added: number;
@@ -42,10 +44,16 @@ export interface IIProvideOfferSummary {
     >;
 }
 
-export function add2Summary(dataProvider: IDataProvider<any, any>, stats: IProvideOfferStats, summary?: IIProvideOfferSummary): IIProvideOfferSummary {
+export function add2Summary(
+    dataProvider: IDataProvider<any, any>,
+    stats: IProvideOfferStats,
+    errors: any[],
+    summary?: IIProvideOfferSummary
+): IIProvideOfferSummary {
     const result: IIProvideOfferSummary =
         summary
         || {
+            totalErrors: 0,
             total: 0,
             unchanged: 0,
             added: 0,
@@ -54,6 +62,7 @@ export function add2Summary(dataProvider: IDataProvider<any, any>, stats: IProvi
             byInwestycja: {}
         };
 
+    result.totalErrors += errors.length;
     result.total += stats.total;
     result.unchanged += stats.unchanged;
     result.added += stats.added.count;
@@ -61,6 +70,7 @@ export function add2Summary(dataProvider: IDataProvider<any, any>, stats: IProvi
     result.deleted += stats.deleted.count;
 
     result.byInwestycja[dataProvider.inwestycjaId] = {
+        errors,
         total: stats.total,
         unchanged: stats.unchanged,
         added: stats.added.count,

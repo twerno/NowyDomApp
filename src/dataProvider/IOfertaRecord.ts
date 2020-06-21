@@ -21,14 +21,16 @@ export interface IOfertaRecordOpe {
 
 export type OdbiorType = { rok: number, kwartal: number } | { rok: number, miesiac: number } | IRawData;
 export type MapWithRawType<T extends object> = { data: Partial<T>, raw?: Array<string | null> };
+export const KartaOfertyPdf = 'ofertaPdf';
 
 export interface IOfertaDane {
     typ: Typ | IRawData;
-    budynek: string | IRawData;
+    budynek?: string | IRawData;
     nrLokalu?: string | IRawData;
     metraz: number | IRawData;
     lpPokoj?: number | IRawData;
     pietro?: number | IRawData;
+    liczbaKondygnacji?: number | IRawData;
     stronySwiata?: Array<StronySwiata | IRawData>;
     cechy: MapWithRawType<ICechy>;
 

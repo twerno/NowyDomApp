@@ -1,15 +1,15 @@
 import { HTMLElement, parse } from 'node-html-parser';
-import { IDataProvider, ISubTaskProps } from "../../../dataProvider/IOfertaProvider";
+import { IDataProvider, IParseListProps } from "../../../dataProvider/IOfertaProvider";
 import { ICechy, IRawData, OdbiorType, Status } from "../../../dataProvider/IOfertaRecord";
 import ProvideOfferTask1 from "../../../dataProvider/ProvideOfferTask1";
 import { IAsyncTask } from "../../../utils/asyncTask/IAsyncTask";
-import { HtmlParserHelper } from './HtmlParserHelper';
+import { HtmlParserHelper } from '../../../utils/HtmlParserHelper';
 import { ISemekoDetails, ISemekoListElement } from "./SemekoModel";
 
 export default (
     html: string,
     errors: any[],
-    subTaskProps: ISubTaskProps<ISemekoListElement, ISemekoDetails>
+    subTaskProps: IParseListProps<ISemekoListElement, ISemekoDetails>
 ): { items: ISemekoListElement[], tasks?: IAsyncTask[] } => {
 
     const root = parse(html);
@@ -142,7 +142,7 @@ function getMiniaturkaUrl(row: HTMLElement | undefined, tooltips: HTMLElement | 
 
 function buildPostTasks(
     root: HTMLElement | undefined,
-    subTaskProps: ISubTaskProps<ISemekoListElement, ISemekoDetails>,
+    subTaskProps: IParseListProps<ISemekoListElement, ISemekoDetails>,
     h: HtmlParserHelper<ISemekoListElement>) {
     const nextPageUrl = getNextPageUrl(root, h);
 

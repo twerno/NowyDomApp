@@ -53,11 +53,11 @@ class ProvideOfferTask2<T extends IListElement = IListElement, D = any> implemen
     private async parseDetails(htmlList: Array<string | null>, errors: any[]): Promise<D | null> {
         const htmls = htmlList.filter(TypeUtils.notEmpty);
 
-        if (htmls.length === 0) {
+        if (htmls.length === 0 || this.dataProvider.parseOfferHtml === null) {
             return null;
         }
 
-        return await this.dataProvider
+        return this.dataProvider
             .parseOfferHtml(
                 htmls.length === 1 ? htmls[0] : htmls,
                 errors

@@ -12,6 +12,7 @@ import SemekoPrimaReda from './inwestycje/Semeko/SemekoPrimaReda';
 import SemekoZielonaLaguna2 from './inwestycje/Semeko/SemekoZielonaLaguna2';
 import { saveFile, provideDir } from './utils/FileSave';
 import { getEmptyProvideOfferStats, IProvideOfferStats, IIProvideOfferSummary, add2Summary } from './dataProvider/AbstractZapiszZmianyTask';
+import { GarvenaPark } from './inwestycje/Garvena/GarvenaPark';
 
 console.log('start');
 
@@ -26,6 +27,7 @@ const tasks = [
     new ProvideOfferTask1(SemekoPortoBianco3),
     new ProvideOfferTask1(SemekoPrimaReda),
     new ProvideOfferTask1(SemekoZielonaLaguna2),
+    new ProvideOfferTask1(GarvenaPark)
 ];
 
 async function runTasksSeq() {
@@ -43,7 +45,7 @@ async function runTasksSeq() {
             .then(() => taskLogger({ errors, task, date, stats }))
             .catch(err => taskLogger({ err, errors, task, date, stats }));
 
-        summary = add2Summary(task.dataProvider, stats, summary);
+        summary = add2Summary(task.dataProvider, stats, errors, summary);
     }
 
     saveLogFile(date, 'summary.txt', { summary });

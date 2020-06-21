@@ -1,7 +1,7 @@
 import { IOfertaDane, ICechy } from "dataProvider/IOfertaRecord";
 import { IAsyncTask } from "utils/asyncTask/IAsyncTask";
 
-export interface ISubTaskProps<T extends IListElement = IListElement, D = any> {
+export interface IParseListProps<T extends IListElement = IListElement, D = any> {
     dataProvider: IDataProvider<T, D>;
     priority?: number;
 }
@@ -13,10 +13,10 @@ export interface IDataProvider<T extends IListElement = IListElement, D = any> {
     readonly standard: { data: Partial<ICechy>, raw?: string[] },
 
     getListUrl: () => string,
-    parseListHtml: (html: string, errors: any[], subTaskProps: ISubTaskProps<T, D>) => { items: T[], tasks?: IAsyncTask[] };
+    parseListHtml: (html: string, errors: any[], props: IParseListProps<T, D>) => { items: T[], tasks?: IAsyncTask[] };
 
     getOfferUrl: (listItem: T) => string | string[] | undefined;
-    parseOfferHtml: (html: string[] | string, errors: any[]) => Promise<D>;
+    parseOfferHtml: ((html: string[] | string, errors: any[]) => Promise<D>) | null;
 
     offerBuilder: (listItem: T, details: D | null) => { id: string, dane: IOfertaDane };
 }

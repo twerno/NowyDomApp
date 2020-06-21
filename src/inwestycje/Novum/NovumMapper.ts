@@ -3,7 +3,7 @@ import { IRawData } from '../../dataProvider/IOfertaRecord';
 import CheerioHelper from '../../utils/CheerioHelper';
 import { NovumDataProvider } from './NovumDataProvider';
 import { INovumDetails, INovumListElement } from './NovumSchema';
-import { ISubTaskProps } from '../../dataProvider/IOfertaProvider';
+import { IParseListProps } from '../../dataProvider/IOfertaProvider';
 
 export default {
     listMapper,
@@ -13,7 +13,7 @@ export default {
 function listMapper(
     html: string,
     errors: any[],
-    subTaskProps: ISubTaskProps<INovumListElement, INovumDetails>
+    subTaskProps: IParseListProps<INovumListElement, INovumDetails>
 ) {
     const rows = cheerio
         .load(html)('.list-item.box');

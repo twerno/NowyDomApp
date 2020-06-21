@@ -3,9 +3,10 @@ export default {
 }
 
 
-function silentErrorReporter(errors: any[], props: { [key: string]: any }) {
+function silentErrorReporter(errorList: any[], props: { [key: string]: any }) {
     return (err: any) => {
-        errors.push({ err: JSON.stringify(err), ...props });
+        const errors = { message: err.message, stack: err.stack?.split('\n') };
+        errorList.push({ errors, ...props });
         return null;
     }
 }

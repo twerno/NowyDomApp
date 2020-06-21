@@ -3,7 +3,7 @@ import { IRawData, Status, ICechy, StronySwiata, stronySwiataMaper } from '../..
 import CheerioHelper from '../../utils/CheerioHelper';
 import { IOstojaListElement, IOstojaOfferDetails } from './OstojaModel';
 import { OstojaDataProvider } from './OstojaDataProvider';
-import { ISubTaskProps } from '../../dataProvider/IOfertaProvider';
+import { IParseListProps } from '../../dataProvider/IOfertaProvider';
 
 export default {
     listMapper,
@@ -13,7 +13,7 @@ export default {
 function listMapper(
     html: string,
     errors: any[],
-    subTaskProps: ISubTaskProps<IOstojaListElement, IOstojaOfferDetails>
+    subTaskProps: IParseListProps<IOstojaListElement, IOstojaOfferDetails>
 ) {
     const rows = cheerio
         .load(html)('form.offer-search .price-list > tbody > tr');

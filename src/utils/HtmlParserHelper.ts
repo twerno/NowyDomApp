@@ -1,6 +1,7 @@
 import { HTMLElement } from 'node-html-parser';
-import { IRawData, MapWithRawType, isRawData } from '../../../dataProvider/IOfertaRecord';
-import TypeUtils, { FancyProperties, SomeRequired } from '../../../utils/TypeUtils';
+import { IRawData, MapWithRawType, isRawData } from '../dataProvider/IOfertaRecord';
+import TypeUtils, { FancyProperties, SomeRequired } from './TypeUtils';
+import parseUtils from './parseUtils';
 
 export interface IElReaderOptions {
     // default: true
@@ -14,8 +15,6 @@ export interface IParserOptions<T> {
     fromAttribute?: string;
     mapper?: (rawText: string) => T | null
 }
-
-const floatRegExpr = /([\d,.]+)/;
 
 export class HtmlParserHelper<T extends object> {
 
@@ -68,19 +67,11 @@ export class HtmlParserHelper<T extends object> {
     // 
     public asFloat<K extends keyof FancyProperties<T, number | IRawData>>(
         field: K,
-        el: HTMLElement | undefined) {
-
+        el: HTMLElement | undefined,
+        customRegExpr?: RegExp
+    ) {
         return this.asCustom<number, K>(field, el, {
-            mapper: rawText => {
-                const exprResult = floatRegExpr.exec(rawText || '');
-                if (exprResult === null || exprResult[1] === null) {
-                    return null;
-                }
-                const parsedNumber = Number.parseFloat(exprResult[1].replace(/,/g, '.'));
-                return isNaN(parsedNumber)
-                    ? null
-                    : parsedNumber;
-            }
+            mapper: (rawText) => parseUtils.floatParser(rawText, customRegExpr)
         });
     }
 
