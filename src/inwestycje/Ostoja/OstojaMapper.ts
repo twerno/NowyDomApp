@@ -1,9 +1,9 @@
 import cheerio from 'cheerio';
-import { IRawData, Status, ICechy, StronySwiata, stronySwiataMaper } from '../../dataProvider/IOfertaRecord';
-import CheerioHelper from '../../utils/CheerioHelper';
+import { IRawData, Status, ICechy, StronySwiata, stronySwiataMaper } from '../../core/oferta/model/IOfertaModel';
+import CheerioHelper from '../../core/utils/CheerioHelper';
 import { IOstojaListElement, IOstojaOfferDetails } from './OstojaModel';
-import { OstojaDataProvider } from './OstojaDataProvider';
-import { IParseListProps } from '../../dataProvider/IOfertaProvider';
+import { Ostoja } from './Ostoja';
+import { IParseListProps } from '../../core/oferta/IOfertaProvider';
 
 export default {
     listMapper,
@@ -71,7 +71,7 @@ function rowMapper(rowIdx: number, row: CheerioElement): IOstojaListElement {
         stronySwiata: stronySwiataParser(cols[6]),
     };
 
-    result.id = `${OstojaDataProvider.inwestycjaId}-${result.nrLokalu}`;
+    result.id = `${Ostoja.inwestycjaId}-${result.nrLokalu}`;
     result.budynek = result.nrLokalu[0];
 
     return result;

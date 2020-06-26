@@ -1,5 +1,5 @@
 import { HTMLElement, parse } from 'node-html-parser';
-import { IRawData, StronySwiata } from "../../../dataProvider/IOfertaRecord";
+import { IRawData, StronySwiata } from "../../../core/oferta/model/IOfertaModel";
 import { ISemekoDetails } from "./SemekoModel";
 
 export default async (

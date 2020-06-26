@@ -1,4 +1,4 @@
-import { IOfertaDane, Typ } from '../../dataProvider/IOfertaRecord';
+import { IOfertaDane, Typ } from '../../core/oferta/model/IOfertaModel';
 import { IOstojaListElement, IOstojaOfferDetails } from './OstojaModel';
 
 export default (listItem: IOstojaListElement, detale: IOstojaOfferDetails | null): { id: string, dane: IOfertaDane } => {

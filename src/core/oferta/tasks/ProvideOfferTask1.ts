@@ -1,8 +1,8 @@
-import { IAsyncTask } from "../utils/asyncTask/IAsyncTask";
-import WebDownloader from "../utils/WebDownloader";
-import { IDataProvider, IListElement } from "./IOfertaProvider";
+import { IAsyncTask } from "../../asyncTask/IAsyncTask";
+import WebDownloader from "../../../utils/WebDownloader";
+import { IDataProvider, IListElement } from "../IOfertaProvider";
 import ProvideOfferTask2 from "./ProvideOfferTask2";
-import TaskHelper from './TaskHelper';
+import TaskHelper from '../../asyncTask/TaskHelper';
 import { IProvideOfferStats } from "./AbstractZapiszZmianyTask";
 
 /**

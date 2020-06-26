@@ -1,4 +1,4 @@
-import { IOfertaDane, Typ } from '../../../dataProvider/IOfertaRecord';
+import { IOfertaDane, Typ } from '../../../core/oferta/model/IOfertaModel';
 import { ISemekoDetails, ISemekoListElement } from './SemekoModel';
 
 export default (item: ISemekoListElement, detale: ISemekoDetails | null): { id: string, dane: IOfertaDane } => {

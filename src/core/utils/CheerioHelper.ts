@@ -1,5 +1,5 @@
-import { IRawData } from '../dataProvider/IOfertaRecord';
-import { HTMLElement } from 'node-html-parser';
+import cheerio from 'cheerio';
+import { IRawData } from 'core/oferta/model/IOfertaModel';
 
 export default {
     loadString,
@@ -7,12 +7,12 @@ export default {
     loadFloat
 }
 
-function loadString(element: HTMLElement | undefined): string {
-    return element?.text?.trim() || '';
+function loadString(element: CheerioElement): string {
+    return cheerio(element)?.text()?.trim() || '';
 }
 
-function loadInt(element: HTMLElement | undefined): number | IRawData {
-    const text = loadString(element);
+function loadInt(element: CheerioElement): number | IRawData {
+    const text = cheerio(element)?.text();
     const result = Number.parseInt(text, 10);
 
     return isNaN(result)
@@ -22,8 +22,8 @@ function loadInt(element: HTMLElement | undefined): number | IRawData {
 
 const floatRegExpr = /([\d,.]+)/;
 
-function loadFloat(element: HTMLElement | undefined): number | IRawData {
-    const text = loadString(element);
+function loadFloat(element: CheerioElement): number | IRawData {
+    const text = cheerio(element)?.text();
     const float = floatRegExpr.exec(text);
     if (float === null || float[1] === null) {
         return { raw: text || '' }

@@ -1,6 +1,6 @@
 import { HTMLElement } from 'node-html-parser';
-import { IRawData, MapWithRawType, isRawData } from '../dataProvider/IOfertaRecord';
-import TypeUtils, { FancyProperties, SomeRequired } from './TypeUtils';
+import { IRawData, MapWithRawType, isRawData } from '../oferta/model/IOfertaModel';
+import TypeUtils, { PropertiesOfTheType as PropertiesByTheType, SomeRequired } from '../../utils/TypeUtils';
 import parseUtils from './parseUtils';
 
 export interface IElReaderOptions {
@@ -28,7 +28,7 @@ export class HtmlParserHelper<T extends object> {
 
     // oczekiwana niepusta wartosc tekstowa
     // 
-    public asString<K extends keyof FancyProperties<T, string>>(
+    public asString<K extends keyof PropertiesByTheType<T, string>>(
         field: K,
         el: HTMLElement | undefined,
     ) {
@@ -38,7 +38,7 @@ export class HtmlParserHelper<T extends object> {
         return this.asRecord<K, string>(field, text || '');
     }
 
-    public asStringOptional<K extends keyof FancyProperties<T, string | null>>(
+    public asStringOptional<K extends keyof PropertiesByTheType<T, string | null>>(
         field: K,
         el: HTMLElement | undefined) {
 
@@ -49,7 +49,7 @@ export class HtmlParserHelper<T extends object> {
 
     // oczekiwana niepusta wartosc całkowita
     // 
-    public asInt<K extends keyof FancyProperties<T, number | IRawData>>(
+    public asInt<K extends keyof PropertiesByTheType<T, number | IRawData>>(
         field: K,
         el: HTMLElement | undefined) {
 
@@ -65,7 +65,7 @@ export class HtmlParserHelper<T extends object> {
 
     // oczekiwana niepusta wartosc zmiennoprzecinkowa
     // 
-    public asFloat<K extends keyof FancyProperties<T, number | IRawData>>(
+    public asFloat<K extends keyof PropertiesByTheType<T, number | IRawData>>(
         field: K,
         el: HTMLElement | undefined,
         customRegExpr?: RegExp
@@ -75,7 +75,7 @@ export class HtmlParserHelper<T extends object> {
         });
     }
 
-    public asCustomWithDefault<Type, K extends keyof FancyProperties<T, Type>>(
+    public asCustomWithDefault<Type, K extends keyof PropertiesByTheType<T, Type>>(
         field: K,
         el: HTMLElement | undefined,
         options: SomeRequired<IParserOptions<Type>, 'mapper'> & { defaultValue: Type },
@@ -85,7 +85,7 @@ export class HtmlParserHelper<T extends object> {
         return this.asRecord<K, Type>(field, data || options.defaultValue);
     }
 
-    public asCustom<Type, K extends keyof FancyProperties<T, Type | IRawData>>(
+    public asCustom<Type, K extends keyof PropertiesByTheType<T, Type | IRawData>>(
         field: K,
         el: HTMLElement | undefined,
         options: SomeRequired<IParserOptions<Type>, 'mapper'>,
@@ -97,7 +97,7 @@ export class HtmlParserHelper<T extends object> {
             : this.asRecord<K, Type | IRawData>(field, { raw: rawText });
     }
 
-    public asCustomOptional<Type, K extends keyof FancyProperties<T, Type | null>>(
+    public asCustomOptional<Type, K extends keyof PropertiesByTheType<T, Type | null>>(
         field: K,
         el: HTMLElement | undefined,
         options: SomeRequired<IParserOptions<Type>, 'mapper'>,
@@ -109,7 +109,7 @@ export class HtmlParserHelper<T extends object> {
             : this.asRecord<K, Type | null>(field, null);
     }
 
-    protected asCustomInternal<Type, K extends keyof FancyProperties<T, Type>>(
+    protected asCustomInternal<Type, K extends keyof PropertiesByTheType<T, Type>>(
         field: K,
         el: HTMLElement | undefined,
         options: IElReaderOptions & SomeRequired<IParserOptions<Type>, 'mapper'>,
@@ -125,7 +125,7 @@ export class HtmlParserHelper<T extends object> {
         }
     }
 
-    public asMap<Type extends object, K extends keyof FancyProperties<T, MapWithRawType<Type>>>(
+    public asMap<Type extends object, K extends keyof PropertiesByTheType<T, MapWithRawType<Type>>>(
         field: K,
         elList: HTMLElement[] | undefined,
         mapper: (rawText: string) => { data: Partial<Type> } | IRawData | null,
@@ -183,7 +183,7 @@ export class HtmlParserHelper<T extends object> {
         return rawText || null;
     }
 
-    protected asRecord<K extends keyof FancyProperties<T, TYPE>, TYPE>(
+    protected asRecord<K extends keyof PropertiesByTheType<T, TYPE>, TYPE>(
         field: K,
         value: TYPE): Record<K, TYPE> {
         return { [field]: value } as any;

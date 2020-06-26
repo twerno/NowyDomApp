@@ -1,9 +1,9 @@
 import Axios, { AxiosResponse } from "axios";
 import { extension, contentType } from "mime-types";
-import S3Utils from "../utils/S3Utils";
+import S3Utils from "../../../utils/S3Utils";
 import AbstractZapiszZmianyTask, { IProvideOfferStats } from "./AbstractZapiszZmianyTask";
-import { IDataProvider, IListElement } from "./IOfertaProvider";
-import { IOfertaRecord } from "./IOfertaRecord";
+import { IDataProvider, IListElement } from "../IOfertaProvider";
+import { IOfertaRecord } from "../model/IOfertaModel";
 
 /**
  * pobranie dodatkowych zasobów, odłożenie ich na s3 i aktualizacja bazy danych
@@ -79,4 +79,3 @@ class ProvideOfferTask4<T extends IListElement = IListElement, D = any> extends 
 }
 
 export default ProvideOfferTask4;
-

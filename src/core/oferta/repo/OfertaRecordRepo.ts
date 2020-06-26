@@ -1,5 +1,5 @@
-import { DynamoDBRepo } from "../utils/DynamoDBRepo";
-import { IOfertaRecord } from "../dataProvider/IOfertaRecord";
+import { DynamoDBRepo } from "../../../utils/DynamoDBRepo";
+import { IOfertaRecord } from "../model/IOfertaModel";
 
 export interface IOfertaRepoKey extends
     Pick<IOfertaRecord, 'inwestycjaId'>,

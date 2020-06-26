@@ -1,9 +1,10 @@
-import { IDataProvider } from "../../dataProvider/IOfertaProvider";
+import { IDataProvider } from "../../core/oferta/IOfertaProvider";
 import { INovumDetails, INovumListElement } from "./NovumSchema";
 import NovumOfertaBuilder from "./NovumOfertaBuilder";
 import NovumMapper from "./NovumMapper";
+import { registerInwestycja } from "../../inwestycje/inwestycje";
 
-export const NovumDataProvider: IDataProvider<INovumListElement, INovumDetails> = {
+export const Novum: IDataProvider<INovumListElement, INovumDetails> = {
 
     inwestycjaId: 'Novum',
     developerId: 'HS',
@@ -33,4 +34,6 @@ export const NovumDataProvider: IDataProvider<INovumListElement, INovumDetails> 
     parseOfferHtml: NovumMapper.detailMapper,
 
     offerBuilder: NovumOfertaBuilder,
-}
+};
+
+registerInwestycja(Novum);

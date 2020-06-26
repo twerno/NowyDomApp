@@ -1,9 +1,9 @@
-import { ofertaOpeRepo } from "../db/OfertaRecordOpeRepo";
-import { ofertaRepo } from "../db/OfertaRecordRepo";
-import { IAsyncTask } from "../utils/asyncTask/IAsyncTask";
-import TypeUtils from "../utils/TypeUtils";
-import { IDataProvider, IListElement } from "./IOfertaProvider";
-import { IOfertaDane, IOfertaRecord, IOfertaRecordOpe, Status } from "./IOfertaRecord";
+import { ofertaOpeRepo } from "../repo/OfertaRecordOpeRepo";
+import { ofertaRepo } from "../repo/OfertaRecordRepo";
+import { IAsyncTask } from "../../asyncTask/IAsyncTask";
+import TypeUtils from "../../../utils/TypeUtils";
+import { IDataProvider, IListElement } from "../IOfertaProvider";
+import { IOfertaDane, IOfertaRecord, IOfertaRecordOpe, Status } from "../model/IOfertaModel";
 import { IStringMap } from "utils/IMap";
 
 export interface IProvideOfferStats {

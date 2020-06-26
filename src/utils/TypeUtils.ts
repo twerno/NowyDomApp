@@ -1,6 +1,6 @@
 
 // https://stackoverflow.com/a/49797062
-export type FancyProperties<T, TYPE> = Pick<T, {
+export type PropertiesOfTheType<T, TYPE> = Pick<T, {
     [K in keyof T]: T[K] extends TYPE ? K : never
 }[keyof T]>;
 

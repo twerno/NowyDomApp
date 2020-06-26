@@ -1,5 +1,5 @@
-import { IListElement } from "dataProvider/IOfertaProvider";
-import { IRawData, Status, ICechy, StronySwiata } from "../../dataProvider/IOfertaRecord";
+import { IListElement } from "core/oferta/IOfertaProvider";
+import { IRawData, Status, ICechy, StronySwiata } from "../../core/oferta/model/IOfertaModel";
 
 export interface IOstojaListElement extends IListElement {
     budynek: string;

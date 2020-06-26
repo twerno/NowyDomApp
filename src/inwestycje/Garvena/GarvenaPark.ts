@@ -1,7 +1,8 @@
-import { IDataProvider } from "../../dataProvider/IOfertaProvider";
+import { IDataProvider } from "../../core/oferta/IOfertaProvider";
 import { IGarvenaParkListElement, IGarvenaParkDetails } from "./GarvenaParkModel";
 import GarvenaParkListMapper from "./GarvenaParkListMapper";
 import GarvenaOfferBuilder from "./GarvenaOfferBuilder";
+import { registerInwestycja } from "../../inwestycje/inwestycje";
 
 export const GarvenaPark: IDataProvider<IGarvenaParkListElement, IGarvenaParkDetails> = {
 
@@ -22,4 +23,6 @@ export const GarvenaPark: IDataProvider<IGarvenaParkListElement, IGarvenaParkDet
     parseOfferHtml: null,
 
     offerBuilder: GarvenaOfferBuilder
-}
+};
+
+registerInwestycja(GarvenaPark);

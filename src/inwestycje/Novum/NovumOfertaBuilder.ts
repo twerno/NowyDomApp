@@ -1,5 +1,5 @@
-import { ICechy, IOfertaDane, IRawData, Status, StronySwiata, Typ } from '../../dataProvider/IOfertaRecord';
-import { NovumDataProvider } from './NovumDataProvider';
+import { ICechy, IOfertaDane, IRawData, Status, StronySwiata, Typ } from '../../core/oferta/model/IOfertaModel';
+import { Novum } from './Novum';
 import { INovumDetails, INovumListElement } from './NovumSchema';
 
 export default (listItem: INovumListElement, detale: INovumDetails | null): { id: string, dane: IOfertaDane } => {
@@ -99,8 +99,8 @@ function stronaSwiataValMapper(val: string): StronySwiata | { raw: string } {
 
 function standardMapper(detale: INovumDetails | null): { data: ICechy, raw?: string[] } {
     const result = {
-        data: { ...NovumDataProvider.standard.data },
-        raw: [...NovumDataProvider.standard.raw || []]
+        data: { ...Novum.standard.data },
+        raw: [...Novum.standard.raw || []]
     };
 
     detale?.udogodnienia

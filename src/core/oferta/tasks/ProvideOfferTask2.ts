@@ -1,10 +1,9 @@
-import { IAsyncTask } from "../utils/asyncTask/IAsyncTask";
-import { IDataProvider, IListElement } from "./IOfertaProvider";
-import WebDownloader from "../utils/WebDownloader";
-import TaskHelper from './TaskHelper';
-import TypeUtils from "../utils/TypeUtils";
+import TypeUtils from "../../../utils/TypeUtils";
+import WebDownloader from "../../../utils/WebDownloader";
+import { IAsyncTask } from "../../asyncTask/IAsyncTask";
+import TaskHelper from '../../asyncTask/TaskHelper';
+import { IDataProvider, IListElement } from "../IOfertaProvider";
 import ProvideOfferTask3 from "./ProvideOfferTask3";
-import { IProvideOfferStats } from "./AbstractZapiszZmianyTask";
 
 /**
  * Pobieranie detali oferty, przygotowanie ofert znormalizowanej IOfertaDane

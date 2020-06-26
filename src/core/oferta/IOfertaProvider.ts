@@ -1,5 +1,5 @@
-import { IOfertaDane, ICechy } from "dataProvider/IOfertaRecord";
-import { IAsyncTask } from "utils/asyncTask/IAsyncTask";
+import { IOfertaDane, ICechy } from "../../core/oferta/model/IOfertaModel";
+import { IAsyncTask } from "../asyncTask/IAsyncTask";
 
 export interface IParseListProps<T extends IListElement = IListElement, D = any> {
     dataProvider: IDataProvider<T, D>;

@@ -1,5 +1,5 @@
-import { IDataProvider } from "../../../dataProvider/IOfertaProvider";
-import { ICechy } from "../../../dataProvider/IOfertaRecord";
+import { IDataProvider } from "../../../core/oferta/IOfertaProvider";
+import { ICechy } from "../../../core/oferta/model/IOfertaModel";
 import { ISemekoDetails, ISemekoListElement } from "./SemekoModel";
 import semekoOfertaBuilder from "./semekoOfertaBuilder";
 import semekoOfertaParser from "./semekoOfertaParser";

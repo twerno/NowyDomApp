@@ -1,9 +1,9 @@
 import cheerio from 'cheerio';
-import { IRawData } from '../../dataProvider/IOfertaRecord';
-import CheerioHelper from '../../utils/CheerioHelper';
-import { NovumDataProvider } from './NovumDataProvider';
+import { IRawData } from '../../core/oferta/model/IOfertaModel';
+import CheerioHelper from '../../core/utils/CheerioHelper';
+import { Novum } from './Novum';
 import { INovumDetails, INovumListElement } from './NovumSchema';
-import { IParseListProps } from '../../dataProvider/IOfertaProvider';
+import { IParseListProps } from '../../core/oferta/IOfertaProvider';
 
 export default {
     listMapper,
@@ -69,7 +69,7 @@ function rowMapper(rowIdx: number, row: CheerioElement): INovumListElement {
         offerDetailsUrl: row.children[9]?.lastChild?.attribs['href']
     };
 
-    result.id = `${NovumDataProvider.inwestycjaId}-${result.budynek}-${result.nrLokalu}`;
+    result.id = `${Novum.inwestycjaId}-${result.budynek}-${result.nrLokalu}`;
 
     return result;
 }

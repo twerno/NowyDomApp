@@ -1,5 +1,5 @@
-import { IListElement } from "../../../dataProvider/IOfertaProvider";
-import { IRawData, Status, ICechy, StronySwiata, OdbiorType, MapWithRawType } from "../../../dataProvider/IOfertaRecord";
+import { IListElement } from "../../../core/oferta/IOfertaProvider";
+import { IRawData, Status, ICechy, StronySwiata, OdbiorType, MapWithRawType } from "../../../core/oferta/model/IOfertaModel";
 
 export interface ISemekoListElement extends IListElement {
     budynek: string;

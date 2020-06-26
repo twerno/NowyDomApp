@@ -1,5 +1,5 @@
 import { IAsyncTask } from "./IAsyncTask";
-import TaskHelper from "../../dataProvider/TaskHelper";
+import TaskHelper from "./TaskHelper";
 
 export interface IAsyncTaskRunnerConfig<P> {
     concurency?: number;
@@ -54,7 +54,7 @@ async function runNextTask<P>(
     try {
         ref.runningTasks++;
         console.log('run task', taskName);
-        console.log(`runningTasks: ${ref.runningTasks}`, `pendingTasks: ${tasks.length}`);
+        console.log(`runningTasks: ${ref.runningTasks}`, `pendingTasks: ${tasks.length}`, `errors: ${errors?.length || 0}`);
         const result = await task?.run(errors, props) || [];
         tasks.push.apply(tasks, result instanceof Array ? result : [result]);
     }

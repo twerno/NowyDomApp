@@ -1,9 +1,10 @@
-import { IDataProvider } from "../../dataProvider/IOfertaProvider";
+import { IDataProvider } from "../../core/oferta/IOfertaProvider";
 import OstojaMapper from "./OstojaMapper";
 import { IOstojaListElement, IOstojaOfferDetails } from "./OstojaModel";
 import OstojaOfertaBuilder from "./OstojaOfertaBuilder";
+import { registerInwestycja } from "../../inwestycje/inwestycje";
 
-export const OstojaDataProvider: IDataProvider<IOstojaListElement, IOstojaOfferDetails> = {
+export const Ostoja: IDataProvider<IOstojaListElement, IOstojaOfferDetails> = {
 
     inwestycjaId: 'Ostoja',
     developerId: 'Inpro',
@@ -24,4 +25,6 @@ export const OstojaDataProvider: IDataProvider<IOstojaListElement, IOstojaOfferD
     parseOfferHtml: OstojaMapper.detailMapper,
 
     offerBuilder: OstojaOfertaBuilder
-}
+};
+
+registerInwestycja(Ostoja);

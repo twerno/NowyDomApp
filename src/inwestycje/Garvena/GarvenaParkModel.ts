@@ -1,5 +1,5 @@
-import { IListElement } from "../../dataProvider/IOfertaProvider";
-import { IRawData, OdbiorType, Status } from "../../dataProvider/IOfertaRecord";
+import { IListElement } from "../../core/oferta/IOfertaProvider";
+import { IRawData, OdbiorType, Status } from "../../core/oferta/model/IOfertaModel";
 
 export interface IGarvenaParkListElement extends IListElement {
     // budynek: string;

@@ -1,4 +1,4 @@
-import { IOfertaDane, Typ } from '../../dataProvider/IOfertaRecord';
+import { IOfertaDane, Typ } from '../../core/oferta/model/IOfertaModel';
 import { IGarvenaParkDetails, IGarvenaParkListElement } from './GarvenaParkModel';
 
 export default (listItem: IGarvenaParkListElement, detale: IGarvenaParkDetails | null): { id: string, dane: IOfertaDane } => {
