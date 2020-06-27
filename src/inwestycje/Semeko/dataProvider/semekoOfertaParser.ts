@@ -1,6 +1,7 @@
 import { HTMLElement, parse } from 'node-html-parser';
-import { IRawData, StronySwiata } from "../../../core/oferta/model/IOfertaModel";
+import { IRawData } from "../../../core/oferta/model/IOfertaModel";
 import { ISemekoDetails } from "./SemekoModel";
+import { StronaSwiata } from '../../../core/oferta/model/StronySwiata';
 
 export default async (
     html: string[] | string,
@@ -19,7 +20,7 @@ export default async (
     return { stronySwiata, zasobyDoPobrania };
 }
 
-function getKierunkiSwiata(root: HTMLElement | undefined, errors: any[]): Array<StronySwiata | IRawData> | undefined {
+function getKierunkiSwiata(root: HTMLElement | undefined, errors: any[]): Array<StronaSwiata | IRawData> | undefined {
     const kierunkiSwiataEl = root?.querySelectorAll('#KartaBox')
         .filter(i => i.querySelector('div.Left')?.text === 'Strony świata')
         .shift();
@@ -31,12 +32,12 @@ function getKierunkiSwiata(root: HTMLElement | undefined, errors: any[]): Array<
         : undefined;
 }
 
-function kierunkiSwiataMapper(raw: string): StronySwiata | IRawData {
+function kierunkiSwiataMapper(raw: string): StronaSwiata | IRawData {
     switch (raw) {
-        case 'pn': return StronySwiata.PÓŁNOC;
-        case 'w': return StronySwiata.WSCHÓD;
-        case 'po': return StronySwiata.POŁUDNIE;
-        case 'z': return StronySwiata.ZACHÓD;
+        case 'pn': return StronaSwiata.PÓŁNOC;
+        case 'w': return StronaSwiata.WSCHÓD;
+        case 'po': return StronaSwiata.POŁUDNIE;
+        case 'z': return StronaSwiata.ZACHÓD;
         default: return { raw }
     }
 }

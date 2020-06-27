@@ -1,5 +1,6 @@
-import { IOfertaDane, Typ } from '../../core/oferta/model/IOfertaModel';
+import { IOfertaDane } from '../../core/oferta/model/IOfertaModel';
 import { IOstojaListElement, IOstojaOfferDetails } from './OstojaModel';
+import { Typ } from '../../core/oferta/model/Typ';
 
 export default (listItem: IOstojaListElement, detale: IOstojaOfferDetails | null): { id: string, dane: IOfertaDane } => {
 

@@ -1,5 +1,6 @@
-import { IOfertaDane, Typ } from '../../../core/oferta/model/IOfertaModel';
+import { IOfertaDane } from '../../../core/oferta/model/IOfertaModel';
 import { ISemekoDetails, ISemekoListElement } from './SemekoModel';
+import { Typ } from '../../../core/oferta/model/Typ';
 
 export default (item: ISemekoListElement, detale: ISemekoDetails | null): { id: string, dane: IOfertaDane } => {
 

@@ -1,9 +1,11 @@
 import cheerio from 'cheerio';
-import { IRawData, Status, ICechy, StronySwiata, stronySwiataMaper } from '../../core/oferta/model/IOfertaModel';
+import { IRawData, ICechy } from '../../core/oferta/model/IOfertaModel';
 import CheerioHelper from '../../core/utils/CheerioHelper';
 import { IOstojaListElement, IOstojaOfferDetails } from './OstojaModel';
 import { Ostoja } from './Ostoja';
 import { IParseListProps } from '../../core/oferta/IOfertaProvider';
+import { StronaSwiata, StronaSwiataHelper } from '../../core/oferta/model/StronySwiata';
+import { Status } from '../../core/oferta/model/Status';
 
 export default {
     listMapper,
@@ -32,12 +34,11 @@ async function detailMapper(html: string | string[]): Promise<IOstojaOfferDetail
         throw new Error('maper przenaczony dla pojedynczego rekordu, otrzymano tablicę');
     }
 
-    const rows = cheerio.load(html)('.offer-card-header .row p').children();
+    const rows = cheerio.load(html)('div.offer-card-header p');
 
     const zakonczenieRaw = rows
         .filter((_, item) => cheerio(item).text().indexOf('zakończenie') >= 0)
         .text();
-
 
     const sourceOfertaPdfUrl = cheerio.load(html)('a.pdf')?.attr('href');
 
@@ -78,12 +79,9 @@ function rowMapper(rowIdx: number, row: CheerioElement): IOstojaListElement {
 }
 
 function cenaParser(element: CheerioElement): number | IRawData {
-    let raw: string = '';
-    if (element?.firstChild?.tagName === 'div') {
-        raw = cheerio.load(element)('.new-price span').text();
-    }
-    else {
-        raw = cheerio(element).text()
+    let raw: string = cheerio.load(element)('.new-price span').text();
+    if (!raw) {
+        raw = cheerio(element).text();
     }
     const cenaStr = raw?.replace(/zł|\s/g, '')?.replace(/,/g, '.');
     const result = Number.parseFloat(cenaStr);
@@ -112,8 +110,8 @@ function cechyParser(element: CheerioElement): { data: Partial<ICechy>, raw?: st
     return result;
 }
 
-function stronySwiataParser(element: CheerioElement): Array<StronySwiata | IRawData> {
-    const result: Array<StronySwiata | IRawData> = [];
+function stronySwiataParser(element: CheerioElement): Array<StronaSwiata | IRawData> {
+    const result: Array<StronaSwiata | IRawData> = [];
 
     cheerio(element).find('span[data-tip]')
         .each((_, el) => {
@@ -124,14 +122,15 @@ function stronySwiataParser(element: CheerioElement): Array<StronySwiata | IRawD
             dataTip
                 .replace('Ekspozycja okien:', '')
                 .split(',')
-                .forEach(text => result.push(stronySwiataMaper(text)))
+                .map(StronaSwiataHelper.raw2StronaSwiata)
+                .forEach(v => result.push(v))
         });
 
     return result;
 }
 
 function odbiorParser(raw: string): { rok: number, miesiac: number } | IRawData {
-    const exprResult = /(\d{2}\.(\d{2})\.(\d{4}))/.exec(raw);
+    const exprResult = /\d{2}\.(\d{2})\.(\d{4})/.exec(raw);
 
     if (!exprResult || !exprResult[1]) {
         return { raw };

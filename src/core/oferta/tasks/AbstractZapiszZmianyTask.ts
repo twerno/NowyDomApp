@@ -3,8 +3,9 @@ import { ofertaRepo } from "../repo/OfertaRecordRepo";
 import { IAsyncTask } from "../../asyncTask/IAsyncTask";
 import TypeUtils from "../../../utils/TypeUtils";
 import { IDataProvider, IListElement } from "../IOfertaProvider";
-import { IOfertaDane, IOfertaRecord, IOfertaRecordOpe, Status } from "../model/IOfertaModel";
+import { IOfertaDane, IOfertaRecord, IOfertaRecordOpe } from "../model/IOfertaModel";
 import { IStringMap } from "utils/IMap";
+import { Status } from "../model/Status";
 
 export interface IProvideOfferStats {
     total: number,

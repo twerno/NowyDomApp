@@ -1,3 +1,8 @@
+import { StronaSwiata } from "./StronySwiata";
+import { Status } from "./Status";
+import { OdbiorType } from "./OdbiorType";
+import { Typ } from "./Typ";
+
 export interface IOfertaRecord {
     inwestycjaId: string; // partition_key
     developerId: string;
@@ -19,7 +24,7 @@ export interface IOfertaRecordOpe {
     data: Partial<IOfertaDane>;
 }
 
-export type OdbiorType = { rok: number, kwartal: number } | { rok: number, miesiac: number } | IRawData;
+// export type OdbiorType = { rok: number, kwartal: number } | { rok: number, miesiac: number } | IRawData;
 export type MapWithRawType<T extends object> = { data: Partial<T>, raw?: Array<string | null> };
 export const KartaOfertyPdf = 'ofertaPdf';
 
@@ -31,7 +36,7 @@ export interface IOfertaDane {
     lpPokoj?: number | IRawData;
     pietro?: number | IRawData;
     liczbaKondygnacji?: number | IRawData;
-    stronySwiata?: Array<StronySwiata | IRawData>;
+    stronySwiata?: Array<StronaSwiata | IRawData>;
     cechy: MapWithRawType<ICechy>;
 
     status: Status | IRawData;
@@ -56,31 +61,6 @@ export interface IRawData {
     raw: string | null;
 }
 
-export enum StronySwiata {
-    'PÓŁNOC',
-    'PÓŁNOCNY-WSCHÓD',
-    'WSCHÓD',
-    'POŁUDNIOWY-WSCHÓD',
-    'POŁUDNIE',
-    'POŁUDNIOWY-ZACHÓD',
-    'ZACHÓD',
-    'PÓŁNOCNY-ZACHÓD'
-}
-
-export function stronySwiataMaper(raw: string): StronySwiata | IRawData {
-    switch (raw.toUpperCase().trim()) {
-        case 'PÓŁNOC': return StronySwiata.PÓŁNOC;
-        case 'PÓŁNOCNY-WSCHÓD': return StronySwiata["PÓŁNOCNY-WSCHÓD"];
-        case 'WSCHÓD': return StronySwiata.WSCHÓD;
-        case 'POŁUDNIOWY-WSCHÓD': return StronySwiata["POŁUDNIOWY-WSCHÓD"];
-        case 'POŁUDNIE': return StronySwiata.POŁUDNIE;
-        case 'POŁUDNIOWY-ZACHÓD': return StronySwiata["POŁUDNIOWY-ZACHÓD"];
-        case 'ZACHÓD': return StronySwiata.ZACHÓD;
-        case 'PÓŁNOCNY-ZACHÓD': return StronySwiata["PÓŁNOCNY-ZACHÓD"];
-        default: return { raw };
-    }
-}
-
 export interface ICechy {
     ogrzewanie?: 'miejskie' | 'gazowe';
     winda?: boolean;
@@ -90,17 +70,4 @@ export interface ICechy {
     "miejsce parkingowe"?: 'parking ogólnodostępny' | number;
     "hala garażowa"?: number;
     "garaż indywidualny"?: number;
-}
-
-export enum Status {
-    'PLANOWANE',
-    'WOLNE',
-    'ZAREZERWOWANE',
-    'SPRZEDANE',
-    'USUNIETA'
-}
-
-export enum Typ {
-    'MIESZKANIE',
-    'DOM'
 }

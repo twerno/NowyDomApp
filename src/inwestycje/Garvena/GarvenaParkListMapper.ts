@@ -1,9 +1,11 @@
 import { HTMLElement, parse } from 'node-html-parser';
 import parseUtils from '../../core/utils/parseUtils';
 import { IDataProvider, IParseListProps } from "../../core/oferta/IOfertaProvider";
-import { KartaOfertyPdf, OdbiorType, Status } from "../../core/oferta/model/IOfertaModel";
+import { KartaOfertyPdf } from "../../core/oferta/model/IOfertaModel";
 import { HtmlParserHelper } from '../../core/utils/HtmlParserHelper';
 import { IGarvenaParkDetails, IGarvenaParkListElement } from './GarvenaParkModel';
+import { Status } from '../../core/oferta/model/Status';
+import { OdbiorType } from '../../core/oferta/model/OdbiorType';
 
 export default (
     html: string,

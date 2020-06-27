@@ -1,5 +1,7 @@
 import { IListElement } from "core/oferta/IOfertaProvider";
-import { IRawData, Status, ICechy, StronySwiata } from "../../core/oferta/model/IOfertaModel";
+import { IRawData, ICechy } from "../../core/oferta/model/IOfertaModel";
+import { StronaSwiata } from "../../core/oferta/model/StronySwiata";
+import { Status } from "../../core/oferta/model/Status";
 
 export interface IOstojaListElement extends IListElement {
     budynek: string;
@@ -11,7 +13,7 @@ export interface IOstojaListElement extends IListElement {
     cena?: number | IRawData;
     offerDetailsUrl?: string;
     cechy: { data: Partial<ICechy>, raw?: string[] };
-    stronySwiata: Array<StronySwiata | IRawData>;
+    stronySwiata: Array<StronaSwiata | IRawData>;
 }
 
 export interface IOstojaOfferDetails {

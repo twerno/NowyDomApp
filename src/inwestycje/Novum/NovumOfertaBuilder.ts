@@ -1,6 +1,9 @@
-import { ICechy, IOfertaDane, IRawData, Status, StronySwiata, Typ } from '../../core/oferta/model/IOfertaModel';
+import { ICechy, IOfertaDane, IRawData } from '../../core/oferta/model/IOfertaModel';
 import { Novum } from './Novum';
 import { INovumDetails, INovumListElement } from './NovumSchema';
+import { StronaSwiata, StronaSwiataHelper } from '../../core/oferta/model/StronySwiata';
+import { Status } from '../../core/oferta/model/Status';
+import { Typ } from '../../core/oferta/model/Typ';
 
 export default (listItem: INovumListElement, detale: INovumDetails | null): { id: string, dane: IOfertaDane } => {
 
@@ -65,7 +68,7 @@ function rzymskie2arabskie(liczbaRzymska: string): number {
     throw new Error(`"${liczbaRzymska}" nie jest rozpoznawalną liczbą rzymską.`);
 }
 
-function statusMapper(listItem: INovumListElement): Status | { raw: string } {
+function statusMapper(listItem: INovumListElement): Status | IRawData {
     switch (listItem.status) {
         case 'wolne': return Status.WOLNE;
         case 'zarezerwowane': return Status.ZAREZERWOWANE;
@@ -74,7 +77,7 @@ function statusMapper(listItem: INovumListElement): Status | { raw: string } {
     }
 }
 
-function kierunekMapper(detale: INovumDetails | null): Array<StronySwiata | { raw: string }> {
+function kierunekMapper(detale: INovumDetails | null): Array<StronaSwiata | IRawData> {
     if (!detale) {
         return [];
     }
@@ -87,14 +90,8 @@ function kierunekMapper(detale: INovumDetails | null): Array<StronySwiata | { ra
     return result;
 }
 
-function stronaSwiataValMapper(val: string): StronySwiata | { raw: string } {
-    switch (val) {
-        case 'Północ': return StronySwiata.PÓŁNOC;
-        case 'Południe': return StronySwiata.POŁUDNIE;
-        case 'Wschód': return StronySwiata.WSCHÓD;
-        case 'Zachód': return StronySwiata.ZACHÓD;
-        default: return { raw: val };
-    }
+function stronaSwiataValMapper(val: string): StronaSwiata | IRawData {
+    return StronaSwiataHelper.raw2StronaSwiata(val);
 }
 
 function standardMapper(detale: INovumDetails | null): { data: ICechy, raw?: string[] } {

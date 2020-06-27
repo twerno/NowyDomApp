@@ -1,8 +1,8 @@
-import { IDataProvider } from 'core/oferta/IOfertaProvider';
-import { inwestycje } from 'inwestycje/inwestycje';
+import { IDataProvider } from './core/oferta/IOfertaProvider';
+import { inwestycje } from './inwestycje/inwestycje';
 import InwestycjaDataProviderTaskRunner from './core/oferta/InwestycjaDataProviderTaskRunner';
 import ProvideOfferTask1 from './core/oferta/tasks/ProvideOfferTask1';
-import { IIProvideOfferSummary } from 'core/oferta/tasks/AbstractZapiszZmianyTask';
+import { IIProvideOfferSummary } from './core/oferta/tasks/AbstractZapiszZmianyTask';
 
 export default {
     runOne,
@@ -14,6 +14,7 @@ async function runOne(task: string | IDataProvider<any, any>) {
         ? inwestycje.filter(inwestycja => inwestycja.inwestycjaId === task)
             .map(inwestycja => new ProvideOfferTask1(inwestycja))
         : [new ProvideOfferTask1(task)];
+
 
     const { date, summary } = await InwestycjaDataProviderTaskRunner.procesInwestycjaSeq(tasks);
 

@@ -2,7 +2,6 @@ import { IDataProvider } from "../../core/oferta/IOfertaProvider";
 import OstojaMapper from "./OstojaMapper";
 import { IOstojaListElement, IOstojaOfferDetails } from "./OstojaModel";
 import OstojaOfertaBuilder from "./OstojaOfertaBuilder";
-import { registerInwestycja } from "../../inwestycje/inwestycje";
 
 export const Ostoja: IDataProvider<IOstojaListElement, IOstojaOfferDetails> = {
 
@@ -26,5 +25,3 @@ export const Ostoja: IDataProvider<IOstojaListElement, IOstojaOfferDetails> = {
 
     offerBuilder: OstojaOfertaBuilder
 };
-
-registerInwestycja(Ostoja);

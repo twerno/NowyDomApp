@@ -1,8 +1,7 @@
 import { IDataProvider } from "../../core/oferta/IOfertaProvider";
-import { INovumDetails, INovumListElement } from "./NovumSchema";
-import NovumOfertaBuilder from "./NovumOfertaBuilder";
 import NovumMapper from "./NovumMapper";
-import { registerInwestycja } from "../../inwestycje/inwestycje";
+import NovumOfertaBuilder from "./NovumOfertaBuilder";
+import { INovumDetails, INovumListElement } from "./NovumSchema";
 
 export const Novum: IDataProvider<INovumListElement, INovumDetails> = {
 
@@ -35,5 +34,3 @@ export const Novum: IDataProvider<INovumListElement, INovumDetails> = {
 
     offerBuilder: NovumOfertaBuilder,
 };
-
-registerInwestycja(Novum);

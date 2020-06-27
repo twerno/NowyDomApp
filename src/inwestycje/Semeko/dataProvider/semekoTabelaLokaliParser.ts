@@ -1,10 +1,12 @@
 import { HTMLElement, parse } from 'node-html-parser';
 import { IDataProvider, IParseListProps } from "../../../core/oferta/IOfertaProvider";
-import { ICechy, IRawData, OdbiorType, Status } from "../../../core/oferta/model/IOfertaModel";
+import { ICechy, IRawData } from "../../../core/oferta/model/IOfertaModel";
 import ProvideOfferTask1 from "../../../core/oferta/tasks/ProvideOfferTask1";
 import { IAsyncTask } from "../../../core/asyncTask/IAsyncTask";
 import { HtmlParserHelper } from '../../../core/utils/HtmlParserHelper';
 import { ISemekoDetails, ISemekoListElement } from "./SemekoModel";
+import { Status } from '../../../core/oferta/model/Status';
+import { OdbiorType } from '../../../core/oferta/model/OdbiorType';
 
 export default (
     html: string,
