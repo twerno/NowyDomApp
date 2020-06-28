@@ -9,7 +9,7 @@ export interface ISemekoListElement extends IListElement {
     nrLokalu: string;
     pietro: number | IRawData;
     metraz: number | IRawData;
-    liczbaPokoi: number | IRawData;
+    lpPokoj: number | IRawData;
     odbior: OdbiorType;
     status: Status;
     cechy: MapWithRawType<ICechy>;

@@ -19,7 +19,7 @@ function miesiac2str(idx: number): string {
 const lpRzymskie = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
 
 function lp2Rzymskie(lp: number): string {
-    const result = miesiace[lp - 1];
+    const result = lpRzymskie[lp - 1];
 
     return result || `${lp}`;
 }

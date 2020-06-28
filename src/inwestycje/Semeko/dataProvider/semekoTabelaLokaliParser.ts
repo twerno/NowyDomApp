@@ -49,7 +49,7 @@ function rowMapper(
         ...h.asString('nrLokalu', row?.querySelector('.c2')),
         ...h.asInt('pietro', row?.querySelector('.c3')),
         ...h.asFloat('metraz', row?.querySelector('.c5')),
-        ...h.asInt('liczbaPokoi', row?.querySelector('.c6')),
+        ...h.asInt('lpPokoj', row?.querySelector('.c6')),
         ...h.asCustom('odbior', row?.querySelector('.c7'), { mapper: odbiorMapper }),
         status: Status.WOLNE,
         ...h.asMap("cechy", row?.querySelectorAll('.c9 span.more4'), cechaParser, { notEmpty: false }),

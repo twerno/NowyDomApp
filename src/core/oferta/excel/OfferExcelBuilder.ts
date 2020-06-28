@@ -25,23 +25,26 @@ async function writeOfertaStanSheet(sheet: Excel.Worksheet) {
         { state: 'frozen', xSplit: 3, ySplit: 1, activeCell: 'A1' }
     ];
 
-    sheet.columns = [
-        header('Inwestycja', 15),
-        header('Budynek', 10),
-        header('Mieszkanie', 10),
-        header('Status'),
-        header('Developer'),
-        header('Dodana dnia'),
-        header('Metraż'),
-        header('Cena'),
-        header('Cena za metr'),
-        header('Liczba kondygnacji'),
-        header('Liczba pokoi'),
-        header('Odbiór'),
-        header('Piętro'),
-        header('Typ'),
-        header('Strony świata'),
-    ];
+    registerColumns(sheet,
+        [
+            column('Inwestycja', { width: 15 }),
+            column('Budynek', { width: 10 }),
+            column('Mieszkanie', { width: 10 }),
+            column('Status'),
+            column('Developer'),
+            column('Dodana dnia'),
+            column('Metraż', { numFmt: '# ##0.00 "m²"' }),
+            column('Cena', { numFmt: '# ##0.00 [$PLN]' }),
+            column('Cena za metr', { numFmt: '# ##0.00 [$PLN]' }),
+            column('Kondygnacje'),
+            column('Liczba pokoi'),
+            column('Odbiór'),
+            column('Piętro'),
+            column('Typ'),
+            column('Strony świata'),
+            column('Id'),
+        ]
+    );
 
     setColStyle(sheet, stanList);
 
@@ -56,13 +59,13 @@ async function writeOfertaStanSheet(sheet: Excel.Worksheet) {
                 'Status': StatusHelper.status2string(v.data.status),
                 'Metraż': number2Excel(v.data.metraz),
                 'Cena': number2Excel(v.data.cena),
-                'Liczba kondygnacji': v.data.liczbaKondygnacji,
+                'Kondygnacje': v.data.liczbaKondygnacji,
                 'Liczba pokoi': valOrRaw2Str(v.data.lpPokoj),
                 'Odbiór': OdbiorTypeHelper.odbior2Str(v.data.odbior),
                 'Piętro': valOrRaw2Str(v.data.pietro),
                 'Typ': TypHelper.typ2str(v.data.typ),
                 'Strony świata': v.data.stronySwiata?.map(StronaSwiataHelper.stronaSwiata2Short).join(', '),
-
+                "Id": v.ofertaId
             }
         );
 
@@ -101,9 +104,6 @@ function setColStyle(sheet: Excel.Worksheet, recordList: any[]) {
             cellEqualsRule('"Sprzedane"', { fill: solidBgPattern(sprzedaneColor) }),
         ]
     });
-
-    sheet.getColumn('Cena').numFmt = '# ##0.00 [$PLN];-# ##0.00 [$PLN]';
-    sheet.getColumn('Liczba kondygnacji').numFmt = '';
 }
 
 function valOrRaw2Str<T>(valOrRaw: T | IRawData, mapper?: (val: T) => string): string | null {
@@ -121,11 +121,27 @@ function valOrRaw2Str<T>(valOrRaw: T | IRawData, mapper?: (val: T) => string): s
         : JSON.stringify(val);
 }
 
-function header(header: string, width?: number): Partial<Excel.Column> {
+function registerColumns(
+    sheet: Excel.Worksheet,
+    columns: Array<Required<Pick<Excel.Column, 'header' | 'key'>> & Partial<Pick<Excel.Column, 'width' | 'numFmt'>>>
+) {
+    sheet.columns = columns;
+
+    columns.forEach(colDef => {
+        const column = sheet.getColumn(colDef.key);
+        column.numFmt = colDef.numFmt;
+    })
+}
+
+function column(
+    header: string,
+    props?: Partial<Pick<Excel.Column, 'width' | 'numFmt'>>
+) {
     return {
+        ...props,
         header,
         key: header,
-        width: width || 15
+        width: props?.width || 15,
     }
 }
 
