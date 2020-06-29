@@ -1,7 +1,10 @@
-import ProvideOfferTask1 from "./tasks/ProvideOfferTask1";
+import ProvideOfferTask1, { IProvideOfferTaskProps } from "./tasks/ProvideOfferTask1";
 import { IIProvideOfferSummary, getEmptyProvideOfferStats, add2Summary, IProvideOfferStats } from "./tasks/AbstractZapiszZmianyTask";
 import { AsyncTaskRunner } from "../../core/asyncTask/AsyncTaskRunner";
 import { provideDir, saveFile } from "../../utils/FileSave";
+import { OfertaUpdateService } from "./tasks/OfertaUpdateService";
+import { ofertaRepo } from "./repo/OfertaRecordRepo";
+import { ofertaOpeRepo } from "./repo/OfertaRecordOpeRepo";
 
 export default {
     procesInwestycjaSeq,
@@ -16,12 +19,25 @@ async function procesInwestycjaSeq(tasks: ProvideOfferTask1[]) {
     for (const task of tasks) {
         const errors: any[] = [];
         const stats = getEmptyProvideOfferStats();
-        await AsyncTaskRunner([task], {
+        const updateService = new OfertaUpdateService(
+            task.dataProvider,
+            {
+                save: async (record) => ofertaRepo.put(record),
+                load: async (inwestycjaId) => ofertaRepo.queryByPartitionKey(inwestycjaId)
+            },
+            {
+                save: async (recordOpe) => ofertaOpeRepo.put(recordOpe),
+            },
+            stats
+        );
+        await updateService.buildCache();
+        await AsyncTaskRunner<IProvideOfferTaskProps>([task], {
             concurency: 10,
-            props: stats
+            props: { stats, updateService }
         }, errors)
             .then(() => taskLogger({ errors, task, date, stats }))
             .catch(err => taskLogger({ err, errors, task, date, stats }));
+        await updateService.wyliczIZapiszUsuniete();
 
         summary = add2Summary(task.dataProvider, stats, errors, summary);
     }

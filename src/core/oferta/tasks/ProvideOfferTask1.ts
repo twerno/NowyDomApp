@@ -4,18 +4,24 @@ import { IDataProvider, IListElement } from "../IOfertaProvider";
 import ProvideOfferTask2 from "./ProvideOfferTask2";
 import TaskHelper from '../../asyncTask/TaskHelper';
 import { IProvideOfferStats } from "./AbstractZapiszZmianyTask";
+import { OfertaUpdateService } from "./OfertaUpdateService";
+
+export interface IProvideOfferTaskProps {
+    stats: IProvideOfferStats;
+    updateService: OfertaUpdateService;
+}
 
 /**
  * Task buduje listę ofert ze strony i dla każdej oferty nadziewa kolejny task
  */
-class ProvideOfferTask1<T extends IListElement = IListElement, D = any> implements IAsyncTask<IProvideOfferStats> {
+class ProvideOfferTask1<T extends IListElement = IListElement, D = any> implements IAsyncTask<IProvideOfferTaskProps> {
 
     public constructor(
         public readonly dataProvider: IDataProvider<T, D>,
         public readonly priority?: number) {
     }
 
-    public async run(errors: any[], stats: IProvideOfferStats) {
+    public async run(errors: any[], props: IProvideOfferTaskProps) {
         const url = this.dataProvider.getListUrl();
 
         const listHtml = await this.downloadLists(url, errors);

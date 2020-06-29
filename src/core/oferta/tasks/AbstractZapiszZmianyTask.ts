@@ -1,11 +1,10 @@
-import { ofertaOpeRepo } from "../repo/OfertaRecordOpeRepo";
-import { ofertaRepo } from "../repo/OfertaRecordRepo";
-import { IAsyncTask } from "../../asyncTask/IAsyncTask";
-import TypeUtils from "../../../utils/TypeUtils";
-import { IDataProvider, IListElement } from "../IOfertaProvider";
-import { IOfertaDane, IOfertaRecord, IOfertaRecordOpe } from "../model/IOfertaModel";
 import { IStringMap } from "utils/IMap";
-import { Status } from "../model/Status";
+import { IAsyncTask } from "../../asyncTask/IAsyncTask";
+import { IDataProvider, IListElement } from "../IOfertaProvider";
+import { IOfertaDane, IOfertaRecord } from "../model/IOfertaModel";
+import { ofertaRepo } from "../repo/OfertaRecordRepo";
+import { OfertaUpdateHelper } from "./OfertaUpdateService";
+import { IProvideOfferTaskProps } from "./ProvideOfferTask1";
 
 export interface IProvideOfferStats {
     total: number,
@@ -92,12 +91,12 @@ export const getEmptyProvideOfferStats = (): IProvideOfferStats => (
     }
 );
 
-abstract class AbstractZapiszZmianyTask<T extends IListElement = IListElement, D = any> implements IAsyncTask<IProvideOfferStats> {
+abstract class AbstractZapiszZmianyTask<T extends IListElement = IListElement, D = any> implements IAsyncTask<IProvideOfferTaskProps> {
 
     public constructor(
         protected readonly dataProvider: IDataProvider<T, D>) { }
 
-    abstract run(errors: any[], stats: IProvideOfferStats): Promise<IAsyncTask | IAsyncTask[]>;
+    abstract run(errors: any[], props: IProvideOfferTaskProps): Promise<IAsyncTask | IAsyncTask[]>;
 
     protected async wyliczZmianyIZapisz(
         ofertaId: string,
@@ -108,170 +107,15 @@ abstract class AbstractZapiszZmianyTask<T extends IListElement = IListElement, D
     ) {
         const stan = fixedStan || await this.pobierzStan(ofertaId);
 
-        stats.total++;
-
-        const zmiana = this.wyliczZmiane(ofertaId, offerData, stan, stats);
-
-        if (zmiana) {
-            this.zapiszZmiany(zmiana);
-        }
-        else {
-            stats.unchanged++;
-        }
-
+        const zmiana = OfertaUpdateHelper.wyliczZmiane({ id: ofertaId, data: offerData }, stan, this.dataProvider, stats);
         return zmiana;
     }
 
     protected async pobierzStan(ofertaId: string) {
-        return ofertaRepo.get({
+        return ofertaRepo.getOne({
             inwestycjaId: this.dataProvider.inwestycjaId,
             ofertaId: ofertaId
         });
-    }
-
-    private wyliczZmiane(
-        ofertaId: string,
-        offerData: IOfertaDane | null,
-        stan: IOfertaRecord | undefined,
-        stats: IProvideOfferStats
-    ): { rekord: IOfertaRecord, ope: IOfertaRecordOpe } | null {
-
-        if (!stan) {
-            return !offerData
-                ? null
-                : this.nowyRekord(ofertaId, offerData, stats)
-        }
-
-        // usunięty
-        if (!offerData) {
-            return this.usunietyRekord(stan, stats);
-        }
-
-        // wylicz zmiane
-        return this.zmienionyRekord(stan, offerData, stats);
-    }
-
-    protected async zapiszZmiany(zmiany: { rekord: IOfertaRecord, ope: IOfertaRecordOpe }) {
-        await ofertaOpeRepo.put(zmiany.ope);
-        return ofertaRepo.put(zmiany.rekord);
-    }
-
-    private nowyRekord(
-        ofertaId: string,
-        offerData: IOfertaDane,
-        stats: IProvideOfferStats
-    ): { rekord: IOfertaRecord, ope: IOfertaRecordOpe } {
-        const timestamp = new Date().getTime();
-
-        stats.added.count++;
-        stats.added.records.push({ ...offerData, id: ofertaId });
-
-        const rekord: IOfertaRecord = {
-            inwestycjaId: this.dataProvider.inwestycjaId, // partition_key
-            ofertaId: ofertaId, // sort_key
-            developerId: this.dataProvider.developerId,
-            version: 1,
-            created_at: timestamp,
-            updated_at: timestamp,
-            data: offerData,
-        };
-
-        const ope: IOfertaRecordOpe = {
-            ofertaId: ofertaId,  // partition_key
-            version: 1, // sort_key
-            timestamp,
-            data: offerData,
-            updatedBy: 'developer'
-        };
-
-        return { rekord, ope };
-    }
-
-    private usunietyRekord(
-        stan: IOfertaRecord,
-        stats: IProvideOfferStats
-    ): { rekord: IOfertaRecord, ope: IOfertaRecordOpe } {
-        const timestamp = new Date().getTime();
-
-        const rekord: IOfertaRecord = {
-            ...stan,
-            version: stan.version + 1,
-            data: {
-                ...stan.data,
-                status: Status.USUNIETA
-            }
-        };
-
-        stats.deleted.count++;
-        stats.deleted.records.push({ id: stan.ofertaId });
-
-        const ope: IOfertaRecordOpe = {
-            ofertaId: stan.ofertaId,  // partition_key
-            version: stan.version + 1, // sort_key
-            timestamp,
-            data: { status: Status.USUNIETA },
-            updatedBy: 'developer'
-        }
-
-        return { rekord, ope };
-    }
-
-    private zmienionyRekord(
-        stan: IOfertaRecord,
-        oferta: IOfertaDane,
-        stats: IProvideOfferStats
-    ): { rekord: IOfertaRecord, ope: IOfertaRecordOpe } | null {
-        const timestamp = new Date().getTime();
-
-        const delta = this.wyliczDelta(stan, oferta);
-
-        if (delta === null) {
-            return null;
-        }
-
-        stats.updated.count++;
-        stats.updated.records.push({ id: stan.ofertaId, ...delta });
-
-        const rekord: IOfertaRecord = {
-            ...stan,
-            version: stan.version + 1,
-            data: {
-                ...stan.data,
-                ...delta
-            }
-        };
-
-        const ope: IOfertaRecordOpe = {
-            ofertaId: stan.ofertaId,  // partition_key
-            version: stan.version + 1, // sort_key
-            timestamp,
-            data: delta,
-            updatedBy: 'developer'
-        }
-
-        return { rekord, ope };
-
-    }
-    private wyliczDelta<T extends IOfertaDane, S extends { data: T }>(stan: S, oferta: T) {
-        const result: Partial<T> = {};
-        let hasChange = false;
-
-        for (const key in oferta) {
-            if (oferta[key] instanceof Object) {
-                if (!TypeUtils.deepEqual(oferta[key], stan.data[key])) {
-                    result[key] = oferta[key];
-                    hasChange = true;
-                }
-            } else {
-                if (oferta[key] !== stan.data[key]) {
-                    result[key] = oferta[key];
-                    hasChange = true;
-                }
-            }
-
-        }
-
-        return hasChange ? result : null;
     }
 }
 

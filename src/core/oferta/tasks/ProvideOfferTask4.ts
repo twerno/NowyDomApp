@@ -4,6 +4,7 @@ import S3Utils from "../../../utils/S3Utils";
 import AbstractZapiszZmianyTask, { IProvideOfferStats } from "./AbstractZapiszZmianyTask";
 import { IDataProvider, IListElement } from "../IOfertaProvider";
 import { IOfertaRecord } from "../model/IOfertaModel";
+import { IProvideOfferTaskProps } from "./ProvideOfferTask1";
 
 /**
  * pobranie dodatkowych zasobów, odłożenie ich na s3 i aktualizacja bazy danych
@@ -18,7 +19,7 @@ class ProvideOfferTask4<T extends IListElement = IListElement, D = any> extends 
         super(dataProvider);
     }
 
-    public async run(errors: any[], stats: IProvideOfferStats) {
+    public async run(errors: any[], { stats }: IProvideOfferTaskProps) {
 
         const doPobrania = this.stan.data.zasobyDoPobrania
             .filter(z => !this.zasobPobrany(z));
