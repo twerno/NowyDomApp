@@ -50,6 +50,8 @@ export interface IOfertaDane {
 
     // id zasobu x sciazka na s3
     zasobyPobrane?: { id: string, s3Filename: string }[];
+
+    sprzedaneData?: number;
 }
 
 export function isRawData(x: any): x is IRawData {

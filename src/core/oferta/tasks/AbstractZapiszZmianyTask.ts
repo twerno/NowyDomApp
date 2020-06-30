@@ -104,7 +104,7 @@ abstract class AbstractZapiszZmianyTask<T extends IListElement = IListElement, D
         props: IProvideOfferTaskProps,
         fixedStan?: IOfertaRecord
     ) {
-        const stan = fixedStan || await this.pobierzStan(ofertaId, props);
+        const stan = fixedStan || await this.pobierzStan(ofertaId, props) || null;
 
         const zmiana = OfertaUpdateHelper.wyliczZmiane({ id: ofertaId, data: offerData }, stan, this.dataProvider, props.stats);
         return zmiana;

@@ -152,7 +152,8 @@ const InternalOfertaUpdateHelper = {
             version: stan.version + 1,
             data: {
                 ...stan.data,
-                status: Status.USUNIETA
+                status: Status.USUNIETA,
+                sprzedaneData: timestamp,
             }
         };
 
@@ -160,7 +161,10 @@ const InternalOfertaUpdateHelper = {
             ofertaId: stan.ofertaId,  // partition_key
             version: stan.version + 1, // sort_key
             timestamp,
-            data: { status: Status.USUNIETA },
+            data: {
+                status: Status.USUNIETA,
+                sprzedaneData: timestamp,
+            },
             updatedBy: 'developer'
         }
 
