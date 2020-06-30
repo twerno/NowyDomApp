@@ -1,4 +1,4 @@
-import { IListElement } from "core/oferta/IOfertaProvider";
+import { IListElement } from "../../core/oferta/IOfertaProvider";
 import { IRawData, ICechy } from "../../core/oferta/model/IOfertaModel";
 import { StronaSwiata } from "../../core/oferta/model/StronySwiata";
 import { Status } from "../../core/oferta/model/Status";

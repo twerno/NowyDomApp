@@ -1,13 +1,15 @@
-import { IAsyncTask } from "../../asyncTask/IAsyncTask";
 import WebDownloader from "../../../utils/WebDownloader";
-import { IDataProvider, IListElement } from "../IOfertaProvider";
-import ProvideOfferTask2 from "./ProvideOfferTask2";
+import { IAsyncTask } from "../../asyncTask/IAsyncTask";
 import TaskHelper from '../../asyncTask/TaskHelper';
+import { IDataProvider, IListElement } from "../IOfertaProvider";
 import { IProvideOfferStats } from "./AbstractZapiszZmianyTask";
+import { IEnv } from "./IEnv";
 import { OfertaUpdateService } from "./OfertaUpdateService";
+import ProvideOfferTask2 from "./ProvideOfferTask2";
 
 export interface IProvideOfferTaskProps {
     stats: IProvideOfferStats;
+    env: IEnv,
     updateService: OfertaUpdateService;
 }
 

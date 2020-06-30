@@ -1,4 +1,4 @@
-import { IListElement } from "core/oferta/IOfertaProvider";
+import { IListElement } from "../../core/oferta/IOfertaProvider";
 import { IRawData } from "../../core/oferta/model/IOfertaModel";
 
 export interface INovumListElement extends IListElement {

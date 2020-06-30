@@ -1,25 +1,26 @@
 import Excel from 'exceljs';
-import { ofertaRepo } from '../repo/OfertaRecordRepo';
+import { IOfertaRepoKey } from '../repo/OfertaRecordRepo';
 import { IRawData, isRawData } from '../model/IOfertaModel';
 import { StronaSwiataHelper } from '../model/StronySwiata';
-import { StatusHelper } from '../model/Status';
+import { StatusHelper, Status } from '../model/Status';
 import { OdbiorTypeHelper } from '../model/OdbiorType';
 import { TypHelper } from '../model/Typ';
+import { IOfertaStateService } from '../service/IOfertaStateService';
 
-export async function buildExcel() {
+export async function buildExcel(ofertaStateService: IOfertaStateService<IOfertaRepoKey>) {
 
     const workbook = new Excel.Workbook();
     const sheet = workbook.addWorksheet('Stan');
 
-    await writeOfertaStanSheet(sheet);
+    await writeOfertaStanSheet(sheet, ofertaStateService);
     // await test(workbook);
 
     await workbook.xlsx.writeFile('test.xlsx');
     console.log('done');
 }
 
-async function writeOfertaStanSheet(sheet: Excel.Worksheet) {
-    const stanList = await ofertaRepo.scan();
+async function writeOfertaStanSheet(sheet: Excel.Worksheet, ofertaStateService: IOfertaStateService<IOfertaRepoKey>) {
+    const stanList = await ofertaStateService.getAll();
 
     sheet.views = [
         { state: 'frozen', xSplit: 3, ySplit: 1, activeCell: 'A1' }
@@ -56,7 +57,7 @@ async function writeOfertaStanSheet(sheet: Excel.Worksheet) {
                 'Mieszkanie': valOrRaw2Str(v.data.nrLokalu),
                 'Developer': v.developerId,
                 'Dodana dnia': new Date(v.created_at),
-                'Status': StatusHelper.status2string(v.data.status),
+                'Status': StatusHelper.status2string(v.data.status === Status.USUNIETA ? Status.SPRZEDANE : v.data.status),
                 'Metraż': number2Excel(v.data.metraz),
                 'Cena': number2Excel(v.data.cena),
                 'Kondygnacje': v.data.liczbaKondygnacji,

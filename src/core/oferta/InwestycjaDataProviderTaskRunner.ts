@@ -1,17 +1,16 @@
-import ProvideOfferTask1, { IProvideOfferTaskProps } from "./tasks/ProvideOfferTask1";
-import { IIProvideOfferSummary, getEmptyProvideOfferStats, add2Summary, IProvideOfferStats } from "./tasks/AbstractZapiszZmianyTask";
 import { AsyncTaskRunner } from "../../core/asyncTask/AsyncTaskRunner";
 import { provideDir, saveFile } from "../../utils/FileSave";
+import { add2Summary, getEmptyProvideOfferStats, IIProvideOfferSummary, IProvideOfferStats } from "./tasks/AbstractZapiszZmianyTask";
 import { OfertaUpdateService } from "./tasks/OfertaUpdateService";
-import { ofertaRepo } from "./repo/OfertaRecordRepo";
-import { ofertaOpeRepo } from "./repo/OfertaRecordOpeRepo";
+import ProvideOfferTask1, { IProvideOfferTaskProps } from "./tasks/ProvideOfferTask1";
+import { IEnv } from "./tasks/IEnv";
 
 export default {
     procesInwestycjaSeq,
     saveLogFile
 }
 
-async function procesInwestycjaSeq(tasks: ProvideOfferTask1[]) {
+async function procesInwestycjaSeq(tasks: ProvideOfferTask1[], env: IEnv) {
     const date = new Date;
 
     let summary: IIProvideOfferSummary | undefined = undefined;
@@ -19,24 +18,17 @@ async function procesInwestycjaSeq(tasks: ProvideOfferTask1[]) {
     for (const task of tasks) {
         const errors: any[] = [];
         const stats = getEmptyProvideOfferStats();
-        const updateService = new OfertaUpdateService(
-            task.dataProvider,
-            {
-                save: async (record) => ofertaRepo.put(record),
-                load: async (inwestycjaId) => ofertaRepo.queryByPartitionKey(inwestycjaId)
-            },
-            {
-                save: async (recordOpe) => ofertaOpeRepo.put(recordOpe),
-            },
-            stats
-        );
+
+        const updateService = new OfertaUpdateService(task.dataProvider, env, stats);
         await updateService.buildCache();
+
         await AsyncTaskRunner<IProvideOfferTaskProps>([task], {
             concurency: 10,
-            props: { stats, updateService }
+            props: { stats, env, updateService }
         }, errors)
             .then(() => taskLogger({ errors, task, date, stats }))
             .catch(err => taskLogger({ err, errors, task, date, stats }));
+
         await updateService.wyliczIZapiszUsuniete();
 
         summary = add2Summary(task.dataProvider, stats, errors, summary);

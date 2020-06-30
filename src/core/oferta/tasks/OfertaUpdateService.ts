@@ -4,15 +4,7 @@ import { IDataProvider } from "../IOfertaProvider";
 import { IOfertaDane, IOfertaRecord, IOfertaRecordOpe } from "../model/IOfertaModel";
 import { Status } from "../model/Status";
 import { IProvideOfferStats } from "./AbstractZapiszZmianyTask";
-
-interface IOfertaStateService {
-    load(inwestycja: string): Promise<IOfertaRecord[]>,
-    save(record: IOfertaRecord): Promise<any>
-}
-
-interface IOfertaOpeService {
-    save(record: IOfertaRecordOpe): Promise<any>
-}
+import { IEnv } from "./IEnv";
 
 export class OfertaUpdateService {
 
@@ -20,15 +12,14 @@ export class OfertaUpdateService {
 
     public constructor(
         protected readonly dataProvider: IDataProvider<any, any>,
-        protected readonly stanService: IOfertaStateService,
-        protected readonly opeService: IOfertaOpeService,
+        protected readonly env: IEnv,
         protected readonly stats: IProvideOfferStats,
     ) {
 
     }
 
     public async buildCache() {
-        const oferty = await this.stanService.load(this.dataProvider.inwestycjaId)
+        const oferty = await this.env.stanService.load(this.dataProvider.inwestycjaId)
         oferty.forEach(oferta => this.cache[oferta.ofertaId] = oferta);
     }
 
@@ -46,8 +37,8 @@ export class OfertaUpdateService {
     }
 
     protected async zapiszZmiany(zmiany: IOfertaWyliczonaZmina) {
-        await this.opeService.save(zmiany.ope);
-        await this.stanService.save(zmiany.rekord);
+        await this.env.opeService.save(zmiany.ope);
+        await this.env.stanService.save(zmiany.rekord);
     }
 
     public async wyliczIZapiszUsuniete() {
@@ -151,7 +142,8 @@ const InternalOfertaUpdateHelper = {
     usunietyRekord: function (stan: IOfertaRecord): IOfertaWyliczonaZmina | null {
         const timestamp = new Date().getTime();
 
-        if (stan.data.status === Status.SPRZEDANE) {
+        if (stan.data.status === Status.USUNIETA
+            || stan.data.status === Status.SPRZEDANE) {
             return null;
         }
 
@@ -160,7 +152,7 @@ const InternalOfertaUpdateHelper = {
             version: stan.version + 1,
             data: {
                 ...stan.data,
-                status: Status.SPRZEDANE
+                status: Status.USUNIETA
             }
         };
 
@@ -168,7 +160,7 @@ const InternalOfertaUpdateHelper = {
             ofertaId: stan.ofertaId,  // partition_key
             version: stan.version + 1, // sort_key
             timestamp,
-            data: { status: Status.SPRZEDANE },
+            data: { status: Status.USUNIETA },
             updatedBy: 'developer'
         }
 

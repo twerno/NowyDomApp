@@ -1,10 +1,9 @@
-import { IStringMap } from "utils/IMap";
 import { IAsyncTask } from "../../asyncTask/IAsyncTask";
 import { IDataProvider, IListElement } from "../IOfertaProvider";
 import { IOfertaDane, IOfertaRecord } from "../model/IOfertaModel";
-import { ofertaRepo } from "../repo/OfertaRecordRepo";
 import { OfertaUpdateHelper } from "./OfertaUpdateService";
 import { IProvideOfferTaskProps } from "./ProvideOfferTask1";
+import { IStringMap } from "../../../utils/IMap";
 
 export interface IProvideOfferStats {
     total: number,
@@ -102,20 +101,21 @@ abstract class AbstractZapiszZmianyTask<T extends IListElement = IListElement, D
         ofertaId: string,
         offerData: IOfertaDane | null,
         errors: any[],
-        stats: IProvideOfferStats,
+        props: IProvideOfferTaskProps,
         fixedStan?: IOfertaRecord
     ) {
-        const stan = fixedStan || await this.pobierzStan(ofertaId);
+        const stan = fixedStan || await this.pobierzStan(ofertaId, props);
 
-        const zmiana = OfertaUpdateHelper.wyliczZmiane({ id: ofertaId, data: offerData }, stan, this.dataProvider, stats);
+        const zmiana = OfertaUpdateHelper.wyliczZmiane({ id: ofertaId, data: offerData }, stan, this.dataProvider, props.stats);
         return zmiana;
     }
 
-    protected async pobierzStan(ofertaId: string) {
-        return ofertaRepo.getOne({
+    protected async pobierzStan(ofertaId: string, props: IProvideOfferTaskProps) {
+        const key = {
             inwestycjaId: this.dataProvider.inwestycjaId,
             ofertaId: ofertaId
-        });
+        };
+        return props.env.stanService.getOne(key)
     }
 }
 

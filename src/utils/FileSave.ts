@@ -7,3 +7,8 @@ export function saveFile(fileName: string, body: any) {
 export function provideDir(dirPath: string) {
     fs.mkdirSync(dirPath, { recursive: true });
 }
+
+export function safeSaveFile(dir: string, fileName: string, body: any) {
+    provideDir(dir);
+    saveFile(`${dir}/${fileName}`, body);
+}
