@@ -1,26 +1,24 @@
 import Excel from 'exceljs';
-import { IOfertaRepoKey } from '../repo/OfertaRecordRepo';
-import { IRawData, isRawData } from '../model/IOfertaModel';
-import { StronaSwiataHelper } from '../model/StronySwiata';
-import { StatusHelper, Status } from '../model/Status';
+import { IRawData, isRawData, IOfertaRecord } from '../model/IOfertaModel';
 import { OdbiorTypeHelper } from '../model/OdbiorType';
+import { Status, StatusHelper } from '../model/Status';
+import { StronaSwiataHelper } from '../model/StronySwiata';
 import { TypHelper } from '../model/Typ';
-import { IOfertaStateService } from '../service/IOfertaStateService';
+import { IEnv } from '../tasks/IEnv';
 
-export async function buildExcel(ofertaStateService: IOfertaStateService<IOfertaRepoKey>) {
+export async function buildExcel(env: IEnv) {
 
     const workbook = new Excel.Workbook();
     const sheet = workbook.addWorksheet('Stan');
 
-    await writeOfertaStanSheet(sheet, ofertaStateService);
-    // await test(workbook);
+    await writeOfertaStanSheet(sheet, env);
 
     await workbook.xlsx.writeFile('test.xlsx');
-    console.log('done');
+    console.log('plik test.xlsx został wygenerowany');
 }
 
-async function writeOfertaStanSheet(sheet: Excel.Worksheet, ofertaStateService: IOfertaStateService<IOfertaRepoKey>) {
-    const stanList = await ofertaStateService.getAll();
+async function writeOfertaStanSheet(sheet: Excel.Worksheet, env: IEnv) {
+    const stanList = await env.stanService.getAll();
 
     sheet.views = [
         { state: 'frozen', xSplit: 3, ySplit: 1, activeCell: 'A1' }
@@ -28,13 +26,12 @@ async function writeOfertaStanSheet(sheet: Excel.Worksheet, ofertaStateService: 
 
     registerColumns(sheet,
         [
-            column('Inwestycja', { width: 15 }),
-            column('Budynek', { width: 10 }),
-            column('Mieszkanie', { width: 10 }),
-            column('Status'),
-            column('Developer'),
-            column('Dodana dnia'),
-            column('Metraż', { numFmt: '# ##0.00 "m²"' }),
+            column('Inwestycja', { width: 12 }),
+            column('Lokal', { width: 9 }),
+            column('Metraż', { numFmt: '# ##0.00 "m²"', width: 10 }),
+            column('Status', { hidden: true }),
+            column('Dodane'),
+            column('Sprzedane'),
             column('Cena', { numFmt: '# ##0.00 [$PLN]' }),
             column('Cena za metr', { numFmt: '# ##0.00 [$PLN]' }),
             column('Kondygnacje'),
@@ -44,41 +41,64 @@ async function writeOfertaStanSheet(sheet: Excel.Worksheet, ofertaStateService: 
             column('Typ'),
             column('Strony świata'),
             column('Id'),
+            column('Developer'),
         ]
     );
 
     setColStyle(sheet, stanList);
 
-    stanList.forEach(v => {
-        const row = sheet.addRow(
-            {
-                'Inwestycja': v.inwestycjaId,
-                'Budynek': valOrRaw2Str(v.data.budynek),
-                'Mieszkanie': valOrRaw2Str(v.data.nrLokalu),
-                'Developer': v.developerId,
-                'Dodana dnia': new Date(v.created_at),
-                'Status': StatusHelper.status2string(v.data.status === Status.USUNIETA ? Status.SPRZEDANE : v.data.status),
-                'Metraż': number2Excel(v.data.metraz),
-                'Cena': number2Excel(v.data.cena),
-                'Kondygnacje': v.data.liczbaKondygnacji,
-                'Liczba pokoi': valOrRaw2Str(v.data.lpPokoj),
-                'Odbiór': OdbiorTypeHelper.odbior2Str(v.data.odbior),
-                'Piętro': valOrRaw2Str(v.data.pietro),
-                'Typ': TypHelper.typ2str(v.data.typ),
-                'Strony świata': v.data.stronySwiata?.map(StronaSwiataHelper.stronaSwiata2Short).join(', '),
-                "Id": v.ofertaId
-            }
-        );
+    stanList
+        .sort(sortFn)
+        .forEach(v => {
+            const row = sheet.addRow(
+                {
+                    'Inwestycja': v.inwestycjaId,
+                    'Lokal': v.ofertaId.replace(`${v.inwestycjaId}-`, ''),
+                    'Dodane': new Date(v.created_at),
+                    'Sprzedane': v.data.sprzedaneData ? new Date(v.data.sprzedaneData) : undefined,
+                    'Status': StatusHelper.status2string(v.data.status === Status.USUNIETA ? Status.SPRZEDANE : v.data.status),
+                    'Metraż': number2Excel(v.data.metraz),
+                    'Cena': number2Excel(v.data.cena),
+                    'Kondygnacje': v.data.liczbaKondygnacji,
+                    'Liczba pokoi': valOrRaw2Str(v.data.lpPokoj),
+                    'Odbiór': OdbiorTypeHelper.odbior2Str(v.data.odbior),
+                    'Piętro': valOrRaw2Str(v.data.pietro),
+                    'Typ': TypHelper.typ2str(v.data.typ),
+                    'Strony świata': v.data.stronySwiata?.map(StronaSwiataHelper.stronaSwiata2Short).join(', '),
+                    "Id": v.ofertaId,
+                    'Developer': v.developerId,
 
-        const cellAdress = `${sheet.getColumn('Cena za metr').letter}${row.number}`;
-        sheet.getCell(cellAdress).value =
-        {
-            formula: `=${sheet.getColumn('Cena').letter}${row.number}/${sheet.getColumn('Metraż').letter}${row.number}`,
-            date1904: false
-        };
+                }
+            );
+
+            const cellAdress = `${sheet.getColumn('Cena za metr').letter}${row.number}`;
+            const cenaLetter = sheet.getColumn('Cena').letter;
+            const metrazLetter = sheet.getColumn('Metraż').letter;
+            sheet.getCell(cellAdress).value =
+            {
+                formula: `=${cenaLetter}${row.number}/${metrazLetter}${row.number}`,
+                date1904: false
+            };
+        }
+
+        );
+}
+
+function sortFn(a: IOfertaRecord, b: IOfertaRecord): number {
+    const comp1 = a.developerId.localeCompare(b.developerId);
+    if (comp1 !== 0) {
+        return comp1;
     }
 
-    );
+    const comp2 = a.inwestycjaId.localeCompare(b.inwestycjaId);
+    if (comp2 !== 0) {
+        return comp2;
+    }
+
+    const metrazA = typeof a.data.metraz === 'number' ? a.data.metraz : 0;
+    const metrazB = typeof b.data.metraz === 'number' ? b.data.metraz : 0;
+
+    return metrazB - metrazA;
 }
 
 function setColStyle(sheet: Excel.Worksheet, recordList: any[]) {
@@ -136,7 +156,7 @@ function registerColumns(
 
 function column(
     header: string,
-    props?: Partial<Pick<Excel.Column, 'width' | 'numFmt'>>
+    props?: Partial<Pick<Excel.Column, 'width' | 'numFmt' | 'hidden'>>
 ) {
     return {
         ...props,
@@ -179,53 +199,3 @@ function cellEqualsRule(formulae: string, style: Partial<Excel.Style>): Excel.Ce
         }
     );
 }
-
-// async function test(workbook: Excel.Workbook) {
-//     const worksheet = workbook.addWorksheet('sheet', { properties: { tabColor: { argb: 'FF00FF00' } } });
-//     worksheet.columns = [
-//         { header: 'Id', key: 'id', width: 10 },
-//         { header: 'Name', key: 'name', width: 32 },
-//         { header: 'D.O.B.', key: 'DOB', width: 10, outlineLevel: 1 }
-//     ];
-
-
-//     const idCol = worksheet.getColumn('id');
-//     const nameCol = worksheet.getColumn('B');
-//     const dobCol = worksheet.getColumn(3);
-
-//     // set column properties
-
-//     // Note: will overwrite cell value C1
-//     dobCol.header = 'Date of Birth';
-
-//     // Note: this will overwrite cell values C1:C2
-//     dobCol.header = ['Date of Birth', 'A.K.A. D.O.B.', 'test'];
-
-//     // from this point on, this column will be indexed by 'dob' and not 'DOB'
-//     dobCol.key = 'dob';
-
-//     dobCol.width = 15;
-
-//     // Hide the column if you'd like
-//     dobCol.hidden = false;
-
-//     // set an outline level for columns
-//     // worksheet.getColumn(4).outlineLevel = 0;
-//     // worksheet.getColumn(5).outlineLevel = 1;
-//     // dobCol.outlineLevel = 10;
-
-//     worksheet.getColumn(6).values = [1, 2, 3, 4, 5];
-
-//     // add a sparse column of values
-//     worksheet.getColumn(7).values = [null, null, 2, 3, null, 5, null, 7, null, null, null, 11];
-
-//     // worksheet.spliceColumns(3, 2);
-
-//     // // remove one column and insert two more.
-//     // // Note: columns 4 and above will be shifted right by 1 column.
-//     // // Also: If the worksheet has more rows than values in the column inserts,
-//     // //  the rows will still be shifted as if the values existed
-//     // const newCol3Values = [1, 2, 3, 4, 5];
-//     // const newCol4Values = ['one', 'two', 'three', 'four', 'five'];
-//     // worksheet.spliceColumns(3, 1, newCol3Values, newCol4Values);
-// }
