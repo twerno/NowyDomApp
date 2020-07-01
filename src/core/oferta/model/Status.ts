@@ -1,9 +1,9 @@
 import { IRawData, isRawData } from "./IOfertaModel";
 
 export enum Status {
-    'WOLNE' = 1,
-    'REZERWACJA' = 2,
-    'SPRZEDANE' = 3,
+    WOLNE = 1,
+    REZERWACJA = 2,
+    SPRZEDANE = 3,
 }
 
 export const StatusHelper = {
