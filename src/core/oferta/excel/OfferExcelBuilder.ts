@@ -21,25 +21,25 @@ async function writeOfertaStanSheet(sheet: Excel.Worksheet, env: IEnv) {
     const stanList = await env.stanService.getAll();
 
     sheet.views = [
-        { state: 'frozen', xSplit: 3, ySplit: 1, activeCell: 'A1' }
+        { state: 'frozen', xSplit: 2, ySplit: 1, activeCell: 'A1' }
     ];
 
     registerColumns(sheet,
         [
-            column('Inwestycja', { width: 12 }),
+            column('Inwestycja', { width: 15 }),
             column('Lokal', { width: 9 }),
             column('Metraż', { numFmt: '# ##0.00 "m²"', width: 10 }),
-            column('Status', { hidden: true }),
-            column('Dodane'),
-            column('Sprzedane'),
+            column('Liczba pokoi'),
             column('Cena', { numFmt: '# ##0.00 [$PLN]' }),
             column('Cena za metr', { numFmt: '# ##0.00 [$PLN]' }),
-            column('Kondygnacje'),
-            column('Liczba pokoi'),
-            column('Odbiór'),
             column('Piętro'),
-            column('Typ'),
+            column('Kondygnacje'),
+            column('Odbiór'),
             column('Strony świata'),
+            column('Dodane'),
+            column('Sprzedane'),
+            column('Typ'),
+            column('Status', { hidden: true }),
             column('Id'),
             column('Developer'),
         ]
@@ -56,13 +56,13 @@ async function writeOfertaStanSheet(sheet: Excel.Worksheet, env: IEnv) {
                     'Lokal': v.ofertaId.replace(`${v.inwestycjaId}-`, ''),
                     'Dodane': new Date(v.created_at),
                     'Sprzedane': v.data.sprzedaneData ? new Date(v.data.sprzedaneData) : undefined,
-                    'Status': StatusHelper.status2string(v.data.status === Status.USUNIETA ? Status.SPRZEDANE : v.data.status),
+                    'Status': StatusHelper.status2string(v.data.status),
                     'Metraż': number2Excel(v.data.metraz),
                     'Cena': number2Excel(v.data.cena),
-                    'Kondygnacje': v.data.liczbaKondygnacji,
-                    'Liczba pokoi': valOrRaw2Str(v.data.lpPokoj),
+                    'Kondygnacje': number2Excel(v.data.liczbaKondygnacji),
+                    'Liczba pokoi': number2Excel(v.data.lpPokoj),
                     'Odbiór': OdbiorTypeHelper.odbior2Str(v.data.odbior),
-                    'Piętro': valOrRaw2Str(v.data.pietro),
+                    'Piętro': number2Excel(v.data.pietro),
                     'Typ': TypHelper.typ2str(v.data.typ),
                     'Strony świata': v.data.stronySwiata?.map(StronaSwiataHelper.stronaSwiata2Short).join(', '),
                     "Id": v.ofertaId,
@@ -109,7 +109,7 @@ function setColStyle(sheet: Excel.Worksheet, recordList: any[]) {
     const rezerwacjaKolor = 'ffffa6';
     const sprzedaneColor = 'ff6d6d';
     sheet.addConditionalFormatting({
-        ref: `A2:C${recordList.length + 1}`,
+        ref: `A2:B${recordList.length + 1}`,
         rules: [
             { type: 'expression', formulae: [`$${statusCol.letter}2="Wolne"`], style: { fill: solidBgPattern(wolnyColor), border: { right: { style: 'thin', color: { argb: '000000' } } } } },
             { type: 'expression', formulae: [`$${statusCol.letter}2="Rezerwacja"`], style: { fill: solidBgPattern(rezerwacjaKolor) } },
