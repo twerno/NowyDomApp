@@ -82,7 +82,7 @@ function statusMapper(raw: string): Status | null {
     switch (raw) {
         case 'Wolne': return Status.WOLNE;
         case 'Sprzedane': return Status.SPRZEDANE;
-        case 'Rezerwacja': return Status.ZAREZERWOWANE;
+        case 'Rezerwacja': return Status.REZERWACJA;
         default: return null;
     }
 }

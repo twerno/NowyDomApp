@@ -1,8 +1,8 @@
 import { IStringMap } from "../../../utils/IMap";
 import TypeUtils from "../../../utils/TypeUtils";
 import { IDataProvider } from "../IOfertaProvider";
-import { IOfertaDane, IOfertaRecord, IOfertaRecordOpe } from "../model/IOfertaModel";
-import { Status } from "../model/Status";
+import { IOfertaDane, IOfertaRecord, IOfertaRecordOpe, IRawData, isRawData } from "../model/IOfertaModel";
+import { Status, StatusHelper } from "../model/Status";
 import { IProvideOfferStats } from "./AbstractZapiszZmianyTask";
 import { IEnv } from "./IEnv";
 
@@ -77,7 +77,7 @@ export const OfertaUpdateHelper = {
 
         // usunięty
         if (!data) {
-            const result = InternalOfertaUpdateHelper.usunietyRekord(stan);
+            const result = InternalOfertaUpdateHelper.oznaczSprzedane(stan);
             this.updateStats(result, stats);
             return result;
         }
@@ -139,11 +139,10 @@ const InternalOfertaUpdateHelper = {
         return { rekord, ope, type: ZmianaType.NEW };
     },
 
-    usunietyRekord: function (stan: IOfertaRecord): IOfertaWyliczonaZmina | null {
+    oznaczSprzedane: function (stan: IOfertaRecord): IOfertaWyliczonaZmina | null {
         const timestamp = new Date().getTime();
 
-        if (stan.data.status === Status.USUNIETA
-            || stan.data.status === Status.SPRZEDANE) {
+        if (stan.data.status === Status.SPRZEDANE) {
             return null;
         }
 
@@ -152,7 +151,7 @@ const InternalOfertaUpdateHelper = {
             version: stan.version + 1,
             data: {
                 ...stan.data,
-                status: Status.USUNIETA,
+                status: Status.SPRZEDANE,
                 sprzedaneData: timestamp,
             }
         };
@@ -162,7 +161,7 @@ const InternalOfertaUpdateHelper = {
             version: stan.version + 1, // sort_key
             timestamp,
             data: {
-                status: Status.USUNIETA,
+                status: Status.SPRZEDANE,
                 sprzedaneData: timestamp,
             },
             updatedBy: 'developer'
@@ -173,8 +172,22 @@ const InternalOfertaUpdateHelper = {
 
     zmienionyRekord: function (stan: IOfertaRecord, oferta: IOfertaDane): IOfertaWyliczonaZmina | null {
         const timestamp = new Date().getTime();
+        let delta: Partial<IOfertaDane> | null = null;
 
-        const delta = this.wyliczDelta(stan, oferta);
+        // nie rejestrujemy zmian na niekatywnych ofertach (innych niż zmiana statusu)
+        // na niektorych stronach z ofert nieaktywnych usuwane sa niektore dane np. cena
+        if (StatusHelper.isStatusAktywny(oferta.status)) {
+            delta = this.wyliczDelta(stan, oferta);
+        }
+        else if (stan.data.status === oferta.status) {
+            return null;
+        }
+        else if (oferta.status === Status.REZERWACJA) {
+            delta = { status: Status.REZERWACJA };
+        }
+        else if (oferta.status === Status.SPRZEDANE) {
+            return this.oznaczSprzedane(stan);
+        }
 
         if (delta === null) {
             return null;
@@ -212,6 +225,7 @@ const InternalOfertaUpdateHelper = {
                     hasChange = true;
                 }
             } else {
+
                 if (oferta[key] !== stan.data[key]) {
                     result[key] = oferta[key];
                     hasChange = true;
@@ -221,4 +235,5 @@ const InternalOfertaUpdateHelper = {
 
         return hasChange ? result : null;
     },
+
 }

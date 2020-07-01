@@ -71,7 +71,7 @@ function rzymskie2arabskie(liczbaRzymska: string): number {
 function statusMapper(listItem: INovumListElement): Status | IRawData {
     switch (listItem.status) {
         case 'wolne': return Status.WOLNE;
-        case 'zarezerwowane': return Status.ZAREZERWOWANE;
+        case 'zarezerwowane': return Status.REZERWACJA;
         case 'sprzedane': return Status.SPRZEDANE;
         default: return { raw: listItem.status };
     }

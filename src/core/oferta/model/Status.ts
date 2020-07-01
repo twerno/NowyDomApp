@@ -1,15 +1,14 @@
 import { IRawData, isRawData } from "./IOfertaModel";
 
 export enum Status {
-    'PLANOWANE',
-    'WOLNE',
-    'ZAREZERWOWANE',
-    'SPRZEDANE',
-    'USUNIETA'
+    'WOLNE' = 1,
+    'REZERWACJA' = 2,
+    'SPRZEDANE' = 3,
 }
 
 export const StatusHelper = {
     status2string,
+    isStatusAktywny
 }
 
 export function status2string(status: Status | IRawData | undefined | null): string | null {
@@ -22,11 +21,14 @@ export function status2string(status: Status | IRawData | undefined | null): str
     }
 
     switch (status) {
-        case Status.PLANOWANE: return 'Planowane';
         case Status.WOLNE: return 'Wolne';
-        case Status.ZAREZERWOWANE: return 'Rezerwacja';
+        case Status.REZERWACJA: return 'Rezerwacja';
         case Status.SPRZEDANE: return 'Sprzedane';
-        case Status.USUNIETA: return 'Usunięte';
         default: return '' + status;
     }
+}
+
+export function isStatusAktywny(status: Status | IRawData) {
+    return status === Status.WOLNE
+        || isRawData(status);
 }
