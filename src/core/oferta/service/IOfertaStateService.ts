@@ -4,14 +4,14 @@ import { safeSaveFile } from "../../../utils/FileSave";
 
 export interface IOfertaStateService<T> {
     getOne(key: T): Promise<IOfertaRecord | undefined>,
-    load(inwestycja: string): Promise<IOfertaRecord[]>,
+    getByInwestycja(inwestycja: string): Promise<IOfertaRecord[]>,
     save(record: IOfertaRecord): Promise<any>,
     getAll(): Promise<IOfertaRecord[]>
 }
 
 export const dynamoDbOfertaStateService: IOfertaStateService<IOfertaRepoKey> = {
     save: (record) => ofertaRepo.put(record),
-    load: (partitionKey) => ofertaRepo.queryByPartitionKey(partitionKey),
+    getByInwestycja: (partitionKey) => ofertaRepo.queryByPartitionKey(partitionKey),
     getOne: (key) => ofertaRepo.getOne(key),
     getAll: () => ofertaRepo.scan(),
 };

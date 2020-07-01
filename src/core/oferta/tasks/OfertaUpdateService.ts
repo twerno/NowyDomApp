@@ -19,7 +19,7 @@ export class OfertaUpdateService {
     }
 
     public async buildCache() {
-        const oferty = await this.env.stanService.load(this.dataProvider.inwestycjaId)
+        const oferty = await this.env.stanService.getByInwestycja(this.dataProvider.inwestycjaId)
         oferty.forEach(oferta => this.cache[oferta.ofertaId] = oferta);
     }
 
@@ -59,7 +59,7 @@ export const OfertaUpdateHelper = {
         oferta: { id: string, data: IOfertaDane | null },
         stan: IOfertaRecord | null,
         dataProvider: IDataProvider<any, any>,
-        stats: IProvideOfferStats
+        stats: IProvideOfferStats | null
     ): IOfertaWyliczonaZmina | null {
         const data = oferta.data;
 
@@ -88,7 +88,10 @@ export const OfertaUpdateHelper = {
         return result;
     },
 
-    updateStats(zmiana: IOfertaWyliczonaZmina | null, stats: IProvideOfferStats) {
+    updateStats(zmiana: IOfertaWyliczonaZmina | null, stats: IProvideOfferStats | null) {
+        if (!stats) {
+            return;
+        }
         stats.total++;
 
         if (zmiana?.type === ZmianaType.NEW) {
