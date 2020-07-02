@@ -5,6 +5,7 @@ import { IOfertaDane, IOfertaRecord, IOfertaRecordOpe, IRawData, isRawData } fro
 import { Status, StatusHelper } from "../model/Status";
 import { IProvideOfferStats } from "./AbstractZapiszZmianyTask";
 import { IEnv } from "./IEnv";
+import { IDateService, defaultDateService } from "../service/IDateService";
 
 export class OfertaUpdateService {
 
@@ -25,7 +26,7 @@ export class OfertaUpdateService {
 
     public async wyliczIZapiszZmiane(oferta: { id: string, data: IOfertaDane | null }) {
         const stan = this.cache[oferta.id] || null;
-        const zmiana = OfertaUpdateHelper.wyliczZmiane(oferta, stan, this.dataProvider, this.stats);
+        const zmiana = OfertaUpdateHelper.wyliczZmiane(oferta, stan, this.dataProvider, this.stats, defaultDateService);
         if (zmiana) {
             await this.zapiszZmiany(zmiana);
         }
@@ -59,54 +60,55 @@ export const OfertaUpdateHelper = {
         oferta: { id: string, data: IOfertaDane | null },
         stan: IOfertaRecord | null,
         dataProvider: IDataProvider<any, any>,
-        stats: IProvideOfferStats | null
+        stats: IProvideOfferStats | null,
+        dateService: IDateService,
     ): IOfertaWyliczonaZmina | null {
         const data = oferta.data;
 
         if (!stan) {
 
             if (!data) {
-                this.updateStats(null, stats);
+                this.updateStats(oferta.id, null, stats);
                 return null;
             }
 
-            const result = InternalOfertaUpdateHelper.nowyRekord(oferta.id, data, dataProvider);
-            this.updateStats(result, stats);
+            const result = InternalOfertaUpdateHelper.nowyRekord(oferta.id, data, dataProvider, dateService);
+            this.updateStats(oferta.id, result, stats);
             return result;
         }
 
         // usunięty
         if (!data) {
-            const result = InternalOfertaUpdateHelper.oznaczSprzedane(stan);
-            this.updateStats(result, stats);
+            const result = InternalOfertaUpdateHelper.oznaczSprzedane(stan, dateService);
+            this.updateStats(oferta.id, result, stats);
             return result;
         }
 
         // wylicz zmiane
-        const result = InternalOfertaUpdateHelper.zmienionyRekord(stan, data);
-        this.updateStats(result, stats);
+        const result = InternalOfertaUpdateHelper.zmienionyRekord(stan, data, dateService);
+        this.updateStats(oferta.id, result, stats);
         return result;
     },
 
-    updateStats(zmiana: IOfertaWyliczonaZmina | null, stats: IProvideOfferStats | null) {
+    updateStats(id: string, zmiana: IOfertaWyliczonaZmina | null, stats: IProvideOfferStats | null) {
         if (!stats) {
             return;
         }
-        stats.total++;
+        stats.totalRecords.add(id);
 
         if (zmiana?.type === ZmianaType.NEW) {
-            stats.added.count++;
+            stats.added.count.add(id);
             stats.added.records.push({ ...zmiana.rekord.data, id: zmiana.rekord.ofertaId });
         }
         else if (zmiana?.type === ZmianaType.UPDATE) {
-            stats.updated.count++;
+            stats.updated.count.add(id);
             stats.updated.records.push({ id: zmiana.rekord.ofertaId, ...zmiana?.ope.data });
         }
         else if (zmiana?.type === ZmianaType.DELETE) {
-            stats.deleted.count++;
+            stats.deleted.count.add(id);
             stats.deleted.records.push({ id: zmiana.rekord.ofertaId });
         } else {
-            stats.unchanged++;
+            stats.unchanged.add(id);
         }
     }
 
@@ -117,9 +119,15 @@ const InternalOfertaUpdateHelper = {
     nowyRekord: function (
         ofertaId: string,
         offerData: IOfertaDane,
-        dataProvider: IDataProvider<any, any>
+        dataProvider: IDataProvider<any, any>,
+        dateService: IDateService,
     ): IOfertaWyliczonaZmina {
-        const timestamp = new Date().getTime();
+        const timestamp = dateService.now().getTime();
+
+        const data = { ...offerData };
+        if (data.status === Status.SPRZEDANE) {
+            data.sprzedaneData = timestamp;
+        }
 
         const rekord: IOfertaRecord = {
             inwestycjaId: dataProvider.inwestycjaId, // partition_key
@@ -128,22 +136,22 @@ const InternalOfertaUpdateHelper = {
             version: 1,
             created_at: timestamp,
             updated_at: timestamp,
-            data: offerData,
+            data,
         };
 
         const ope: IOfertaRecordOpe = {
             ofertaId: ofertaId,  // partition_key
             version: 1, // sort_key
             timestamp,
-            data: offerData,
+            data,
             updatedBy: 'developer'
         };
 
         return { rekord, ope, type: ZmianaType.NEW };
     },
 
-    oznaczSprzedane: function (stan: IOfertaRecord): IOfertaWyliczonaZmina | null {
-        const timestamp = new Date().getTime();
+    oznaczSprzedane: function (stan: IOfertaRecord, dateService: IDateService): IOfertaWyliczonaZmina | null {
+        const timestamp = dateService.now().getTime();
 
         if (stan.data.status === Status.SPRZEDANE) {
             return null;
@@ -173,8 +181,8 @@ const InternalOfertaUpdateHelper = {
         return { rekord, ope, type: ZmianaType.DELETE };
     },
 
-    zmienionyRekord: function (stan: IOfertaRecord, oferta: IOfertaDane): IOfertaWyliczonaZmina | null {
-        const timestamp = new Date().getTime();
+    zmienionyRekord: function (stan: IOfertaRecord, oferta: IOfertaDane, dateService: IDateService): IOfertaWyliczonaZmina | null {
+        const timestamp = dateService.now().getTime();
         let delta: Partial<IOfertaDane> | null = null;
 
         // nie rejestrujemy zmian na niekatywnych ofertach (innych niż zmiana statusu)
@@ -189,7 +197,7 @@ const InternalOfertaUpdateHelper = {
             delta = { status: Status.REZERWACJA };
         }
         else if (oferta.status === Status.SPRZEDANE) {
-            return this.oznaczSprzedane(stan);
+            return this.oznaczSprzedane(stan, dateService);
         }
 
         if (delta === null) {

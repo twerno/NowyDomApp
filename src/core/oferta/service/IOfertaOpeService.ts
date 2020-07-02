@@ -15,8 +15,8 @@ export const dynamoDbOfertaOpeService: IOfertaOpeService = {
 export const devOfertaOpeService: IOfertaOpeService = {
     ...dynamoDbOfertaOpeService,
 
-    save: (recordOpe) => {
+    save: async (recordOpe) => {
         safeSaveFile(`dev/ope`, `${recordOpe.ofertaId}-${recordOpe.version}`, JSON.stringify(recordOpe, null, 2));
-        return Promise.resolve();
+        return undefined;
     },
 };

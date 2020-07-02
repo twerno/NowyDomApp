@@ -1,12 +1,21 @@
-import { IEnv } from "../../core/oferta/tasks/IEnv";
-import { OfertaUpdateHelper, IOfertaWyliczonaZmina } from "../../core/oferta/tasks/OfertaUpdateService";
-import { inwestycje } from "../../inwestycje/inwestycje";
-import { IOfertaRecord, IOfertaDane } from "../../core/oferta/model/IOfertaModel";
+import { IEnv } from "../core/oferta/tasks/IEnv";
+import { OfertaUpdateHelper, IOfertaWyliczonaZmina } from "../core/oferta/tasks/OfertaUpdateService";
+import { inwestycje } from "../inwestycje/inwestycje";
+import { IOfertaRecord, IOfertaDane } from "../core/oferta/model/IOfertaModel";
+import { Status } from "../core/oferta/model/Status";
+import TypeUtils from "../utils/TypeUtils";
+import { Typ } from "../core/oferta/model/Typ";
 
 export class OfertaStanRecomputeService {
 
     public constructor(protected readonly env: IEnv) {
 
+    }
+
+    public async recomputeMany(inwestycjeIds: string[]) {
+        for (const inwestycjaId of inwestycjeIds) {
+            await this.recomputeStan(inwestycjaId);
+        }
     }
 
     public async recomputeStan(inwestycjaId: string) {
@@ -16,27 +25,32 @@ export class OfertaStanRecomputeService {
             throw new Error(`dataProvider for ${inwestycjaId} is NULL`);
         }
 
+        console.log(`Przetwarzam ${inwestycjaId}`);
+
         for (const oferta of ofertyList) {
             const operacje = (await this.env.opeService.getByOfertaId(oferta.ofertaId))
                 .sort((a, b) => a.version - b.version);
 
             let data: IOfertaDane = {} as any;
-            let stan: IOfertaRecord | null = null;
+            let wyliczonyStan: IOfertaRecord | null = null;
             let zmiana: IOfertaWyliczonaZmina | null = null;
             for (const ope of operacje) {
                 data = { ...data, ...ope.data };
                 zmiana = OfertaUpdateHelper.wyliczZmiane(
                     { id: oferta.ofertaId, data },
-                    stan,
+                    wyliczonyStan,
                     dataProvider,
-                    null
+                    null,
+                    { now: () => new Date(ope.timestamp) }
                 );
                 if (zmiana?.rekord) {
-                    stan = zmiana?.rekord || null;
+                    wyliczonyStan = zmiana?.rekord || null;
+                    wyliczonyStan = { ...wyliczonyStan, data: { ...wyliczonyStan?.data, typ: Typ.DOM } }
                 }
             }
-            if (zmiana?.rekord) {
-                await this.env.stanService.save(zmiana?.rekord);
+
+            if (wyliczonyStan && !TypeUtils.deepEqual(wyliczonyStan, oferta)) {
+                await this.env.stanService.save(wyliczonyStan);
             }
 
         }

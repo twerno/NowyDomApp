@@ -18,7 +18,7 @@ function notEmpty<TValue>(value: TValue | null | undefined): value is TValue {
 }
 
 // https://stackoverflow.com/a/38416465
-function deepEqual(a: any, b: any) {
+function deepEqual(a: any, b: any): boolean {
     if ((typeof a == 'object' && a != null) &&
         (typeof b == 'object' && b != null)) {
         var count = [0, 0];

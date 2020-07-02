@@ -69,6 +69,7 @@ async function writeOfertaStanSheet(sheet: Excel.Worksheet, env: IEnv) {
                     'Developer': v.developerId,
 
                 }
+                , ''
             );
 
             const cellAdress = `${sheet.getColumn('Cena za metr').letter}${row.number}`;
@@ -76,7 +77,9 @@ async function writeOfertaStanSheet(sheet: Excel.Worksheet, env: IEnv) {
             const metrazLetter = sheet.getColumn('Metraż').letter;
             sheet.getCell(cellAdress).value =
             {
-                formula: `=${cenaLetter}${row.number}/${metrazLetter}${row.number}`,
+                // formula: `=IF(ISBLANK(${cenaLetter}${row.number});"";${cenaLetter}${row.number}/${metrazLetter}${row.number})`,
+                // formula: `=IF(ISBLANK(${cenaLetter}${row.number});"a";"b")`,
+                formula: `JEŻELI(CZY.PUSTA(E2);"a";"b")`,
                 date1904: false
             };
         }

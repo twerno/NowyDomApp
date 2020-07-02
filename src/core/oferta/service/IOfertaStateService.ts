@@ -10,16 +10,16 @@ export interface IOfertaStateService<T> {
 }
 
 export const dynamoDbOfertaStateService: IOfertaStateService<IOfertaRepoKey> = {
-    save: (record) => ofertaRepo.put(record),
-    getByInwestycja: (partitionKey) => ofertaRepo.queryByPartitionKey(partitionKey),
-    getOne: (key) => ofertaRepo.getOne(key),
-    getAll: () => ofertaRepo.scan(),
+    save: async (record) => ofertaRepo.put(record),
+    getByInwestycja: async (partitionKey) => ofertaRepo.queryByPartitionKey(partitionKey),
+    getOne: async (key) => ofertaRepo.getOne(key),
+    getAll: async () => ofertaRepo.scan(),
 };
 
 export const devOfertaStateService: IOfertaStateService<IOfertaRepoKey> = {
     ...dynamoDbOfertaStateService,
 
-    save: (record) => {
+    save: async (record) => {
         safeSaveFile(`dev/${record.inwestycjaId}`, record.ofertaId, JSON.stringify(record, null, 2));
         return Promise.resolve();
     }

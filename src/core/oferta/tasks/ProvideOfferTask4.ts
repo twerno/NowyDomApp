@@ -2,7 +2,7 @@ import Axios, { AxiosResponse } from "axios";
 import { contentType, extension } from "mime-types";
 import { IDataProvider, IListElement } from "../IOfertaProvider";
 import { IOfertaRecord } from "../model/IOfertaModel";
-import AbstractZapiszZmianyTask from "./AbstractZapiszZmianyTask";
+import AbstractZapiszZmianyTask, { getEmptyProvideOfferStats } from "./AbstractZapiszZmianyTask";
 import { IProvideOfferTaskProps } from "./ProvideOfferTask1";
 
 /**
@@ -23,6 +23,7 @@ class ProvideOfferTask4<T extends IListElement = IListElement, D = any> extends 
         const doPobrania = this.stan.data.zasobyDoPobrania
             .filter(z => !this.zasobPobrany(z));
 
+        // const resourcesDownloaded = {count: new Set<string>()};
         // wywolywanie operacji synchroniczne
         for (const res of doPobrania) {
             await this.pobierzIZapisz(res, errors, props);
@@ -46,7 +47,8 @@ class ProvideOfferTask4<T extends IListElement = IListElement, D = any> extends 
 
         const stan = this.stan || await this.pobierzStan(this.ofertaId, props);
         const zmiana = { ...stan?.data, zasobyPobrane: [...stan?.data.zasobyPobrane || [], { id: zasob.id, s3Filename }] };
-        await this.wyliczZmianyIZapisz(this.ofertaId, zmiana, errors, props, stan);
+        await this.wyliczZmianyIZapisz(this.ofertaId, zmiana, errors, {...props, stats: getEmptyProvideOfferStats()}, stan);
+        props.stats.resourcesDownloaded.count.add(`${this.ofertaId}-${zasob.id}`);
     }
 
     private async pobierzIZapiszNaS3(

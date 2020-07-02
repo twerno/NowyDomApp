@@ -10,18 +10,18 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/mime-types": "^2.1.0",
-    "aws-sdk": "^2.690.0",
+    "aws-sdk": "^2.709.0",
     "axios": "^0.19.2",
     "cheerio": "^1.0.0-rc.3",
-    "exceljs": "^4.0.1",
+    "exceljs": "^4.1.0",
     "mime-types": "^2.1.27",
     "module-alias": "^2.2.2",
-    "node-html-parser": "^1.2.19"
+    "node-html-parser": "^1.2.20"
   },
   "devDependencies": {
     "@types/axios": "^0.14.0",
     "@types/cheerio": "^0.22.18",
-    "typescript": "^3.9.5"
+    "@types/mime-types": "^2.1.0",
+    "typescript": "^3.9.6"
   }
 }

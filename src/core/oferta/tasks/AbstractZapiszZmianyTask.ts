@@ -4,41 +4,47 @@ import { IOfertaDane, IOfertaRecord } from "../model/IOfertaModel";
 import { OfertaUpdateHelper } from "./OfertaUpdateService";
 import { IProvideOfferTaskProps } from "./ProvideOfferTask1";
 import { IStringMap } from "../../../utils/IMap";
+import { defaultDateService } from "../service/IDateService";
 
 export interface IProvideOfferStats {
-    total: number,
-    unchanged: number,
+    totalRecords: Set<string>,
+    unchanged: Set<string>,
 
     added: {
-        count: number,
+        count: Set<string>,
         records: Array<{ id: string } & IOfertaDane>
     },
     updated: {
-        count: number,
+        count: Set<string>,
         records: Array<{ id: string } & Partial<IOfertaDane>>
     },
     deleted: {
-        count: number,
+        count: Set<string>,
         records: { id: string }[]
     },
+    resourcesDownloaded: {
+        count: Set<string>
+    }
 };
 
 export interface IIProvideOfferSummary {
     totalErrors: number,
-    total: number;
+    totalRecords: number;
     unchanged: number,
     added: number;
     updated: number;
     deleted: number;
+    resourcesDownloaded: number;
 
     byInwestycja: IStringMap<
         {
             errors: any[],
-            total: number;
+            totalRecords: number;
             unchanged: number,
             added: number;
             updated: number;
             deleted: number;
+            resourcesDownloaded: number;
         }
     >;
 }
@@ -53,28 +59,31 @@ export function add2Summary(
         summary
         || {
             totalErrors: 0,
-            total: 0,
+            totalRecords: 0,
             unchanged: 0,
             added: 0,
             updated: 0,
             deleted: 0,
+            resourcesDownloaded: 0,
             byInwestycja: {}
         };
 
     result.totalErrors += errors.length;
-    result.total += stats.total;
-    result.unchanged += stats.unchanged;
-    result.added += stats.added.count;
-    result.updated += stats.updated.count;
-    result.deleted += stats.deleted.count;
+    result.totalRecords += stats.totalRecords.size;
+    result.unchanged += stats.unchanged.size;
+    result.added += stats.added.count.size;
+    result.updated += stats.updated.count.size;
+    result.deleted += stats.deleted.count.size;
+    result.resourcesDownloaded += stats.resourcesDownloaded.count.size;
 
     result.byInwestycja[dataProvider.inwestycjaId] = {
         errors,
-        total: stats.total,
-        unchanged: stats.unchanged,
-        added: stats.added.count,
-        updated: stats.updated.count,
-        deleted: stats.deleted.count,
+        totalRecords: stats.totalRecords.size,
+        unchanged: stats.unchanged.size,
+        added: stats.added.count.size,
+        updated: stats.updated.count.size,
+        deleted: stats.deleted.count.size,
+        resourcesDownloaded: stats.resourcesDownloaded.count.size,
     };
 
     return result;
@@ -82,11 +91,12 @@ export function add2Summary(
 
 export const getEmptyProvideOfferStats = (): IProvideOfferStats => (
     {
-        total: 0,
-        unchanged: 0,
-        added: { count: 0, records: [] },
-        updated: { count: 0, records: [] },
-        deleted: { count: 0, records: [] },
+        totalRecords: new Set<string>(),
+        unchanged: new Set<string>(),
+        added: { count: new Set<string>(), records: [] },
+        updated: { count: new Set<string>(), records: [] },
+        deleted: { count: new Set<string>(), records: [] },
+        resourcesDownloaded: {count: new Set<string>()},
     }
 );
 
@@ -106,7 +116,8 @@ abstract class AbstractZapiszZmianyTask<T extends IListElement = IListElement, D
     ) {
         const stan = fixedStan || await this.pobierzStan(ofertaId, props) || null;
 
-        const zmiana = OfertaUpdateHelper.wyliczZmiane({ id: ofertaId, data: offerData }, stan, this.dataProvider, props.stats);
+        const zmiana = OfertaUpdateHelper.wyliczZmiane(
+            { id: ofertaId, data: offerData }, stan, this.dataProvider, props.stats, defaultDateService);
         return zmiana;
     }
 

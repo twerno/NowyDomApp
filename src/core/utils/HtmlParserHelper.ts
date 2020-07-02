@@ -92,7 +92,7 @@ export class HtmlParserHelper<T extends object> {
     ) {
         const { data, rawText } = this.asCustomInternal<Type | IRawData, K>(field, el, { notEmpty: true, ...options });
 
-        return !!data
+        return data !== undefined && data !== null 
             ? this.asRecord<K, Type | IRawData>(field, data)
             : this.asRecord<K, Type | IRawData>(field, { raw: rawText });
     }

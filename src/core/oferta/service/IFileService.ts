@@ -6,14 +6,15 @@ export interface IFileService {
 }
 
 export const s3FileService: IFileService = {
-    writeFile: (path, filename, body, contentType) => S3Utils.putFile(path, filename, body, contentType),
+    writeFile: async (path, filename, body, contentType) => S3Utils.putFile(path, filename, body, contentType),
 }
 
 export const devFileService: IFileService = {
     ...s3FileService,
-    writeFile: (path, filename, body) => {
+
+    writeFile: async (path, filename, body) => {
         safeSaveFile(`dev/${path}/files`, filename, body);
-        return Promise.resolve();
+        return undefined;
     }
 
 }
