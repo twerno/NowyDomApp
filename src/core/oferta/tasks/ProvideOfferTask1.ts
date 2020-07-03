@@ -6,8 +6,10 @@ import { IProvideOfferStats } from "./AbstractZapiszZmianyTask";
 import { IEnv } from "./IEnv";
 import { OfertaUpdateService } from "./OfertaUpdateService";
 import ProvideOfferTask2 from "./ProvideOfferTask2";
+import ProviderOfferHelper from "./ProviderOfferHelper";
 
 export interface IProvideOfferTaskProps {
+    executionDate: Date;
     stats: IProvideOfferStats;
     env: IEnv,
     updateService: OfertaUpdateService;
@@ -26,13 +28,14 @@ class ProvideOfferTask1<T extends IListElement = IListElement, D = any> implemen
     public async run(errors: any[], props: IProvideOfferTaskProps) {
         const url = this.dataProvider.getListUrl();
 
-        const listHtml = await this.downloadLists(url, errors);
+        const data = await this.downloadLists(url, errors);
+        await this.saveHtml(data, props);
 
-        const parseResult = this.parseOfferList(listHtml, errors);
+        const parseResult = this.parseOfferList(data, errors);
 
         const task2List = parseResult
             ? parseResult.items.map(offer =>
-                new ProvideOfferTask2(offer, this.dataProvider, (this.priority || 0) + 1))
+                new ProvideOfferTask2(offer, url, this.dataProvider, (this.priority || 0) + 1))
             : [];
 
         return [...task2List, ...(parseResult?.tasks || [])];
@@ -40,16 +43,22 @@ class ProvideOfferTask1<T extends IListElement = IListElement, D = any> implemen
 
     private async downloadLists(url: string, errors: any[]) {
         const promise = WebDownloader.download(url)
-            .catch(TaskHelper.silentErrorReporter(errors, { method: 'downloadLists', url }));
+            .catch(TaskHelper.silentErrorReporter(errors, { method: 'downloadLists', url }))
+            .then(html => ({ html, url }))
 
         return promise;
     }
 
     // przetworzenie pobranych stron i wyciągnięcie z nich listy ofert
-    private parseOfferList(html: string | null, errors: any[]) {
-        return html
-            ? this.dataProvider.parseListHtml(html, errors, { dataProvider: this.dataProvider, priority: this.priority })
+    private parseOfferList(data: { html: string | null, url: string }, errors: any[]) {
+        return data.html
+            ? this.dataProvider.parseListHtml(data.html, errors, { dataProvider: this.dataProvider, priority: this.priority })
             : null;
+    }
+
+    private async saveHtml(data: { html: string | null, url: string }, props: IProvideOfferTaskProps) {
+        // TODO - jesli kiedys dodam odtwarzenie zmian na podstawie zapisanego html, to trzeba pominac ten krok w otworzonym przebiegu
+        return ProviderOfferHelper.saveHtml(data, `html/${props.executionDate.getTime()}`, props.env.fileService);
     }
 
 }

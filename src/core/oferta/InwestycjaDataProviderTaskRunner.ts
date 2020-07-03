@@ -24,7 +24,7 @@ async function procesInwestycjaSeq(tasks: ProvideOfferTask1[], env: IEnv) {
 
         await AsyncTaskRunner<IProvideOfferTaskProps>([task], {
             concurency: 10,
-            props: { stats, env, updateService }
+            props: { stats, env, updateService, executionDate: date }
         }, errors)
             .then(() => taskLogger({ errors, task, date, stats }))
             .catch(err => taskLogger({ err, errors, task, date, stats }));

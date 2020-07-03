@@ -1,10 +1,20 @@
 import Methods from "./Methods";
 import { buildExcel } from "./core/oferta/excel/OfferExcelBuilder";
 import { dynamoDbOfertaStateService } from "./core/oferta/service/IOfertaStateService";
-import { devEnv } from "./core/oferta/tasks/IEnv";
+import { devEnv, prodEnv } from "./core/oferta/tasks/IEnv";
+import { OfertaStanRecomputeService } from "./fix/OfertaStanRecomputeService";
+import { inwestycje } from "./inwestycje/inwestycje";
 
-Methods.runAll(devEnv);
+// Methods.runAll(devEnv);
 
-// Methods.runOne('Remoda', devEnv);
+Methods.runAll(prodEnv)
+    .then(() => buildExcel(devEnv))
+    .catch(console.error);
 
-// buildExcel(dynamoDbOfertaStateService);
+// buildExcel(devEnv);
+
+// new OfertaStanRecomputeService(prodEnv).garvenaFix();
+// new OfertaStanRecomputeService(prodEnv).recomputeStan('GarvenaPark');
+// new OfertaStanRecomputeService(prodEnv).recomputeMany(inwestycje.map(i => i.inwestycjaId))
+// .then(() => buildExcel(prodEnv))
+// .catch(console.error);
