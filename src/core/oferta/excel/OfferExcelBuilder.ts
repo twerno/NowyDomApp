@@ -1,7 +1,7 @@
 import Excel from 'exceljs';
 import { IRawData, isRawData, IOfertaRecord } from '../model/IOfertaModel';
 import { OdbiorTypeHelper } from '../model/OdbiorType';
-import { Status, StatusHelper } from '../model/Status';
+import { StatusHelper } from '../model/Status';
 import { StronaSwiataHelper } from '../model/StronySwiata';
 import { TypHelper } from '../model/Typ';
 import { IEnv } from '../tasks/IEnv';
@@ -67,7 +67,6 @@ async function writeOfertaStanSheet(sheet: Excel.Worksheet, env: IEnv) {
                     'Strony świata': v.data.stronySwiata?.map(StronaSwiataHelper.stronaSwiata2Short).join(', '),
                     "Id": v.ofertaId,
                     'Developer': v.developerId,
-
                 }
                 , ''
             );
