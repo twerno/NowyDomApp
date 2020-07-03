@@ -77,9 +77,7 @@ async function writeOfertaStanSheet(sheet: Excel.Worksheet, env: IEnv) {
             const metrazLetter = sheet.getColumn('Metraż').letter;
             sheet.getCell(cellAdress).value =
             {
-                // formula: `=IF(ISBLANK(${cenaLetter}${row.number});"";${cenaLetter}${row.number}/${metrazLetter}${row.number})`,
-                // formula: `=IF(ISBLANK(${cenaLetter}${row.number});"a";"b")`,
-                formula: `JEŻELI(CZY.PUSTA(E2);"a";"b")`,
+                formula: `IF(COUNTBLANK(${cenaLetter}${row.number}) > 0, "", ${cenaLetter}${row.number}/${metrazLetter}${row.number})`,
                 date1904: false
             };
         }
