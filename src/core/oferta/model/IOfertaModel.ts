@@ -24,8 +24,7 @@ export interface IOfertaRecordOpe {
     data: Partial<IOfertaDane>;
 }
 
-// export type OdbiorType = { rok: number, kwartal: number } | { rok: number, miesiac: number } | IRawData;
-export type MapWithRawType<T extends object> = { data: Partial<T>, raw?: Array<string | null> };
+export type MapWithRawType<T extends {}> = { data: Partial<T>, raw?: string[] };
 export const KartaOfertyPdf = 'ofertaPdf';
 
 export interface IOfertaDane {

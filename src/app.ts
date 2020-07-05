@@ -4,14 +4,17 @@ import { dynamoDbOfertaStateService } from "./core/oferta/service/IOfertaStateSe
 import { devEnv, prodEnv } from "./core/oferta/tasks/IEnv";
 import { OfertaStanRecomputeService } from "./fix/OfertaStanRecomputeService";
 import { inwestycje } from "./inwestycje/inwestycje";
+import ApartamentyMarengo from "./inwestycje/Multidom/ApartamentyMarengo";
 
 // Methods.runAll(devEnv);
 
-Methods.runAll(prodEnv)
-    .then(() => buildExcel(devEnv))
-    .catch(console.error);
+// Methods.runAll(prodEnv)
+//     .then(() => buildExcel(devEnv))
+// .catch (console.error);
 
 // buildExcel(devEnv);
+
+Methods.runOne(ApartamentyMarengo, devEnv);
 
 // new OfertaStanRecomputeService(prodEnv).garvenaFix();
 // new OfertaStanRecomputeService(prodEnv).recomputeStan('GarvenaPark');

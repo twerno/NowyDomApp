@@ -1,12 +1,12 @@
 import { HTMLElement, parse } from 'node-html-parser';
-import { IDataProvider, IParseListProps } from "../../../core/oferta/IOfertaProvider";
-import { ICechy, IRawData } from "../../../core/oferta/model/IOfertaModel";
-import ProvideOfferTask1 from "../../../core/oferta/tasks/ProvideOfferTask1";
 import { IAsyncTask } from "../../../core/asyncTask/IAsyncTask";
-import { HtmlParserHelper } from '../../../core/utils/HtmlParserHelper';
-import { ISemekoDetails, ISemekoListElement } from "./SemekoModel";
-import { Status } from '../../../core/oferta/model/Status';
+import { IDataProvider, IParseListProps } from "../../../core/oferta/IOfertaProvider";
+import { ICechy } from '../../../core/oferta/model/IOfertaModel';
 import { OdbiorType } from '../../../core/oferta/model/OdbiorType';
+import { Status } from '../../../core/oferta/model/Status';
+import ProvideOfferTask1 from "../../../core/oferta/tasks/ProvideOfferTask1";
+import { HtmlParserHelper } from '../../../inwestycje/helpers/HtmlParserHelper';
+import { ISemekoDetails, ISemekoListElement } from "./SemekoModel";
 
 export default (
     html: string,
@@ -45,17 +45,15 @@ function rowMapper(
 
     const result: ISemekoListElement = {
         id: 'tmp_id',
-        ...h.asString('budynek', row?.querySelector('.c1')),
-        ...h.asString('nrLokalu', row?.querySelector('.c2')),
+        ...h.asRaw('budynek', row?.querySelector('.c1')),
+        ...h.asRaw('nrLokalu', row?.querySelector('.c2')),
         ...h.asInt('pietro', row?.querySelector('.c3')),
         ...h.asFloat('metraz', row?.querySelector('.c5')),
         ...h.asInt('lpPokoj', row?.querySelector('.c6')),
-        ...h.asCustom('odbior', row?.querySelector('.c7'), { mapper: odbiorMapper }),
+        ...h.asCustom('odbior', row?.querySelector('.c7'), odbiorMapper),
         status: Status.WOLNE,
-        ...h.asMap("cechy", row?.querySelectorAll('.c9 span.more4'), cechaParser, { notEmpty: false }),
-        ...h.asCustomWithDefault("detailsUrl", row?.querySelector('.c1'),
-            { fromAttribute: 'onclick', mapper: detailsUrlParser, defaultValue: '', }
-        ),
+        ...h.asMap("cechy", row?.querySelectorAll('.c9 span.more4'), cechaParser, { errorWhenEmpty: false }),
+        ...h.asString("detailsUrl", row?.querySelector('.c1'), detailsUrlParser, { attributeName: 'href' }),
         zasobyDoPobrania,
     };
 
@@ -68,35 +66,39 @@ function rowMapper(
 // mapper utils
 // ****************************
 
-function odbiorMapper(raw: string | null): OdbiorType | null {
-    const exprResult = /(\d{4})-(\d{2})/.exec(raw || '');
+function odbiorMapper(rawText: string | null | undefined): OdbiorType | null {
+    if (rawText === null || rawText === undefined) {
+        return null;
+    }
+
+    const exprResult = /(\d{4})-(\d{2})/.exec(rawText || '');
 
     if (!exprResult || !exprResult[1]) {
-        return { raw };
+        return { raw: rawText };
     }
 
     const rok = Number.parseInt(exprResult[1]);
     const miesiac = Number.parseInt(exprResult[2]);
 
     if (isNaN(miesiac) || isNaN(rok)) {
-        return { raw };
+        return { raw: rawText };
     }
 
     return { miesiac, rok };
 }
 
-function cechaParser(raw: string): { data: Partial<ICechy> } | IRawData | null {
-    switch (raw) {
-        case 'o': return { raw: 'ogród' };
-        case 't/o': return { raw: 'taras/ogród' };
-        case 'b': return { raw: 'balkon' };
-        case 'a': return { raw: 'antresola' };
-        case 'l': return { raw: 'loggia' };
-        default: return null;
+function cechaParser(source: string | undefined | null): Partial<ICechy> | string | null {
+    switch (source) {
+        case 'o': return 'ogród';
+        case 't/o': return 'taras/ogród';
+        case 'b': return 'balkon';
+        case 'a': return 'antresola';
+        case 'l': return 'loggia';
     }
+    return null
 }
 
-function detailsUrlParser(raw: string) {
+function detailsUrlParser(raw: string | null | undefined) {
     const exprResult = /location\.href=\'(.+)'/.exec(raw || '');
 
     if (exprResult && exprResult[1]) {
@@ -123,14 +125,20 @@ function getMiniaturkaUrl(row: HTMLElement | undefined, tooltips: HTMLElement | 
         return null;
     }
 
-    const dataTooltip = h.readTextOf(row?.querySelector('.c111 a'),
-        { fieldName: 'zasobyDoPobrania', comment: 'data-tooltip' },
-        { fromAttribute: 'data-tooltip', notEmpty: true, }
+    const dataTooltip = h.readAttributeOf(
+        row?.querySelector('.c111 a'),
+        'data-tooltip',
+        {
+            fieldInfo: { fieldName: 'zasobyDoPobrania', comment: 'data-tooltip' },
+        }
     );
 
-    const srcPart = h.readTextOf(tooltips?.querySelector(`[id='${dataTooltip}'] img`),
-        { fieldName: 'zasobyDoPobrania', comment: 'src' },
-        { fromAttribute: 'src', notEmpty: true, }
+    const srcPart = h.readAttributeOf(
+        tooltips?.querySelector(`[id='${dataTooltip}'] img`),
+        'src',
+        {
+            fieldInfo: { fieldName: 'zasobyDoPobrania', comment: 'src' },
+        }
     );
 
     return !!srcPart
@@ -158,12 +166,13 @@ function buildPostTasks(
 // ****************************
 
 function getNextPageUrl(root: HTMLElement | undefined, h: HtmlParserHelper<ISemekoListElement>) {
-    const urlPart = h.readTextOf(root?.querySelector('div.next a'),
-        { comment: 'getNextPageUrl' },
+    const urlPart = h.readAttributeOf(
+        root?.querySelector('div.next a'),
+        'onclick',
         {
-            notEmpty: false,
-            notNull: false,
-            fromAttribute: 'onclick'
+            fieldInfo: { comment: 'getNextPageUrl' },
+            errorWhenEmpty: false,
+            mustExist: false
         });
 
     const exprResult = /='(.+)';/.exec(urlPart || '');

@@ -1,5 +1,5 @@
 import { IDataProvider } from "../../../core/oferta/IOfertaProvider";
-import { ICechy } from "../../../core/oferta/model/IOfertaModel";
+import { ICechy, isRawData } from "../../../core/oferta/model/IOfertaModel";
 import { ISemekoDetails, ISemekoListElement } from "./SemekoModel";
 import semekoOfertaBuilder from "./semekoOfertaBuilder";
 import semekoOfertaParser from "./semekoOfertaParser";
@@ -22,7 +22,7 @@ export const SemekoDataProviderBuilder = (props: ISemekoDataProviderProps): IDat
 
         getListUrl: () => props.listaLokaliUrl,
         parseListHtml: semekoTabelaLokaliParser,
-        getOfferUrl: item => item.detailsUrl,
+        getOfferUrl: item => isRawData(item.detailsUrl) ? undefined : item.detailsUrl,
         parseOfferHtml: semekoOfertaParser,
         offerBuilder: semekoOfertaBuilder
     }

@@ -13,7 +13,7 @@ export interface ISemekoListElement extends IListElement {
     odbior: OdbiorType;
     status: Status;
     cechy: MapWithRawType<ICechy>;
-    detailsUrl: string;
+    detailsUrl: string | IRawData;
     zasobyDoPobrania: { id: string, url: string }[];
 }
 

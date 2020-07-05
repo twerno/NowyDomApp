@@ -1,11 +1,10 @@
 import { HTMLElement, parse } from 'node-html-parser';
-import parseUtils from '../../core/utils/parseUtils';
 import { IDataProvider, IParseListProps } from "../../core/oferta/IOfertaProvider";
 import { KartaOfertyPdf } from "../../core/oferta/model/IOfertaModel";
-import { HtmlParserHelper } from '../../core/utils/HtmlParserHelper';
-import { IGarvenaParkDetails, IGarvenaParkListElement } from './GarvenaParkModel';
-import { Status } from '../../core/oferta/model/Status';
 import { OdbiorType } from '../../core/oferta/model/OdbiorType';
+import DataParserHelper from '../../inwestycje/helpers/DataParserHelper';
+import { HtmlParserHelper } from '../../inwestycje/helpers/HtmlParserHelper';
+import { IGarvenaParkDetails, IGarvenaParkListElement } from './GarvenaParkModel';
 
 export default (
     html: string,
@@ -40,15 +39,17 @@ function rowMapper(
 
     const zasobyDoPobrania = getZasobyDoPobrania(row, h);
 
+    const rows = row?.querySelectorAll('td') || [];
+
     const result: IGarvenaParkListElement = {
         id: 'tmp_id',
-        ...h.asString('nrLokalu', row?.querySelectorAll('td')[0]),
-        ...h.asFloat('liczbaKondygnacji', row?.querySelectorAll('td')[1]),
-        ...h.asInt('liczbaPokoi', row?.querySelectorAll('td')[2]),
-        ...h.asFloat('metraz', row?.querySelectorAll('td')[3]),
-        ...h.asFloat('powiezchniaOgrodu', row?.querySelectorAll('td')[4], /ok\.(\d]+) m²/),
-        ...h.asCustom('odbior', row?.querySelectorAll('td')[5], { mapper: odbiorMapper }),
-        ...h.asCustom('status', row?.querySelectorAll('td')[6], { mapper: statusMapper }),
+        ...h.asRaw('nrLokalu', rows[0]),
+        ...h.asFloat('liczbaKondygnacji', rows[1]),
+        ...h.asInt('liczbaPokoi', rows[2]),
+        ...h.asFloat('metraz', rows[3]),
+        ...h.asFloat('powiezchniaOgrodu', rows[4], DataParserHelper.float(/ok\.(\d]+) m²/)),
+        ...h.asCustom('odbior', rows[5], odbiorMapper),
+        ...h.asCustom('status', rows[6], DataParserHelper.status),
         zasobyDoPobrania,
     };
 
@@ -61,14 +62,18 @@ function rowMapper(
 // mapper utils
 // ****************************
 
-function odbiorMapper(raw: string | null): OdbiorType | null {
+function odbiorMapper(raw: string | null | undefined): OdbiorType | null {
+    if (raw === null || raw === undefined) {
+        return null;
+    }
+
     const exprResult = /(\w)-(\d{4})r./.exec(raw || '');
 
     if (!exprResult || !exprResult[1]) {
         return { raw };
     }
 
-    const miesiac = parseUtils.parseMiesiac(exprResult[1]);
+    const miesiac = DataParserHelper.miesiac(exprResult[1]);
     const rok = Number.parseInt(exprResult[2]);
 
     if (miesiac === null || isNaN(rok)) {
@@ -78,22 +83,18 @@ function odbiorMapper(raw: string | null): OdbiorType | null {
     return { miesiac, rok };
 }
 
-function statusMapper(raw: string): Status | null {
-    switch (raw) {
-        case 'Wolne': return Status.WOLNE;
-        case 'Sprzedane': return Status.SPRZEDANE;
-        case 'Rezerwacja': return Status.REZERWACJA;
-        default: return null;
-    }
-}
-
 function getZasobyDoPobrania(row: HTMLElement | undefined, h: HtmlParserHelper<IGarvenaParkListElement>) {
     const result: { id: string, url: string }[] = [];
 
-    const pdfUrl = h.readTextOf(
+    const pdfUrl = h.readAttributeOf(
         row?.querySelectorAll('td')[8]?.querySelector('a'),
-        { fieldName: 'zasobyDoPobrania', comment: 'pdf' },
-        { fromAttribute: 'href', mapper: rawText => rawText, notEmpty: true })
+        'href',
+        {
+            fieldInfo: { fieldName: 'zasobyDoPobrania', comment: 'pdf' },
+            mustExist: false,
+            errorWhenEmpty: false
+        }
+    );
 
     if (pdfUrl) {
         result.push({ id: KartaOfertyPdf, url: pdfUrl })

@@ -11,6 +11,7 @@ import SemekoCubic from "./Semeko/SemekoCubic";
 import SemekoAquasfera from "./Semeko/SemekoAquasfera";
 import { Ostoja } from "./Ostoja/Ostoja";
 import { GarvenaPark } from "./Garvena/GarvenaPark";
+import ApartamentyMarengo from "./Multidom/ApartamentyMarengo";
 
 export const inwestycje: IDataProvider<any, any>[] = [
     Ostoja,
@@ -25,4 +26,5 @@ export const inwestycje: IDataProvider<any, any>[] = [
     SemekoCubic,
     SemekoAquasfera,
     SemekoZielonaLaguna2,
+    ApartamentyMarengo,
 ];
