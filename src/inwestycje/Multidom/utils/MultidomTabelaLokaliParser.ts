@@ -35,8 +35,6 @@ function rowMapper(
     dataProvider: IDataProvider<IMultiDomListElement, IMultidomDetails>
 ): IMultiDomListElement {
 
-    const a = h.asMap('cechy', row?.querySelector('td.options')?.structuredText?.split(',')?.map(v => v.trim()), cechaParser);
-
     const result: IMultiDomListElement = {
         id: 'tmp_id',
         ...h.asStringOptional('budynek', row?.querySelector('td.building')),
