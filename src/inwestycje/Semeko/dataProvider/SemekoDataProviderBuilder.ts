@@ -29,7 +29,7 @@ export const SemekoDataProviderBuilder = (props: ISemekoDataProviderProps): ISem
 
         getListUrl: () => props.listaLokaliUrl,
         parseListHtml: semekoTabelaLokaliParser,
-        getOfferUrl: item => isRawData(item.detailsUrl) ? undefined : item.detailsUrl,
+        getOfferUrl: item => isRawData(item.offerDetailsUrl) ? undefined : item.offerDetailsUrl,
         parseOfferHtml: semekoOfertaParser,
         offerBuilder: semekoOfertaBuilder
     }

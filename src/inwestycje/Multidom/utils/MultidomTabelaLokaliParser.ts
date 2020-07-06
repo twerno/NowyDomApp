@@ -50,7 +50,7 @@ function rowMapper(
         ...h.asCustom('status', row?.querySelector('td.status'), DataParserHelper.status),
 
         ...h.asMap('cechy', row?.querySelector('td.options')?.structuredText?.split(',')?.map(v => v.trim()), cechaParser),
-        ...h.asStringOptional("detailsUrl", row?.querySelector('td.view')?.querySelector('a'), detailsUrlParser, { attributeName: 'href' }),
+        ...h.asStringOptional("offerDetailsUrl", row?.querySelector('td.view')?.querySelector('a'), detailsUrlParser, { attributeName: 'href' }),
     };
 
     result.id = ofertaIdBuilderExcept([dataProvider.inwestycjaId, result.budynek, result.nrLokalu]);

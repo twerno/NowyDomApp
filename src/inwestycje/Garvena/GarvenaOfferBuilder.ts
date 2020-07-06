@@ -7,7 +7,12 @@ export default (listItem: IGarvenaParkListElement, detale: IGarvenaParkDetails |
     const result: IOfertaDane = {
         typ: Typ.DOM
         , ...listItem
-        , cechy: { data: {} }
+        , cechy: { data: {} },
+        budynek: undefined,
+        cena: undefined,
+        pietro: undefined,
+        stronySwiata: undefined,
+        offerDetailsUrl: undefined,
     };
 
     return { id: listItem.id, dane: result };

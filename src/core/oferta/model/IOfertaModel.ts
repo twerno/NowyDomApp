@@ -33,20 +33,20 @@ export enum ZASOBY {
 
 export interface IOfertaDane {
     typ: Typ | IRawData;
-    budynek?: string | IRawData;
-    nrLokalu?: string | IRawData;
+    budynek: string | IRawData | undefined;
+    nrLokalu: string | IRawData | undefined;
     metraz: number | IRawData;
-    lpPokoj?: number | IRawData;
-    pietro?: number | IRawData;
-    liczbaKondygnacji?: number | IRawData;
-    stronySwiata?: Array<StronaSwiata | IRawData>;
+    lpPokoj: number | IRawData | undefined;
+    pietro: number | IRawData | undefined;
+    liczbaKondygnacji: number | IRawData | undefined;
+    stronySwiata: Array<StronaSwiata | IRawData> | undefined;
     cechy: MapWithRawType<ICechy>;
 
     status: Status | IRawData;
-    odbior?: OdbiorType;
-    cena?: number | IRawData;
+    odbior: OdbiorType | undefined;
+    cena: number | IRawData | undefined;
 
-    offerDetailsUrl?: string;
+    offerDetailsUrl: string | undefined;
 
     // id zasobu x url 
     zasobyDoPobrania: { id: string, url: string }[];

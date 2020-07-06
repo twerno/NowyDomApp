@@ -15,7 +15,7 @@ export interface IMultiDomListElement extends IListElement {
 
     status: Status | IRawData;
 
-    detailsUrl?: string | IRawData;
+    offerDetailsUrl?: string | IRawData;
 }
 
 export interface IMultidomDetails {

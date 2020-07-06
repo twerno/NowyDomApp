@@ -13,7 +13,10 @@ export default (listItem: IOstojaListElement, detale: IOstojaOfferDetails | null
         ...listItem,
         ...detale,
         zasobyDoPobrania,
-        zasobyPobrane: []
+        liczbaKondygnacji: undefined,
+        odbior: undefined,
+        cena: listItem.cena,
+        offerDetailsUrl: listItem.offerDetailsUrl
     };
 
     return { id: listItem.id, dane: result };

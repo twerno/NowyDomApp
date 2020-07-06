@@ -31,7 +31,7 @@ export const MultidomDataProviderBuilder = (props: IBuilderProps): IMultiDomData
 
         getListUrl: () => props.listaLokaliUrl,
         parseListHtml: MultidomTabelaLokaliParser,
-        getOfferUrl: (element) => isRawData(element.detailsUrl) ? undefined : element.detailsUrl,
+        getOfferUrl: (element) => isRawData(element.offerDetailsUrl) ? undefined : element.offerDetailsUrl,
         parseOfferHtml: MultidomOfertaParser,
         offerBuilder: MultidomOfertaBuilder
     }

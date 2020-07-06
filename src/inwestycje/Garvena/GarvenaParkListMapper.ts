@@ -45,7 +45,7 @@ function rowMapper(
         id: 'tmp_id',
         ...h.asRaw('nrLokalu', rows[0]),
         ...h.asFloat('liczbaKondygnacji', rows[1]),
-        ...h.asInt('liczbaPokoi', rows[2]),
+        ...h.asInt('lpPokoj', rows[2]),
         ...h.asFloat('metraz', rows[3]),
         ...h.asFloatOptional('powiezchniaOgrodu', rows[4], powiezchniaOgrodu),
         ...h.asCustom('odbior', rows[5], odbiorMapper),

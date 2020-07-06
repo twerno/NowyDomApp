@@ -32,7 +32,7 @@ export default (listItem: INovumListElement, detale: INovumDetails | null): { id
 
         offerDetailsUrl: listItem.offerDetailsUrl,
         zasobyDoPobrania,
-        zasobyPobrane: []
+        liczbaKondygnacji: undefined
     };
 
     return { id: listItem.id, dane: result };

@@ -54,7 +54,7 @@ function rowMapper(
         ...h.asCustom('odbior', row?.querySelector('.c7'), odbiorMapper),
         status: Status.WOLNE,
         ...h.asMap("cechy", row?.querySelectorAll('.c9 span.more4'), cechaParser, { errorWhenEmpty: false, mustExist: false }),
-        ...h.asString("detailsUrl", row?.querySelector('.c1'), detailsUrlParser, { attributeName: 'onclick' }),
+        ...h.asString("offerDetailsUrl", row?.querySelector('.c1'), detailsUrlParser, { attributeName: 'onclick' }),
         zasobyDoPobrania,
     };
 
