@@ -25,7 +25,11 @@ export interface IOfertaRecordOpe {
 }
 
 export type MapWithRawType<T extends {}> = { data: Partial<T>, raw?: string[] };
-export const KartaOfertyPdf = 'ofertaPdf';
+
+export enum ZASOBY {
+    PDF = 'ofertaPdf',
+    IMG = 'planImg'
+}
 
 export interface IOfertaDane {
     typ: Typ | IRawData;

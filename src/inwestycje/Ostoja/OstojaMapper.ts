@@ -2,8 +2,8 @@ import cheerio from 'cheerio';
 import { IRawData, ICechy } from '../../core/oferta/model/IOfertaModel';
 import CheerioHelper from '../../core/utils/CheerioHelper';
 import { IOstojaListElement, IOstojaOfferDetails } from './OstojaModel';
-import { Ostoja } from './Ostoja';
-import { IParseListProps } from '../../core/oferta/IOfertaProvider';
+import { Ostoja, IOstojaParserProps } from './Ostoja';
+import { IDataProviderParserProps } from '../../core/oferta/IOfertaProvider';
 import { StronaSwiata, StronaSwiataHelper } from '../../core/oferta/model/StronySwiata';
 import { Status } from '../../core/oferta/model/Status';
 
@@ -15,7 +15,7 @@ export default {
 function listMapper(
     html: string,
     errors: any[],
-    subTaskProps: IParseListProps<IOstojaListElement, IOstojaOfferDetails>
+    props: IOstojaParserProps
 ) {
     const rows = cheerio
         .load(html)('form.offer-search .price-list > tbody > tr');
@@ -28,7 +28,12 @@ function listMapper(
     return { items };
 }
 
-async function detailMapper(html: string | string[]): Promise<IOstojaOfferDetails> {
+async function detailMapper(
+    html: string | string[],
+    errors: any[],
+    offerId: string,
+    props: IOstojaParserProps
+): Promise<IOstojaOfferDetails> {
 
     if (html instanceof Array) {
         throw new Error('maper przenaczony dla pojedynczego rekordu, otrzymano tablicę');

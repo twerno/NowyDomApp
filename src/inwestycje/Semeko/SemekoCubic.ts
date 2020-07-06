@@ -3,6 +3,6 @@ import { SemekoDataProviderBuilder } from "./dataProvider/SemekoDataProviderBuil
 export default SemekoDataProviderBuilder({
     inwestycjaId: 'Cubic',
     listaLokaliUrl: 'https://www.semeko.pl/oferta/Osiedle-Cubic-Rumia/tabela-lokali',
-    standard: { data: {} },
+    data: {},
     url: 'https://www.semeko.pl/oferta/Osiedle-Cubic-Rumia'
 });

@@ -64,7 +64,9 @@ class ProvideOfferTask2<T extends IListElement = IListElement, D = any> implemen
         return this.dataProvider
             .parseOfferHtml(
                 htmls.length === 1 ? htmls[0] : htmls,
-                errors
+                errors,
+                this.offer.id,
+                { dataProvider: this.dataProvider }
             )
             .catch(TaskHelper.silentErrorReporter(errors, { method: 'parseDetails', htmlList, offer: this.offer }));
     }

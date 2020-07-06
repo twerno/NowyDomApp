@@ -1,15 +1,17 @@
 import { HTMLElement, parse } from 'node-html-parser';
 import { IAsyncTask } from "../../../core/asyncTask/IAsyncTask";
-import { IDataProvider, IParseListProps } from "../../../core/oferta/IOfertaProvider";
+import { IDataProvider, IDataProviderParserProps } from "../../../core/oferta/IOfertaProvider";
 import { ICechy } from '../../../core/oferta/model/IOfertaModel';
 import DataParserHelper from '../../../inwestycje/helpers/DataParserHelper';
 import { HtmlParserHelper } from '../../../inwestycje/helpers/HtmlParserHelper';
 import { IMultidomDetails, IMultiDomListElement } from './MultidomModel';
+import { Typ } from 'core/oferta/model/Typ';
+import { IMultiDomDataProvider, IMultiDomParserProps } from './MultidomDataProviderBuilder';
 
 export default (
     html: string,
     errors: any[],
-    subTaskProps: IParseListProps<IMultiDomListElement, IMultidomDetails>
+    props: IMultiDomParserProps
 ): { items: IMultiDomListElement[], tasks?: IAsyncTask[] } => {
 
     const root = parse(html);
@@ -17,8 +19,8 @@ export default (
 
     const items: IMultiDomListElement[] = rows.map(
         (row, idx) => {
-            const h = new HtmlParserHelper<IMultiDomListElement>(`${subTaskProps.dataProvider.inwestycjaId} X ${idx}`, errors);
-            return rowMapper(row, h, subTaskProps.dataProvider);
+            const h = new HtmlParserHelper<IMultiDomListElement>(`${props.dataProvider.inwestycjaId} X ${idx}`, errors);
+            return rowMapper(row, h, props.dataProvider);
         }
     );
 
@@ -32,11 +34,12 @@ export default (
 function rowMapper(
     row: HTMLElement | undefined,
     h: HtmlParserHelper<IMultiDomListElement>,
-    dataProvider: IDataProvider<IMultiDomListElement, IMultidomDetails>
+    dataProvider: IMultiDomDataProvider
 ): IMultiDomListElement {
 
     const result: IMultiDomListElement = {
         id: 'tmp_id',
+        typ: dataProvider.data.typ,
         ...h.asStringOptional('budynek', row?.querySelector('td.building')),
         ...h.asString('nrLokalu', row?.querySelector('td.local'), DataParserHelper.regExp(/Lokal:\s*(\w+)/)),
 
@@ -61,13 +64,6 @@ function rowMapper(
 // ****************************
 
 function cechaParser(source: string | undefined | null): Partial<ICechy> | string | null {
-    switch (source) {
-        case 'o': return 'ogród';
-        case 't/o': return 'taras/ogród';
-        case 'b': return 'balkon';
-        case 'a': return 'antresola';
-        case 'l': return 'loggia';
-    }
     return null;
 }
 

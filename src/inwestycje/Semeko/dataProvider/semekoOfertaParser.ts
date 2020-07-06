@@ -1,11 +1,14 @@
 import { HTMLElement, parse } from 'node-html-parser';
-import { IRawData } from "../../../core/oferta/model/IOfertaModel";
+import { IRawData, ZASOBY } from "../../../core/oferta/model/IOfertaModel";
 import { ISemekoDetails } from "./SemekoModel";
 import { StronaSwiata } from '../../../core/oferta/model/StronySwiata';
+import { ISemekoParserProps } from './SemekoDataProviderBuilder';
 
 export default async (
     html: string[] | string,
     errors: any[],
+    ofertaId: string,
+    props: ISemekoParserProps
 ): Promise<ISemekoDetails> => {
 
     if (html instanceof Array) {
@@ -50,7 +53,7 @@ function getZasobyDoPobrania(root: HTMLElement | undefined, errors: any[]): { id
         .shift();
 
     if (pdfUrlPart) {
-        result.push({ id: 'ofertaPdf', url: `https://www.semeko.pl${pdfUrlPart}` })
+        result.push({ id: ZASOBY.PDF, url: `https://www.semeko.pl${pdfUrlPart}` })
     }
 
     return result;

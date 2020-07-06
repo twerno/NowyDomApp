@@ -1,15 +1,16 @@
 import { HTMLElement, parse } from 'node-html-parser';
-import { IDataProvider, IParseListProps } from "../../core/oferta/IOfertaProvider";
-import { KartaOfertyPdf } from "../../core/oferta/model/IOfertaModel";
+import { IDataProvider, IDataProviderParserProps } from "../../core/oferta/IOfertaProvider";
+import { ZASOBY } from "../../core/oferta/model/IOfertaModel";
 import { OdbiorType } from '../../core/oferta/model/OdbiorType';
 import DataParserHelper from '../../inwestycje/helpers/DataParserHelper';
 import { HtmlParserHelper } from '../../inwestycje/helpers/HtmlParserHelper';
 import { IGarvenaParkDetails, IGarvenaParkListElement } from './GarvenaParkModel';
+import { IGarvenaParkParserProps } from './GarvenaPark';
 
 export default (
     html: string,
     errors: any[],
-    props: IParseListProps<IGarvenaParkListElement, IGarvenaParkDetails>
+    props: IGarvenaParkParserProps
 ): { items: IGarvenaParkListElement[] } => {
 
     const root = parse(html.substring(html.indexOf('<table'), html.indexOf('</table>')));
@@ -21,7 +22,7 @@ export default (
             const parserId = `${props.dataProvider.inwestycjaId} X ${idx}`;
             const h = new HtmlParserHelper<IGarvenaParkListElement>(parserId, errors);
 
-            return rowMapper(row, h, props.dataProvider);
+            return rowMapper(row, h, props);
         });
 
     return { items };
@@ -34,7 +35,7 @@ export default (
 function rowMapper(
     row: HTMLElement | undefined,
     h: HtmlParserHelper<IGarvenaParkListElement>,
-    dataProvider: IDataProvider<IGarvenaParkListElement, IGarvenaParkDetails>
+    props: IGarvenaParkParserProps
 ): IGarvenaParkListElement {
 
     const zasobyDoPobrania = getZasobyDoPobrania(row, h);
@@ -53,7 +54,7 @@ function rowMapper(
         zasobyDoPobrania,
     };
 
-    result.id = `${dataProvider.inwestycjaId}-${result.nrLokalu}`;
+    result.id = `${props.dataProvider.inwestycjaId}-${result.nrLokalu}`;
 
     return result;
 }
@@ -97,7 +98,7 @@ function getZasobyDoPobrania(row: HTMLElement | undefined, h: HtmlParserHelper<I
     );
 
     if (pdfUrl) {
-        result.push({ id: KartaOfertyPdf, url: pdfUrl })
+        result.push({ id: ZASOBY.PDF, url: pdfUrl })
     }
 
     return result;

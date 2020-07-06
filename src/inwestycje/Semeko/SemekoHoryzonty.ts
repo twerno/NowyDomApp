@@ -3,6 +3,6 @@ import { SemekoDataProviderBuilder } from "./dataProvider/SemekoDataProviderBuil
 export default SemekoDataProviderBuilder({
     inwestycjaId: 'Horyzonty',
     listaLokaliUrl: 'https://www.semeko.pl/oferta/Horyzonty-Gdyni/tabela-lokali',
-    standard: { data: {} },
+    data: {},
     url: 'https://www.semeko.pl/oferta/Horyzonty-Gdyni'
 });

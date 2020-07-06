@@ -1,11 +1,11 @@
-import { IOfertaDane } from '../../core/oferta/model/IOfertaModel';
+import { IOfertaDane, ZASOBY } from '../../core/oferta/model/IOfertaModel';
 import { IOstojaListElement, IOstojaOfferDetails } from './OstojaModel';
 import { Typ } from '../../core/oferta/model/Typ';
 
 export default (listItem: IOstojaListElement, detale: IOstojaOfferDetails | null): { id: string, dane: IOfertaDane } => {
 
     const zasobyDoPobrania = detale?.sourceOfertaPdfUrl
-        ? [{ id: 'ofertaPdf', url: detale?.sourceOfertaPdfUrl }]
+        ? [{ id: ZASOBY.PDF, url: detale?.sourceOfertaPdfUrl }]
         : [];
 
     const result: IOfertaDane = {

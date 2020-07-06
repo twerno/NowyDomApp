@@ -3,6 +3,6 @@ import { SemekoDataProviderBuilder } from "./dataProvider/SemekoDataProviderBuil
 export default SemekoDataProviderBuilder({
     inwestycjaId: 'Remoda',
     listaLokaliUrl: 'https://www.semeko.pl/oferta/Remoda-Reda/tabela-lokali',
-    standard: { data: {} },
+    data: {},
     url: 'https://www.semeko.pl/oferta/Remoda-Reda'
 });

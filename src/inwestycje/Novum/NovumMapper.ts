@@ -1,9 +1,8 @@
 import cheerio from 'cheerio';
 import { IRawData } from '../../core/oferta/model/IOfertaModel';
 import CheerioHelper from '../../core/utils/CheerioHelper';
-import { Novum } from './Novum';
+import { Novum, INovumData, INovumParserProps } from './Novum';
 import { INovumDetails, INovumListElement } from './NovumSchema';
-import { IParseListProps } from '../../core/oferta/IOfertaProvider';
 
 export default {
     listMapper,
@@ -13,7 +12,7 @@ export default {
 function listMapper(
     html: string,
     errors: any[],
-    subTaskProps: IParseListProps<INovumListElement, INovumDetails>
+    props: INovumParserProps
 ) {
     const rows = cheerio
         .load(html)('.list-item.box');

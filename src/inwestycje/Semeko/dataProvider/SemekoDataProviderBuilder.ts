@@ -1,24 +1,31 @@
-import { IDataProvider } from "../../../core/oferta/IOfertaProvider";
+import { IDataProvider, IDataProviderParserProps } from "../../../core/oferta/IOfertaProvider";
 import { ICechy, isRawData } from "../../../core/oferta/model/IOfertaModel";
 import { ISemekoDetails, ISemekoListElement } from "./SemekoModel";
 import semekoOfertaBuilder from "./semekoOfertaBuilder";
-import semekoOfertaParser from "./semekoOfertaParser";
 import semekoTabelaLokaliParser from "./semekoTabelaLokaliParser";
+import semekoOfertaParser from "./semekoOfertaParser";
 
 export interface ISemekoDataProviderProps {
     inwestycjaId: string;
     url: string;
-    standard: { data: Partial<ICechy>, raw?: string[] },
+    data: ISemekoDataProviderBuilderData,
     listaLokaliUrl: string
 }
 
-export const SemekoDataProviderBuilder = (props: ISemekoDataProviderProps): IDataProvider<ISemekoListElement, ISemekoDetails> => {
+interface ISemekoDataProviderBuilderData {
+
+}
+
+export type ISemekoDataProvider = IDataProvider<ISemekoListElement, ISemekoDetails, ISemekoDataProviderBuilderData>;
+export type ISemekoParserProps = IDataProviderParserProps<ISemekoListElement, ISemekoDetails, ISemekoDataProviderBuilderData>;
+
+export const SemekoDataProviderBuilder = (props: ISemekoDataProviderProps): ISemekoDataProvider => {
 
     return {
         developerId: 'Semeko',
         inwestycjaId: props.inwestycjaId,
         url: props.url,
-        standard: props.standard,
+        data: props.data,
 
         getListUrl: () => props.listaLokaliUrl,
         parseListHtml: semekoTabelaLokaliParser,

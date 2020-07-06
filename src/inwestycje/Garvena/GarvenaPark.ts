@@ -1,17 +1,21 @@
-import { IDataProvider } from "../../core/oferta/IOfertaProvider";
+import { IDataProvider, IDataProviderParserProps } from "../../core/oferta/IOfertaProvider";
 import { IGarvenaParkListElement, IGarvenaParkDetails } from "./GarvenaParkModel";
 import GarvenaParkListMapper from "./GarvenaParkListMapper";
 import GarvenaOfferBuilder from "./GarvenaOfferBuilder";
 
-export const GarvenaPark: IDataProvider<IGarvenaParkListElement, IGarvenaParkDetails> = {
+interface IGarvenaParkData {
+
+}
+
+export type IGarvenaParkDataProvider = IDataProvider<IGarvenaParkListElement, IGarvenaParkDetails, IGarvenaParkData>;
+export type IGarvenaParkParserProps = IDataProviderParserProps<IGarvenaParkListElement, IGarvenaParkDetails, IGarvenaParkData>;
+
+export const GarvenaPark: IGarvenaParkDataProvider = {
 
     inwestycjaId: 'GarvenaPark',
     developerId: 'DS Development',
     url: 'https://www.garvena.pl/',
-    standard: {
-        data: {},
-        raw: []
-    },
+    data: {},
 
     getListUrl: () => 'https://www.garvena.pl/mieszkania/#lokale',
 

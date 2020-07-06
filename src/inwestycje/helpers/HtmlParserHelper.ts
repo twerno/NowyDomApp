@@ -12,6 +12,11 @@ export interface IElReaderOptions {
      * default: true 
      * */
     errorWhenEmpty?: boolean;
+
+    /**
+     * default: false 
+     * */
+    reportMappingError?: boolean;
 }
 
 /**
@@ -64,7 +69,8 @@ export class HtmlParserHelper<T extends object> {
 
         const options: IElReaderOptions = {
             mustExist: true,
-            errorWhenEmpty: true
+            errorWhenEmpty: true,
+            reportMappingError: true
         }
 
         const defaultMapper: THtmlParserMapper<string> = v => v || null;
@@ -81,7 +87,10 @@ export class HtmlParserHelper<T extends object> {
 
         const defaultMapper: THtmlParserMapper<string> = v => v || null;
 
-        const _options = { mustExist: false };
+        const _options = {
+            mustExist: false,
+            reportMappingError: false
+        };
 
         return this.asCustomOptional(field, el, mapper || defaultMapper, type, _options);
     }
@@ -97,7 +106,8 @@ export class HtmlParserHelper<T extends object> {
 
         const options: IElReaderOptions = {
             errorWhenEmpty: true,
-            mustExist: true
+            mustExist: true,
+            reportMappingError: true
         };
 
         const defaultMapper: THtmlParserMapper<number> = (rawText) => {
@@ -120,7 +130,8 @@ export class HtmlParserHelper<T extends object> {
     ) {
         const options: IElReaderOptions = {
             errorWhenEmpty: true,
-            mustExist: true
+            mustExist: true,
+            reportMappingError: true
         };
 
         const defaultMapper: THtmlParserMapper<number> = (rawText) => {
@@ -140,8 +151,9 @@ export class HtmlParserHelper<T extends object> {
         type?: 'text' | { attributeName: string },
     ) {
         const options: IElReaderOptions = {
-            errorWhenEmpty: true,
-            mustExist: true
+            mustExist: false,
+            errorWhenEmpty: false,
+            reportMappingError: false
         };
 
         const defaultMapper: THtmlParserMapper<number> = (rawText) => {
@@ -256,6 +268,9 @@ export class HtmlParserHelper<T extends object> {
         try {
             const mappedValue = mapper(value);
             if (mappedValue === null) {
+                if (props.reportMappingError) {
+                    this.addError(props.fieldInfo, `Mapper nie był w stanie zmapować wartości: ${value}`);
+                }
                 return { raw: value };
             }
             else if (mappedValue === undefined) {

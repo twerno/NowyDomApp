@@ -3,6 +3,6 @@ import { SemekoDataProviderBuilder } from "./dataProvider/SemekoDataProviderBuil
 export default SemekoDataProviderBuilder({
     inwestycjaId: 'Light Tower',
     listaLokaliUrl: 'https://www.semeko.pl/oferta/Light-Tower-Reda/tabela-lokali',
-    standard: { data: {} },
+    data: {},
     url: 'https://www.semeko.pl/oferta/Light-Tower-Reda'
 });

@@ -1,4 +1,4 @@
-import { ICechy, IOfertaDane, IRawData } from '../../core/oferta/model/IOfertaModel';
+import { ICechy, IOfertaDane, IRawData, ZASOBY, MapWithRawType } from '../../core/oferta/model/IOfertaModel';
 import { Novum } from './Novum';
 import { INovumDetails, INovumListElement } from './NovumSchema';
 import { StronaSwiata, StronaSwiataHelper } from '../../core/oferta/model/StronySwiata';
@@ -13,7 +13,7 @@ export default (listItem: INovumListElement, detale: INovumDetails | null): { id
     const odbior = odbiorMapper(listItem);
 
     const zasobyDoPobrania = detale?.sourceOfertaPdfUrl
-        ? [{ id: 'ofertaPdf', url: detale?.sourceOfertaPdfUrl }]
+        ? [{ id: ZASOBY.PDF, url: detale?.sourceOfertaPdfUrl }]
         : [];
 
     const result: IOfertaDane = {
@@ -94,10 +94,10 @@ function stronaSwiataValMapper(val: string): StronaSwiata | IRawData {
     return StronaSwiataHelper.raw2StronaSwiata(val);
 }
 
-function standardMapper(detale: INovumDetails | null): { data: ICechy, raw?: string[] } {
-    const result = {
-        data: { ...Novum.standard.data },
-        raw: [...Novum.standard.raw || []]
+function standardMapper(detale: INovumDetails | null): MapWithRawType<ICechy> {
+    const result: MapWithRawType<ICechy> = {
+        data: { ...Novum.data.cechy.data },
+        raw: [...Novum.data.cechy.raw || []]
     };
 
     detale?.udogodnienia

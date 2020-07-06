@@ -3,6 +3,6 @@ import { SemekoDataProviderBuilder } from "./dataProvider/SemekoDataProviderBuil
 export default SemekoDataProviderBuilder({
     inwestycjaId: 'Zielona Laguna II',
     listaLokaliUrl: 'https://www.semeko.pl/oferta/Zielona-Laguna-II-Gdynia/tabela-lokali',
-    standard: { data: {} },
+    data: {},
     url: 'https://www.semeko.pl/oferta/Zielona-Laguna-II-Gdynia'
 });
