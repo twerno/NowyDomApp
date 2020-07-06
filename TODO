@@ -1,0 +1,5 @@
+- mapery zwracaja typ <IRawData | null | T> zamiast <T | null | undefined>
+- maper ceny dla Multidomu
+- maper liczba pokoi
+- dodanie pozostałych inwestycji inpro
+- dodanie pozostałych inwestycji multidom
