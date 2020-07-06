@@ -39,7 +39,7 @@ function rowMapper(
     const result: IMultiDomListElement = {
         id: 'tmp_id',
         typ: dataProvider.data.typ,
-        ...h.asStringOptional('budynek', row?.querySelector('td.building')),
+        ...h.asStringOptional('budynek', row?.querySelector('td.building'), DataParserHelper.regExp(/Budynek:\s*(\w+)/)),
         ...h.asString('nrLokalu', row?.querySelector('td.local'), DataParserHelper.regExp(/Lokal:\s*(\w+)/)),
 
         ...h.asFloat('metraz', row?.querySelector('td.area')),
