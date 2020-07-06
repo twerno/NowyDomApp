@@ -23,10 +23,13 @@ class ProvideOfferTask4<T extends IListElement = IListElement, D = any> extends 
         const doPobrania = this.stan.data.zasobyDoPobrania
             .filter(z => !this.zasobPobrany(z));
 
+        let stanCached = this.stan;
+
         // const resourcesDownloaded = {count: new Set<string>()};
         // wywolywanie operacji synchroniczne
         for (const res of doPobrania) {
-            await this.pobierzIZapisz(res, errors, props);
+            const zmiana = await this.pobierzIZapisz(res, stanCached, errors, props);
+            stanCached = zmiana?.rekord || stanCached;
         }
 
         return [];
@@ -39,16 +42,19 @@ class ProvideOfferTask4<T extends IListElement = IListElement, D = any> extends 
 
     private async pobierzIZapisz(
         zasob: { id: string; url: string; },
+        stanCached: IOfertaRecord,
         errors: any[],
         props: IProvideOfferTaskProps
     ) {
         console.log('pobieranie', JSON.stringify(zasob), this.ofertaId);
         const s3Filename = await this.pobierzIZapiszNaS3(zasob, props);
 
-        const stan = this.stan || await this.pobierzStan(this.ofertaId, props);
+        const stan = stanCached || await this.pobierzStan(this.ofertaId, props);
         const zmiana = { ...stan?.data, zasobyPobrane: [...stan?.data.zasobyPobrane || [], { id: zasob.id, s3Filename }] };
-        await this.wyliczZmianyIZapisz(this.ofertaId, zmiana, errors, { ...props, stats: getEmptyProvideOfferStats() }, stan);
+        const result = await this.wyliczZmianyIZapisz(this.ofertaId, zmiana, errors, { ...props, stats: getEmptyProvideOfferStats() }, stan);
         props.stats.resourcesDownloaded.count.add(`${this.ofertaId}-${zasob.id}`);
+        return result;
+
     }
 
     private async pobierzIZapiszNaS3(
@@ -57,7 +63,7 @@ class ProvideOfferTask4<T extends IListElement = IListElement, D = any> extends 
     ) {
         const file = await Axios({ responseType: 'arraybuffer', url: zasob.url });
         const fileExt = this.readFileExt(file);
-        const filename = `${this.ofertaId}_${zasob.id}`; + (fileExt ? `.${fileExt}` : '');
+        const filename = `${this.ofertaId}_${zasob.id}` + (fileExt ? `.${fileExt}` : '');
         const cType = contentType(fileExt) || undefined;
         await props.env.fileService.writeFile(this.dataProvider.inwestycjaId, filename, file.data, cType);
         return filename;

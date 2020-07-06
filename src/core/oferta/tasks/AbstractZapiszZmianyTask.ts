@@ -1,7 +1,7 @@
 import { IAsyncTask } from "../../asyncTask/IAsyncTask";
 import { IDataProvider, IListElement } from "../IOfertaProvider";
 import { IOfertaDane, IOfertaRecord } from "../model/IOfertaModel";
-import { OfertaUpdateHelper } from "./OfertaUpdateService";
+import { OfertaUpdateHelper, IOfertaWyliczonaZmina } from "./OfertaUpdateService";
 import { IProvideOfferTaskProps } from "./ProvideOfferTask1";
 import { IStringMap } from "../../../utils/IMap";
 import { defaultDateService } from "../service/IDateService";
@@ -96,7 +96,7 @@ export const getEmptyProvideOfferStats = (): IProvideOfferStats => (
         added: { count: new Set<string>(), records: [] },
         updated: { count: new Set<string>(), records: [] },
         deleted: { count: new Set<string>(), records: [] },
-        resourcesDownloaded: {count: new Set<string>()},
+        resourcesDownloaded: { count: new Set<string>() },
     }
 );
 
@@ -118,6 +118,9 @@ abstract class AbstractZapiszZmianyTask<T extends IListElement = IListElement, D
 
         const zmiana = OfertaUpdateHelper.wyliczZmiane(
             { id: ofertaId, data: offerData }, stan, this.dataProvider, props.stats, defaultDateService);
+
+        await this.zapisz(zmiana, props);
+
         return zmiana;
     }
 
@@ -127,6 +130,14 @@ abstract class AbstractZapiszZmianyTask<T extends IListElement = IListElement, D
             ofertaId: ofertaId
         };
         return props.env.stanService.getOne(key)
+    }
+
+    protected async zapisz(zmiany: IOfertaWyliczonaZmina | null, props: IProvideOfferTaskProps) {
+        if (zmiany) {
+            await props.env.stanService.save(zmiany.rekord);
+            await props.env.opeService.save(zmiany.ope);
+        }
+
     }
 }
 

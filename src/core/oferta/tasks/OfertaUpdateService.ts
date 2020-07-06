@@ -185,9 +185,10 @@ const InternalOfertaUpdateHelper = {
         const timestamp = dateService.now().getTime();
         let delta: Partial<IOfertaDane> | null = null;
 
-        // nie rejestrujemy zmian na niekatywnych ofertach (innych niż zmiana statusu)
+        // nie rejestrujemy zmian na niekatywnych ofertach (innych niż zmiana statusu i pobieranie plików)
         // na niektorych stronach z ofert nieaktywnych usuwane sa niektore dane np. cena
-        if (StatusHelper.isStatusAktywny(oferta.status)) {
+        if (StatusHelper.isStatusAktywny(oferta.status)
+            || (stan?.data.zasobyPobrane?.length || 0) < oferta.zasobyDoPobrania.length) {
             delta = this.wyliczDelta(stan, oferta);
         }
         else if (stan.data.status === oferta.status) {
