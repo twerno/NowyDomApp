@@ -1,9 +1,8 @@
 import { HTMLElement, parse } from 'node-html-parser';
-import { IDataProviderParserProps } from '../../../core/oferta/IOfertaProvider';
-import { HtmlParserHelper } from '../../../inwestycje/helpers/HtmlParserHelper';
-import { IMultidomDetails, IMultiDomListElement } from './MultidomModel';
 import { ZASOBY } from '../../../core/oferta/model/IOfertaModel';
+import { HtmlParserHelper } from '../../../inwestycje/helpers/HtmlParserHelper';
 import { IMultiDomParserProps } from './MultidomDataProviderBuilder';
+import { IMultidomDetails } from './MultidomModel';
 
 export default async (
     html: string[] | string,

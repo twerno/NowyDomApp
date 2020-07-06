@@ -1,5 +1,6 @@
-import { IOfertaDane, ICechy } from "../../core/oferta/model/IOfertaModel";
+import { IOfertaDane, ICechy, IRawData, isRawData } from "../../core/oferta/model/IOfertaModel";
 import { IAsyncTask } from "../asyncTask/IAsyncTask";
+import TypeUtils from "../../utils/TypeUtils";
 
 export interface IDataProviderParserProps<T extends IListElement = IListElement, Details = any, Data = any> {
     dataProvider: IDataProvider<T, Details, Data>;
@@ -23,4 +24,14 @@ export interface IDataProvider<T extends IListElement = IListElement, Details = 
 
 export interface IListElement {
     id: string;
+}
+
+export function ofertaIdBuilderExcept(skladowe: Array<string | undefined | IRawData>): string {
+    for (const sk of skladowe) {
+        if (isRawData(sk)) {
+            throw new Error(`Błąd budowania id z pól: ${JSON.stringify(skladowe)}`);
+        }
+    }
+
+    return skladowe.filter(TypeUtils.notEmpty).join('-');
 }

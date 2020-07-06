@@ -1,8 +1,8 @@
-import AbstractZapiszZmianyTask, { IProvideOfferStats } from "./AbstractZapiszZmianyTask";
 import { IDataProvider, IListElement } from "../IOfertaProvider";
 import { IOfertaDane } from "../model/IOfertaModel";
-import ProvideOfferTask4 from "./ProvideOfferTask4";
+import AbstractZapiszZmianyTask from "./AbstractZapiszZmianyTask";
 import { IProvideOfferTaskProps } from "./ProvideOfferTask1";
+import ProvideOfferTask4 from "./ProvideOfferTask4";
 
 /**
  * zapisanie zmian w ofercie do bazy

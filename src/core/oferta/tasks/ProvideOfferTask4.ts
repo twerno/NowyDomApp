@@ -47,7 +47,7 @@ class ProvideOfferTask4<T extends IListElement = IListElement, D = any> extends 
 
         const stan = this.stan || await this.pobierzStan(this.ofertaId, props);
         const zmiana = { ...stan?.data, zasobyPobrane: [...stan?.data.zasobyPobrane || [], { id: zasob.id, s3Filename }] };
-        await this.wyliczZmianyIZapisz(this.ofertaId, zmiana, errors, {...props, stats: getEmptyProvideOfferStats()}, stan);
+        await this.wyliczZmianyIZapisz(this.ofertaId, zmiana, errors, { ...props, stats: getEmptyProvideOfferStats() }, stan);
         props.stats.resourcesDownloaded.count.add(`${this.ofertaId}-${zasob.id}`);
     }
 
@@ -57,7 +57,7 @@ class ProvideOfferTask4<T extends IListElement = IListElement, D = any> extends 
     ) {
         const file = await Axios({ responseType: 'arraybuffer', url: zasob.url });
         const fileExt = this.readFileExt(file);
-        const filename = `${this.ofertaId}_${zasob.id}.${fileExt}`;
+        const filename = `${this.ofertaId}_${zasob.id}`; + (fileExt ? `.${fileExt}` : '');
         const cType = contentType(fileExt) || undefined;
         await props.env.fileService.writeFile(this.dataProvider.inwestycjaId, filename, file.data, cType);
         return filename;
@@ -65,7 +65,7 @@ class ProvideOfferTask4<T extends IListElement = IListElement, D = any> extends 
 
     private readFileExt(file: AxiosResponse<any>): string {
 
-        const extExpr = /filename=".+\.(\w+)"/
+        const extExpr = /filename="?.+\.(\w+)"?/
             .exec(file.headers['content-disposition']);
 
         if (extExpr && extExpr[1]) {
@@ -76,6 +76,11 @@ class ProvideOfferTask4<T extends IListElement = IListElement, D = any> extends 
         const ext = extension(contentType);
         if (ext) {
             return ext;
+        }
+
+        const expResult = /\.(\w{1,})$/.exec(file.config.url || '');
+        if (expResult && expResult[1]) {
+            return expResult[1];
         }
 
         return '';

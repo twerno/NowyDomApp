@@ -3,8 +3,8 @@ import WebDownloader from "../../../utils/WebDownloader";
 import { IAsyncTask } from "../../asyncTask/IAsyncTask";
 import TaskHelper from '../../asyncTask/TaskHelper';
 import { IDataProvider, IListElement } from "../IOfertaProvider";
-import ProvideOfferTask3 from "./ProvideOfferTask3";
 import { IProvideOfferTaskProps } from "./ProvideOfferTask1";
+import ProvideOfferTask3 from "./ProvideOfferTask3";
 import ProviderOfferHelper from "./ProviderOfferHelper";
 
 /**

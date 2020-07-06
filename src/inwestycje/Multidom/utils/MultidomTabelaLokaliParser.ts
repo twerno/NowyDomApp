@@ -1,12 +1,11 @@
 import { HTMLElement, parse } from 'node-html-parser';
 import { IAsyncTask } from "../../../core/asyncTask/IAsyncTask";
-import { IDataProvider, IDataProviderParserProps } from "../../../core/oferta/IOfertaProvider";
 import { ICechy } from '../../../core/oferta/model/IOfertaModel';
 import DataParserHelper from '../../../inwestycje/helpers/DataParserHelper';
 import { HtmlParserHelper } from '../../../inwestycje/helpers/HtmlParserHelper';
-import { IMultidomDetails, IMultiDomListElement } from './MultidomModel';
-import { Typ } from 'core/oferta/model/Typ';
 import { IMultiDomDataProvider, IMultiDomParserProps } from './MultidomDataProviderBuilder';
+import { IMultiDomListElement } from './MultidomModel';
+import { ofertaIdBuilderExcept } from '../../../core/oferta/IOfertaProvider';
 
 export default (
     html: string,
@@ -54,7 +53,7 @@ function rowMapper(
         ...h.asStringOptional("detailsUrl", row?.querySelector('td.view')?.querySelector('a'), detailsUrlParser, { attributeName: 'href' }),
     };
 
-    result.id = `${dataProvider.inwestycjaId}-${result.budynek}-${result.nrLokalu}`;
+    result.id = ofertaIdBuilderExcept([dataProvider.inwestycjaId, result.budynek, result.nrLokalu]);
 
     return result;
 }
