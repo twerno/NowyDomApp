@@ -1,11 +1,10 @@
 import { HTMLElement, parse } from 'node-html-parser';
-import { IDataProvider, IDataProviderParserProps } from "../../core/oferta/IOfertaProvider";
 import { ZASOBY } from "../../core/oferta/model/IOfertaModel";
 import { OdbiorType } from '../../core/oferta/model/OdbiorType';
 import DataParserHelper from '../../inwestycje/helpers/DataParserHelper';
 import { HtmlParserHelper } from '../../inwestycje/helpers/HtmlParserHelper';
-import { IGarvenaParkDetails, IGarvenaParkListElement } from './GarvenaParkModel';
 import { IGarvenaParkParserProps } from './GarvenaPark';
+import { IGarvenaParkListElement } from './GarvenaParkModel';
 
 export default (
     html: string,
@@ -48,7 +47,7 @@ function rowMapper(
         ...h.asFloat('liczbaKondygnacji', rows[1]),
         ...h.asInt('liczbaPokoi', rows[2]),
         ...h.asFloat('metraz', rows[3]),
-        ...h.asFloat('powiezchniaOgrodu', rows[4], DataParserHelper.float(/ok\.(\d]+) m²/)),
+        ...h.asFloatOptional('powiezchniaOgrodu', rows[4], powiezchniaOgrodu),
         ...h.asCustom('odbior', rows[5], odbiorMapper),
         ...h.asCustom('status', rows[6], DataParserHelper.status),
         zasobyDoPobrania,
@@ -102,4 +101,11 @@ function getZasobyDoPobrania(row: HTMLElement | undefined, h: HtmlParserHelper<I
     }
 
     return result;
+}
+
+function powiezchniaOgrodu(rawText: string | null | undefined): number | null | undefined {
+    if (rawText === '-') {
+        return undefined;
+    }
+    return DataParserHelper.float(/ok\.(\d+)\s+m²/)(rawText);
 }

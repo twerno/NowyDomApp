@@ -8,7 +8,7 @@ export interface IGarvenaParkListElement extends IListElement {
     nrLokalu: string;
     liczbaKondygnacji: number | IRawData;
     metraz: number | IRawData;
-    powiezchniaOgrodu: number | IRawData;
+    powiezchniaOgrodu?: number | IRawData;
     liczbaPokoi: number | IRawData;
     odbior: OdbiorType;
     status: Status | IRawData;
