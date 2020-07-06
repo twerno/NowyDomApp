@@ -1,7 +1,8 @@
 import fs from 'fs';
 
 export function saveFile(fileName: string, body: any) {
-    fs.writeFileSync(fileName, body, {});
+    const safeFileName = fileName.replace(/(\.)+$/, '');
+    fs.writeFileSync(safeFileName, body, {});
 }
 
 export function provideDir(dirPath: string) {
