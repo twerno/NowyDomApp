@@ -1,5 +1,5 @@
 import Excel from 'exceljs';
-import { IRawData, isRawData, IOfertaRecord } from '../model/IOfertaModel';
+import { IRawData, isRawData, IOfertaRecord, ZASOBY } from '../model/IOfertaModel';
 import { OdbiorTypeHelper } from '../model/OdbiorType';
 import { StatusHelper } from '../model/Status';
 import { StronaSwiataHelper } from '../model/StronySwiata';
@@ -39,6 +39,7 @@ async function writeOfertaStanSheet(sheet: Excel.Worksheet, env: IEnv) {
             column('Cena za metr', { numFmt: '# ##0.00 [$PLN]' }),
             column('Piętro'),
             column('Kondygnacje'),
+            column('Oferta'),
             column('Odbiór'),
             column('Strony świata'),
             column('Dodane'),
@@ -66,6 +67,7 @@ async function writeOfertaStanSheet(sheet: Excel.Worksheet, env: IEnv) {
                     'Cena': number2Excel(v.data.cena),
                     'Kondygnacje': number2Excel(v.data.liczbaKondygnacji),
                     'Liczba pokoi': number2Excel(v.data.lpPokoj),
+                    'Oferta': ofertaUrl(v),
                     'Odbiór': OdbiorTypeHelper.odbior2Str(v.data.odbior),
                     'Piętro': number2Excel(v.data.pietro),
                     'Typ': TypHelper.typ2str(v.data.typ),
@@ -203,4 +205,17 @@ function cellEqualsRule(formulae: string, style: Partial<Excel.Style>): Excel.Ce
             style,
         }
     );
+}
+
+function ofertaUrl(record: IOfertaRecord) {
+    const filename = record.data.zasobyPobrane?.find(v => v.id === ZASOBY.PDF)?.s3Filename;
+
+    if (!filename) {
+        return null;
+    }
+
+    return {
+        text: 'pdf',
+        hyperlink: `https://nowydom.s3-eu-west-1.amazonaws.com/${record.inwestycjaId}/${filename}`,
+    };
 }
