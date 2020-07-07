@@ -11,6 +11,7 @@ export default {
     float,
     floatOptional,
     miesiac,
+    cena,
 }
 
 function pietro(rawText: string | null | undefined): number | null | IRawData {
@@ -167,4 +168,25 @@ function parseNumberFn(rawText: string | undefined | null, regExp: RegExp, parse
     return isNaN(parsedNumber)
         ? null
         : parsedNumber;
+}
+
+function cena(customRegExpr?: RegExp): (rawText: string | undefined | null) => number | null | IRawData | undefined {
+    return (rawText) => {
+        if (rawText === null || rawText === undefined || rawText === '') {
+            return undefined;
+        }
+
+        const result = parseNumberFn(
+            rawText,
+            customRegExpr || defaultFloatRegExp,
+            val => Number.parseFloat(val.replace(/,/g, '.'))
+        );
+
+        if (typeof result === 'number') {
+            return result < 1000
+                ? result * 1000
+                : result;
+        }
+        return result;
+    };
 }

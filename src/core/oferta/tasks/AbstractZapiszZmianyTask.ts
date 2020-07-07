@@ -58,6 +58,7 @@ export function add2Summary(
     const result: IIProvideOfferSummary =
         summary
         || {
+            byInwestycja: {},
             totalErrors: 0,
             totalRecords: 0,
             unchanged: 0,
@@ -65,7 +66,6 @@ export function add2Summary(
             updated: 0,
             deleted: 0,
             resourcesDownloaded: 0,
-            byInwestycja: {}
         };
 
     result.totalErrors += errors.length;

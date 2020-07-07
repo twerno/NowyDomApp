@@ -45,7 +45,7 @@ function rowMapper(
         ...h.asFloat('metraz', row?.querySelector('td.area')),
         ...h.asInt('pietro', row?.querySelector('td.position'), DataParserHelper.pietro),
         ...h.asInt('lpPokoj', row?.querySelector('td.rooms'), DataParserHelper.int(/Pokoje:\s*(\d+)/)),
-        ...h.asFloatOptional('cena', row?.querySelector('td.price'), DataParserHelper.floatOptional()),
+        ...h.asFloatOptional('cena', row?.querySelector('td.price'), DataParserHelper.cena()),
 
         ...h.asCustom('status', row?.querySelector('td.status'), DataParserHelper.status),
 
