@@ -1,8 +1,8 @@
 import { HTMLElement, parse } from 'node-html-parser';
-import { ZASOBY } from "../../core/oferta/model/IOfertaModel";
+import { ZASOBY, IRawData } from "../../core/oferta/model/IOfertaModel";
 import { OdbiorType } from '../../core/oferta/model/OdbiorType';
-import DataParserHelper from '../../inwestycje/helpers/DataParserHelper';
-import { HtmlParserHelper } from '../../inwestycje/helpers/HtmlParserHelper';
+import DataParserHelper from '../helpers/ParserHelper';
+import { HtmlParserHelper } from '../helpers/HtmlParser';
 import { IGarvenaParkParserProps } from './GarvenaPark';
 import { IGarvenaParkListElement } from './GarvenaParkModel';
 
@@ -103,9 +103,9 @@ function getZasobyDoPobrania(row: HTMLElement | undefined, h: HtmlParserHelper<I
     return result;
 }
 
-function powiezchniaOgrodu(rawText: string | null | undefined): number | null | undefined {
+function powiezchniaOgrodu(rawText: string | null | undefined): number | null | IRawData {
     if (rawText === '-') {
-        return undefined;
+        return { raw: null };
     }
     return DataParserHelper.float(/ok\.(\d+)\s+m²/)(rawText);
 }

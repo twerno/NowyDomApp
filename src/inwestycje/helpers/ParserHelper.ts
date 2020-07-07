@@ -1,10 +1,11 @@
 import { Status } from "../../core/oferta/model/Status";
-import { ICechy } from "../../core/oferta/model/IOfertaModel";
+import { ICechy, IRawData } from "../../core/oferta/model/IOfertaModel";
 
 export default {
     pietro,
     status,
     cecha,
+    pokoj,
     regExp,
     int,
     float,
@@ -12,7 +13,7 @@ export default {
     miesiac,
 }
 
-function pietro(rawText: string | null | undefined): number | null {
+function pietro(rawText: string | null | undefined): number | null | IRawData {
     if (rawText === null || rawText === undefined) {
         return null;
     }
@@ -39,7 +40,15 @@ function pietro(rawText: string | null | undefined): number | null {
     return null;
 }
 
-function status(rawText: string | null | undefined): number | null {
+function pokoj(rawText: string | null | undefined): number | null | IRawData {
+    if (rawText?.toLocaleLowerCase() === 'open') {
+        return { raw: 'open' };
+    }
+
+    return int()(rawText);
+}
+
+function status(rawText: string | null | undefined): number | null | IRawData {
     if (rawText === null || rawText === undefined) {
         return null;
     }
@@ -55,7 +64,7 @@ function status(rawText: string | null | undefined): number | null {
     return null;
 }
 
-function cecha(rawText: string | null | undefined, convDataList: Array<{ text: string, cecha: ICechy }>): ICechy | null {
+function cecha(rawText: string | null | undefined, convDataList: Array<{ text: string, cecha: ICechy }>): ICechy | null | IRawData {
     if (rawText === null || rawText === undefined) {
         return null;
     }
@@ -70,7 +79,7 @@ function cecha(rawText: string | null | undefined, convDataList: Array<{ text: s
     return null;
 }
 
-function regExp(regExpr: RegExp): (rawText: string | undefined | null) => string | null {
+function regExp(regExpr: RegExp): (rawText: string | undefined | null) => string | null | IRawData {
     return (rawText) => {
         if (rawText === null || rawText === undefined) {
             return null;
@@ -108,7 +117,7 @@ function miesiac(source: string | undefined | null) {
 }
 
 const defaultIntRegExp = /(-?[\d]+)/;
-function int(customRegExpr?: RegExp): (rawText: string | undefined | null) => number | null {
+function int(customRegExpr?: RegExp): (rawText: string | undefined | null) => number | null | IRawData {
     return (rawText) => parseNumberFn(
         rawText,
         customRegExpr || defaultIntRegExp,
@@ -117,7 +126,7 @@ function int(customRegExpr?: RegExp): (rawText: string | undefined | null) => nu
 }
 
 const defaultFloatRegExp = /(-?[\d,.]+)/;
-function float(customRegExpr?: RegExp): (rawText: string | undefined | null) => number | null {
+function float(customRegExpr?: RegExp): (rawText: string | undefined | null) => number | null | IRawData {
     return (rawText) => parseNumberFn(
         rawText,
         customRegExpr || defaultFloatRegExp,
@@ -125,14 +134,17 @@ function float(customRegExpr?: RegExp): (rawText: string | undefined | null) => 
     );
 }
 
-function floatOptional(customRegExpr?: RegExp): (rawText: string | undefined | null) => number | null | undefined {
+function floatOptional(customRegExpr?: RegExp): (rawText: string | undefined | null) => number | null | IRawData | undefined {
     return (rawText) => {
-        const result = parseNumberFn(
+        if (rawText === null || rawText === undefined) {
+            return undefined;
+        }
+
+        return parseNumberFn(
             rawText,
             customRegExpr || defaultFloatRegExp,
             val => Number.parseFloat(val.replace(/,/g, '.'))
         );
-        return result === null ? undefined : result;
     };
 }
 

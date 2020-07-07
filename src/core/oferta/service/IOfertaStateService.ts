@@ -20,7 +20,7 @@ export const devOfertaStateService: IOfertaStateService<IOfertaRepoKey> = {
     ...dynamoDbOfertaStateService,
 
     save: async (record) => {
-        safeSaveFile(`dev/${record.inwestycjaId}`, record.ofertaId, JSON.stringify(record, null, 2));
+        safeSaveFile(`tmp/${record.inwestycjaId}`, record.ofertaId, JSON.stringify(record, null, 2));
         return Promise.resolve();
     }
 };

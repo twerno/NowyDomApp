@@ -1,8 +1,8 @@
 import { HTMLElement, parse } from 'node-html-parser';
 import { IAsyncTask } from "../../../core/asyncTask/IAsyncTask";
 import { ICechy } from '../../../core/oferta/model/IOfertaModel';
-import DataParserHelper from '../../../inwestycje/helpers/DataParserHelper';
-import { HtmlParserHelper } from '../../../inwestycje/helpers/HtmlParserHelper';
+import DataParserHelper from '../../helpers/ParserHelper';
+import { HtmlParserHelper } from '../../helpers/HtmlParser';
 import { IMultiDomDataProvider, IMultiDomParserProps } from './MultidomDataProviderBuilder';
 import { IMultiDomListElement } from './MultidomModel';
 import { ofertaIdBuilderExcept } from '../../../core/oferta/IOfertaProvider';

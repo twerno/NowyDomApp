@@ -81,7 +81,7 @@ class ProvideOfferTask2<T extends IListElement = IListElement, D = any> implemen
 
     private async saveHtml(dataList: Array<{ html: string | null, url: string }>, props: IProvideOfferTaskProps) {
         // TODO - jesli kiedys dodam odtwarzenie zmian na podstawie zapisanego html, to trzeba pominac ten krok w otworzonym przebiegu
-        const path = `html/${props.executionDate.getTime()}/${ProviderOfferHelper.safeUrl(this.parentUrl)}`;
+        const path = `html/${props.executionDate.getTime()}/${ProviderOfferHelper.safeFileName(this.parentUrl)}`;
         const promises = dataList
             .map(data =>
                 ProviderOfferHelper.saveHtml(data, path, props.env.fileService)

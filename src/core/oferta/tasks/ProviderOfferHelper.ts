@@ -1,14 +1,14 @@
 import { IFileService } from "../service/IFileService";
 
 export default {
-    safeUrl,
+    safeFileName,
     saveHtml
 }
 
-function safeUrl(url: string): string {
-    return url.replace(/[^\w]/g, '_');
+function safeFileName(url: string): string {
+    return url.replace(/[^\w\.-]/g, '_');
 }
 
 async function saveHtml(data: { html: string | null, url: string }, path: string, fileService: IFileService) {
-    return fileService.writeFile(path, safeUrl(data.url) + '.html', data.html);
+    return fileService.writeFile(path, safeFileName(data.url) + '.html', data.html);
 }

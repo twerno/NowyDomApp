@@ -5,9 +5,10 @@ import { ICechy } from '../../../core/oferta/model/IOfertaModel';
 import { OdbiorType } from '../../../core/oferta/model/OdbiorType';
 import { Status } from '../../../core/oferta/model/Status';
 import ProvideOfferTask1 from "../../../core/oferta/tasks/ProvideOfferTask1";
-import { HtmlParserHelper } from '../../../inwestycje/helpers/HtmlParserHelper';
+import { HtmlParserHelper } from '../../helpers/HtmlParser';
 import { ISemekoDataProvider, ISemekoParserProps } from './SemekoDataProviderBuilder';
 import { ISemekoDetails, ISemekoListElement } from "./SemekoModel";
+import ParserHelper from '../../../inwestycje/helpers/ParserHelper';
 
 export default (
     html: string,
@@ -50,7 +51,7 @@ function rowMapper(
         ...h.asRaw('nrLokalu', row?.querySelector('.c2')),
         ...h.asInt('pietro', row?.querySelector('.c3')),
         ...h.asFloat('metraz', row?.querySelector('.c5')),
-        ...h.asInt('lpPokoj', row?.querySelector('.c6')),
+        ...h.asInt('lpPokoj', row?.querySelector('.c6'), ParserHelper.pokoj),
         ...h.asCustom('odbior', row?.querySelector('.c7'), odbiorMapper),
         status: Status.WOLNE,
         ...h.asMap("cechy", row?.querySelectorAll('.c9 span.more4'), cechaParser, { errorWhenEmpty: false, mustExist: false }),

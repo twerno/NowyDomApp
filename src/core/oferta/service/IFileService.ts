@@ -13,7 +13,7 @@ export const devFileService: IFileService = {
     ...s3FileService,
 
     writeFile: async (path, filename, body) => {
-        safeSaveFile(`dev/${path}`, filename, body);
+        safeSaveFile(`tmp/${path}`, filename, body);
         return undefined;
     }
 

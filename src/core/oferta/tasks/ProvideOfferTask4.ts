@@ -4,6 +4,7 @@ import { IDataProvider, IListElement } from "../IOfertaProvider";
 import { IOfertaRecord } from "../model/IOfertaModel";
 import AbstractZapiszZmianyTask, { getEmptyProvideOfferStats } from "./AbstractZapiszZmianyTask";
 import { IProvideOfferTaskProps } from "./ProvideOfferTask1";
+import ProviderOfferHelper from "./ProviderOfferHelper";
 
 /**
  * pobranie dodatkowych zasobów, odłożenie ich na s3 i aktualizacja bazy danych
@@ -63,7 +64,9 @@ class ProvideOfferTask4<T extends IListElement = IListElement, D = any> extends 
     ) {
         const file = await Axios({ responseType: 'arraybuffer', url: zasob.url });
         const fileExt = this.readFileExt(file);
-        const filename = `${this.ofertaId}_${zasob.id}` + (fileExt ? `.${fileExt}` : '');
+        const filename = ProviderOfferHelper.safeFileName(
+            `${this.ofertaId}_${zasob.id}` + (fileExt ? `.${fileExt}` : '')
+        );
         const cType = contentType(fileExt) || undefined;
         await props.env.fileService.writeFile(this.dataProvider.inwestycjaId, filename, file.data, cType);
         return filename;

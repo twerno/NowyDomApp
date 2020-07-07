@@ -22,10 +22,11 @@ export interface IElReaderOptions {
 /**
  * mapper otrzymuje string lub śmieci
  * zwraca string jeśli mapowanie się powidło
- * undefined jesli chcemy wymusic z funkcji zewnętrznej zwrot {raw: null} as IRawData
+ * zwraca IRawData jeśli chcemy wymusić mapowanie (brak błędów mapowania)
+ * zwraca undefined dla pola typu optional, (dla pola nie optional zachowuje sie jak null)
  * null w.p.p.
  */
-type THtmlParserMapper<T> = (rawText: string | undefined | null) => T | null | undefined;
+type THtmlParserMapper<T> = (rawText: string | undefined | null) => T | null | IRawData | undefined;
 
 /**
  * mapper dla elementów mapy, otrzymuje string lub śmieci
