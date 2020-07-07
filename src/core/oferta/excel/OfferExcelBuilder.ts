@@ -5,8 +5,9 @@ import { StatusHelper } from '../model/Status';
 import { StronaSwiataHelper } from '../model/StronySwiata';
 import { TypHelper } from '../model/Typ';
 import { IEnv } from '../tasks/IEnv';
+import { exec } from 'child_process';
 
-export async function buildExcel(env: IEnv) {
+export async function buildExcel(env: IEnv, openXLSX?: boolean) {
 
     const workbook = new Excel.Workbook();
     const sheet = workbook.addWorksheet('Stan');
@@ -14,6 +15,10 @@ export async function buildExcel(env: IEnv) {
     await writeOfertaStanSheet(sheet, env);
 
     await workbook.xlsx.writeFile('test.xlsx');
+    if (openXLSX === undefined || openXLSX) {
+        exec('test.xlsx');
+    };
+
     console.log('plik test.xlsx został wygenerowany');
 }
 
