@@ -1,6 +1,6 @@
 import cheerio from 'cheerio';
 import { IRawData, ICechy } from '../../core/oferta/model/IOfertaModel';
-import CheerioHelper from '../../core/utils/CheerioHelper';
+import CheerioHelper from '../helpers/CheerioHelper';
 import { IOstojaListElement, IOstojaOfferDetails } from './OstojaModel';
 import { Ostoja, IOstojaParserProps } from './Ostoja';
 import { IDataProviderParserProps } from '../../core/oferta/IOfertaProvider';

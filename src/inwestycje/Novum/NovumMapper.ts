@@ -1,6 +1,6 @@
 import cheerio from 'cheerio';
 import { IRawData } from '../../core/oferta/model/IOfertaModel';
-import CheerioHelper from '../../core/utils/CheerioHelper';
+import CheerioHelper from '../helpers/CheerioHelper';
 import { Novum, INovumData, INovumParserProps } from './Novum';
 import { INovumDetails, INovumListElement } from './NovumSchema';
 
