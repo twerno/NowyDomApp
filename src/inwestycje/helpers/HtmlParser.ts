@@ -19,8 +19,6 @@ export interface IElReaderOptions {
     reportMappingError?: boolean;
 }
 
-type IEmpty = Record<never, never>;
-
 /**
  * mapper otrzymuje string lub śmieci
  * zwraca string jeśli mapowanie się powidło
@@ -86,10 +84,10 @@ export class HtmlParserHelper<T extends object> {
         el: HTMLElement | undefined,
         mapper?: THtmlParserMapper<string>,
         type?: 'text' | { attributeName: string },
-    ): Record<K, string | IRawData | undefined> | IEmpty {
+    ) {
 
         const defaultMapper: THtmlParserMapper<string> = v => v || null;
-        return this.asCustomOptional<string | IRawData | undefined, K>(field, el, mapper || defaultMapper, type);
+        return this.asCustomOptional(field, el, mapper || defaultMapper, type);
     }
 
     // oczekiwana niepusta wartosc całkowita
@@ -178,7 +176,7 @@ export class HtmlParserHelper<T extends object> {
         mapper: THtmlParserMapper<Type>,
         type?: 'text' | { attributeName: string },
         options?: IElReaderOptions,
-    ): Record<K, Type | IRawData> | IEmpty {
+    ): Record<K, Type | IRawData> | {} {
         const _options = { mustExist: false, errorWhenEmpty: false, ...options, fieldInfo: field };
         const value = this.readValueOf(el, type || 'text', _options);
 
