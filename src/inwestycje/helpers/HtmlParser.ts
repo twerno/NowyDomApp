@@ -19,6 +19,8 @@ export interface IElReaderOptions {
     reportMappingError?: boolean;
 }
 
+type IEmpty = Record<never, never>;
+
 /**
  * mapper otrzymuje string lub śmieci
  * zwraca string jeśli mapowanie się powidło
@@ -84,16 +86,10 @@ export class HtmlParserHelper<T extends object> {
         el: HTMLElement | undefined,
         mapper?: THtmlParserMapper<string>,
         type?: 'text' | { attributeName: string },
-    ): Record<K, string> | {} {
+    ): Record<K, string | IRawData | undefined> | IEmpty {
 
         const defaultMapper: THtmlParserMapper<string> = v => v || null;
-
-        const _options = {
-            mustExist: false,
-            reportMappingError: false
-        };
-
-        return this.asCustomOptional(field, el, mapper || defaultMapper, type, _options);
+        return this.asCustomOptional<string | IRawData | undefined, K>(field, el, mapper || defaultMapper, type);
     }
 
     // oczekiwana niepusta wartosc całkowita
@@ -151,12 +147,6 @@ export class HtmlParserHelper<T extends object> {
         mapper?: THtmlParserMapper<number>,
         type?: 'text' | { attributeName: string },
     ) {
-        const options: IElReaderOptions = {
-            mustExist: false,
-            errorWhenEmpty: false,
-            reportMappingError: false
-        };
-
         const defaultMapper: THtmlParserMapper<number> = (rawText) => {
             const parsedNumber = Number.parseFloat(rawText || '');
             return isNaN(parsedNumber)
@@ -164,7 +154,7 @@ export class HtmlParserHelper<T extends object> {
                 : parsedNumber;
         };
 
-        return this.asCustomOptional(field, el, mapper || defaultMapper, type, options);
+        return this.asCustomOptional(field, el, mapper || defaultMapper, type);
     }
 
     public asCustom<Type, K extends keyof PropertiesByTheType<T, Type | IRawData>>(
@@ -188,15 +178,22 @@ export class HtmlParserHelper<T extends object> {
         mapper: THtmlParserMapper<Type>,
         type?: 'text' | { attributeName: string },
         options?: IElReaderOptions,
-    ) {
-        const _options = { mustExist: false, ...options, fieldInfo: field };
-        const val = this.readAndMapValueOf(el, type || 'text', mapper, _options);
+    ): Record<K, Type | IRawData> | IEmpty {
+        const _options = { mustExist: false, errorWhenEmpty: false, ...options, fieldInfo: field };
+        const value = this.readValueOf(el, type || 'text', _options);
+
+        if (value === null || value === undefined || value === '') {
+            return {};
+        }
+
+        const val = this.mapValue(value, mapper, _options);
 
         return val === undefined
             ? {}
             : val === null
                 ? this.asRecord<K, Type | IRawData | undefined>(field, { raw: null })
-                : this.asRecord<K, Type | IRawData | undefined>(field, val);
+                : this.asRecord<K, Type | IRawData | undefined>(field, val)
+            ;
     }
 
     public asMap<Type extends object, K extends keyof PropertiesByTheType<T, MapWithRawType<Type>>>(
@@ -262,6 +259,16 @@ export class HtmlParserHelper<T extends object> {
     ): R | IRawData | null | undefined {
         const value = this.readValueOf(el, type, props);
 
+        return this.mapValue(value, mapper, props);
+    }
+
+    public mapValue<R>(
+        value: string | null | undefined,
+        mapper: THtmlParserMapper<R>,
+        props: {
+            fieldInfo: keyof T | { fieldName?: keyof T, comment: string }
+        } & IElReaderOptions
+    ): R | IRawData | null | undefined {
         if (value === null || value === undefined) {
             return value;
         }
@@ -357,7 +364,7 @@ export class HtmlParserHelper<T extends object> {
     protected asRecord<K extends keyof PropertiesByTheType<T, TYPE>, TYPE>(
         field: K,
         value: TYPE): Record<K, TYPE> {
-        return { [field]: value } as any;
+        return { [field]: value } as Record<K, TYPE>;
     }
 
 }
