@@ -179,7 +179,7 @@ function cena(customRegExpr?: RegExp): (rawText: string | undefined | null) => n
         const result = parseNumberFn(
             rawText,
             customRegExpr || defaultFloatRegExp,
-            val => Number.parseFloat(val.replace(/,/g, '.'))
+            val => Number.parseFloat(val.replace(/,/g, '.').replace(/\s/g, ''))
         );
 
         if (typeof result === 'number') {

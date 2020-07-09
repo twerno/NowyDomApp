@@ -1,9 +1,9 @@
 import { IDataProvider, IDataProviderParserProps } from "../../../core/oferta/IOfertaProvider";
-import { ICechy, isRawData } from "../../../core/oferta/model/IOfertaModel";
+import { isRawData } from "../../../core/oferta/model/IOfertaModel";
 import { ISemekoDetails, ISemekoListElement } from "./SemekoModel";
 import semekoOfertaBuilder from "./semekoOfertaBuilder";
-import semekoTabelaLokaliParser from "./semekoTabelaLokaliParser";
 import semekoOfertaParser from "./semekoOfertaParser";
+import semekoTabelaLokaliParser from "./semekoTabelaLokaliParser";
 
 export interface ISemekoDataProviderProps {
     inwestycjaId: string;

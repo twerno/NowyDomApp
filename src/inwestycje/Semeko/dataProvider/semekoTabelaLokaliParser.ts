@@ -5,7 +5,7 @@ import { ICechy } from '../../../core/oferta/model/IOfertaModel';
 import { OdbiorType } from '../../../core/oferta/model/OdbiorType';
 import { Status } from '../../../core/oferta/model/Status';
 import ProvideOfferTask1 from "../../../core/oferta/tasks/ProvideOfferTask1";
-import { HtmlParserHelper } from '../../helpers/HtmlParser';
+import { HtmlParser } from '../../helpers/HtmlParser';
 import { ISemekoDataProvider, ISemekoParserProps } from './SemekoDataProviderBuilder';
 import { ISemekoDetails, ISemekoListElement } from "./SemekoModel";
 import ParserHelper from '../../../inwestycje/helpers/ParserHelper';
@@ -22,11 +22,11 @@ export default (
 
     const items: ISemekoListElement[] = [];
     rows.forEach((row, idx) => {
-        const h = new HtmlParserHelper<ISemekoListElement>(`${props.dataProvider.inwestycjaId} X ${idx}`, errors);
+        const h = new HtmlParser<ISemekoListElement>(`${props.dataProvider.inwestycjaId} X ${idx}`, errors);
         items.push(rowMapper(row, tooltips, h, props.dataProvider))
     });
 
-    const h = new HtmlParserHelper<ISemekoListElement>(`${props.dataProvider.inwestycjaId} X buildPostTasks`, errors);
+    const h = new HtmlParser<ISemekoListElement>(`${props.dataProvider.inwestycjaId} X buildPostTasks`, errors);
     const tasks = buildPostTasks(root, props, h);
 
     return { items, tasks };
@@ -39,7 +39,7 @@ export default (
 function rowMapper(
     row: HTMLElement | undefined,
     tooltips: HTMLElement | undefined,
-    h: HtmlParserHelper<ISemekoListElement>,
+    h: HtmlParser<ISemekoListElement>,
     dataProvider: ISemekoDataProvider
 ): ISemekoListElement {
 
@@ -110,7 +110,7 @@ function detailsUrlParser(raw: string | null | undefined) {
     return null;
 }
 
-function getZasobyDoPobrania(row: HTMLElement | undefined, tooltips: HTMLElement | undefined, h: HtmlParserHelper<ISemekoListElement>) {
+function getZasobyDoPobrania(row: HTMLElement | undefined, tooltips: HTMLElement | undefined, h: HtmlParser<ISemekoListElement>) {
     const result: { id: string, url: string }[] = [];
 
     const miniaturkaUrl = getMiniaturkaUrl(row, tooltips, h);
@@ -121,7 +121,7 @@ function getZasobyDoPobrania(row: HTMLElement | undefined, tooltips: HTMLElement
     return result;
 }
 
-function getMiniaturkaUrl(row: HTMLElement | undefined, tooltips: HTMLElement | undefined, h: HtmlParserHelper<ISemekoListElement>) {
+function getMiniaturkaUrl(row: HTMLElement | undefined, tooltips: HTMLElement | undefined, h: HtmlParser<ISemekoListElement>) {
     if (!!!tooltips) {
         h.addError('zasobyDoPobrania', 'tooltips === undefined');
         return null;
@@ -155,7 +155,7 @@ function getMiniaturkaUrl(row: HTMLElement | undefined, tooltips: HTMLElement | 
 function buildPostTasks(
     root: HTMLElement | undefined,
     subTaskProps: IDataProviderParserProps<ISemekoListElement, ISemekoDetails>,
-    h: HtmlParserHelper<ISemekoListElement>) {
+    h: HtmlParser<ISemekoListElement>) {
     const nextPageUrl = getNextPageUrl(root, h);
 
     return nextPageUrl
@@ -167,7 +167,7 @@ function buildPostTasks(
 // post task builder utils
 // ****************************
 
-function getNextPageUrl(root: HTMLElement | undefined, h: HtmlParserHelper<ISemekoListElement>) {
+function getNextPageUrl(root: HTMLElement | undefined, h: HtmlParser<ISemekoListElement>) {
     const urlPart = h.readAttributeOf(
         root?.querySelector('div.next a'),
         'onclick',

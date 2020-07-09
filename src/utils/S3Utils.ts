@@ -9,7 +9,7 @@ export default {
 
 async function putFile(inwestycjaId: string, nazwa: string, Body: AWS.S3.Body, ContentType?: string) {
     const Key = `${inwestycjaId}/${nazwa}`;
-    return s3.putObject({ Bucket: 'nowydom', Key, Body, ContentType, ACL: 'public-read' }).promise();
+    return s3.putObject({ Bucket: 'nowydom', Key, Body, ContentType }).promise();
 }
 
 async function fileExists(inwestycjaId: string, ofertaId: string, nazwa: string,) {

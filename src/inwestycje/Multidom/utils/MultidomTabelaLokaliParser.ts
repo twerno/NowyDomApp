@@ -2,7 +2,7 @@ import { HTMLElement, parse } from 'node-html-parser';
 import { IAsyncTask } from "../../../core/asyncTask/IAsyncTask";
 import { ICechy } from '../../../core/oferta/model/IOfertaModel';
 import DataParserHelper from '../../helpers/ParserHelper';
-import { HtmlParserHelper } from '../../helpers/HtmlParser';
+import { HtmlParser } from '../../helpers/HtmlParser';
 import { IMultiDomDataProvider, IMultiDomParserProps } from './MultidomDataProviderBuilder';
 import { IMultiDomListElement } from './MultidomModel';
 import { ofertaIdBuilderExcept } from '../../../core/oferta/IOfertaProvider';
@@ -18,7 +18,7 @@ export default (
 
     const items: IMultiDomListElement[] = rows.map(
         (row, idx) => {
-            const h = new HtmlParserHelper<IMultiDomListElement>(`${props.dataProvider.inwestycjaId} X ${idx}`, errors);
+            const h = new HtmlParser<IMultiDomListElement>(`${props.dataProvider.inwestycjaId} X ${idx}`, errors);
             return rowMapper(row, h, props.dataProvider);
         }
     );
@@ -32,7 +32,7 @@ export default (
 
 function rowMapper(
     row: HTMLElement | undefined,
-    h: HtmlParserHelper<IMultiDomListElement>,
+    h: HtmlParser<IMultiDomListElement>,
     dataProvider: IMultiDomDataProvider
 ): IMultiDomListElement {
 

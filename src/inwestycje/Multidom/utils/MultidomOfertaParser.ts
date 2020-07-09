@@ -1,6 +1,6 @@
 import { HTMLElement, parse } from 'node-html-parser';
 import { ZASOBY } from '../../../core/oferta/model/IOfertaModel';
-import { HtmlParserHelper } from '../../helpers/HtmlParser';
+import { HtmlParser } from '../../helpers/HtmlParser';
 import { IMultiDomParserProps } from './MultidomDataProviderBuilder';
 import { IMultidomDetails } from './MultidomModel';
 
@@ -17,14 +17,14 @@ export default async (
 
     const root = parse(html);
 
-    const h = new HtmlParserHelper<IMultidomDetails>(`Detale: ${props.dataProvider.inwestycjaId} x ${offerId}`, errors);
+    const h = new HtmlParser<IMultidomDetails>(`Detale: ${props.dataProvider.inwestycjaId} x ${offerId}`, errors);
 
     const zasobyDoPobrania = getZasobyDoPobrania(root, h);
 
     return { zasobyDoPobrania };
 }
 
-function getZasobyDoPobrania(root: HTMLElement | undefined, h: HtmlParserHelper<IMultidomDetails>): { id: string, url: string }[] {
+function getZasobyDoPobrania(root: HTMLElement | undefined, h: HtmlParser<IMultidomDetails>): { id: string, url: string }[] {
     const result: { id: string, url: string }[] = [];
 
     const pdfUrlPart = h.readAttributeOf(

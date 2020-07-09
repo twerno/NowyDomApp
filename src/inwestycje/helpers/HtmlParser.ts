@@ -1,4 +1,5 @@
-import { HTMLElement } from 'node-html-parser';
+import parse, { HTMLElement } from 'node-html-parser';
+import { parseDOM, DomUtils } from 'htmlparser2';
 import { IRawData, MapWithRawType, isRawData } from '../../core/oferta/model/IOfertaModel';
 import TypeUtils, { PropertiesOfTheType as PropertiesByTheType } from '../../utils/TypeUtils';
 
@@ -36,10 +37,15 @@ type THtmlParserMapper<T> = (rawText: string | undefined | null) => T | null | I
  */
 type THtmlParserMapMapper<Type> = (rawText: string | undefined | null) => Partial<Type> | string | null;
 
-export class HtmlParserHelper<T extends object> {
+export class HtmlParser<T extends object> {
 
     public constructor(protected id: string, protected errors: any[]) {
 
+    }
+
+    public static parseHtml(html: string) {
+        const dom = parseDOM(html);
+        return parse(DomUtils.getOuterHTML(dom));
     }
 
     public addError(fieldInfo: keyof T | { fieldName?: keyof T, comment: string }, err: string) {
@@ -57,6 +63,19 @@ export class HtmlParserHelper<T extends object> {
         const value = this.readValueOf(el, type || 'text', { fieldInfo: field });
 
         return this.asRecord<K, string>(field, value || '');
+    }
+
+    public asRawOptional<K extends keyof PropertiesByTheType<T, string | undefined>>(
+        field: K,
+        el: HTMLElement | undefined,
+        type?: 'text' | { attributeName: string },
+    ): Record<K, string> | {} {
+
+        const value = this.readValueOf(el, type || 'text', { fieldInfo: field });
+
+        return value === null || value === undefined
+            ? {}
+            : this.asRecord<K, string | undefined>(field, value);
     }
 
     // oczekiwana niepusta wartosc tekstowa

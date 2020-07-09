@@ -2,7 +2,7 @@ import { HTMLElement, parse } from 'node-html-parser';
 import { ZASOBY, IRawData } from "../../core/oferta/model/IOfertaModel";
 import { OdbiorType } from '../../core/oferta/model/OdbiorType';
 import DataParserHelper from '../helpers/ParserHelper';
-import { HtmlParserHelper } from '../helpers/HtmlParser';
+import { HtmlParser } from '../helpers/HtmlParser';
 import { IGarvenaParkParserProps } from './GarvenaPark';
 import { IGarvenaParkListElement } from './GarvenaParkModel';
 
@@ -19,7 +19,7 @@ export default (
         .filter((_, idx) => idx !== 0)
         .map((row, idx) => {
             const parserId = `${props.dataProvider.inwestycjaId} X ${idx}`;
-            const h = new HtmlParserHelper<IGarvenaParkListElement>(parserId, errors);
+            const h = new HtmlParser<IGarvenaParkListElement>(parserId, errors);
 
             return rowMapper(row, h, props);
         });
@@ -33,7 +33,7 @@ export default (
 
 function rowMapper(
     row: HTMLElement | undefined,
-    h: HtmlParserHelper<IGarvenaParkListElement>,
+    h: HtmlParser<IGarvenaParkListElement>,
     props: IGarvenaParkParserProps
 ): IGarvenaParkListElement {
 
@@ -83,7 +83,7 @@ function odbiorMapper(raw: string | null | undefined): OdbiorType | null {
     return { miesiac, rok };
 }
 
-function getZasobyDoPobrania(row: HTMLElement | undefined, h: HtmlParserHelper<IGarvenaParkListElement>) {
+function getZasobyDoPobrania(row: HTMLElement | undefined, h: HtmlParser<IGarvenaParkListElement>) {
     const result: { id: string, url: string }[] = [];
 
     const pdfUrl = h.readAttributeOf(
