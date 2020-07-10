@@ -13,7 +13,6 @@ import { GarvenaPark } from "./Garvena/GarvenaPark";
 import ApartamentyMarengo from "./Multidom/ApartamentyMarengo";
 import LipovaParkIEtap from "./Multidom/LipovaParkIEtap";
 import LipovaParkIIEtap from "./Multidom/LipovaParkIIEtap";
-import Bravo from "./Inpro/InproBravo";
 import InproBravo from "./Inpro/InproBravo";
 import InproOstoja from "./Inpro/InproOstoja";
 import InproStart from "./Inpro/InproStart";
@@ -31,10 +30,17 @@ export const inwestycje: IDataProvider<any, any>[] = [
     InproHarmoniaOliwska,
     InproDebiut,
     InproAzymut,
-    // Inpro -->,
-    Novum,
-    GarvenaPark,
+    // Inpro -->
 
+    //<-- HS
+    Novum,
+    // HS -->
+
+    //<-- DS Development
+    GarvenaPark,
+    // DS Development -->
+
+    //<-- Semeko
     SemekoRemoda,
     SemekoPrimaReda,
     SemekoPortoBianco3,
@@ -44,7 +50,11 @@ export const inwestycje: IDataProvider<any, any>[] = [
     SemekoCubic,
     SemekoAquasfera,
     SemekoZielonaLaguna2,
+    // Semeko -->
+
+    //<-- MultiDom
     ApartamentyMarengo,
     LipovaParkIEtap,
     LipovaParkIIEtap,
+    // MultiDom -->
 ];
