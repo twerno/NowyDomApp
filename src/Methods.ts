@@ -3,7 +3,7 @@ import { inwestycje } from './inwestycje/inwestycje';
 import InwestycjaDataProviderTaskRunner from './core/oferta/InwestycjaDataProviderTaskRunner';
 import ProvideOfferTask1 from './core/oferta/tasks/ProvideOfferTask1';
 import { IIProvideOfferSummary } from './core/oferta/tasks/AbstractZapiszZmianyTask';
-import { IEnv } from 'core/oferta/tasks/IEnv';
+import { IEnv } from './core/oferta/tasks/IEnv';
 
 export default {
     runOne,

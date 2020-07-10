@@ -3,7 +3,7 @@ import { isRawData, MapWithRawType, ICechy } from "../../core/oferta/model/IOfer
 import { IInproListElement, IInproOfferDetails } from "./internal/InproModel";
 import InproParser from "./internal/InproParser";
 import InproOfertaBuilder from "./internal/InproOfertaBuilder";
-import { Typ } from "core/oferta/model/Typ";
+import { Typ } from "@src/core/oferta/model/Typ";
 
 export interface IInproDataProviderProps {
     inwestycjaId: string;

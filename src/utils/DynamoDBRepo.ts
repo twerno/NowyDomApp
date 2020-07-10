@@ -1,6 +1,6 @@
 import * as AWS from 'aws-sdk';
-import { IStringMap } from 'utils/IMap';
 import { CredentialProviderChain, SharedIniFileCredentials } from 'aws-sdk';
+import { IStringMap } from './IMap';
 
 // TODO - wybadać: https://github.com/awslabs/dynamodb-data-mapper-js
 

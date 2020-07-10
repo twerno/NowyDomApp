@@ -9,6 +9,9 @@
   },
   "author": "",
   "license": "ISC",
+  "_moduleAliases": {
+    "@src": "dist/src/"
+  },
   "dependencies": {
     "aws-sdk": "^2.709.0",
     "axios": "^0.19.2",
