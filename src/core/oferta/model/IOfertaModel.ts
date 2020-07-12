@@ -20,7 +20,7 @@ export interface IOfertaRecordOpe {
     version: number; // sort_key
 
     timestamp: number;
-    updatedBy: 'developer' | 'server';
+    updatedBy: 'developer' | 'server' | 'tech';
     data: Partial<IOfertaDane>;
 }
 

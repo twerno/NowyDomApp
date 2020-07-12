@@ -101,14 +101,15 @@ async function prepareZmianaStanSheet(sheet: Excel.Worksheet, stanList: IOfertaR
 
     const opeLogMap = buildOpeRecordLogMap(stanList, opeList);
 
-    const logList = buildOpeLogList(opeLogMap);
+    const logList = buildOpeLogList(stanList, opeLogMap);
 
     registerColumns(sheet,
         [
             column('Kiedy', { width: 12 }),
             column('Inwestycja', { width: 20 }),
             column('Mieszkanie', { width: 28 }),
-            column('Opis', { width: 50 }),
+            column('Opis', { width: 100 }),
+            // column('Wersja', { width: 10 }),
         ]
     );
 
@@ -118,7 +119,8 @@ async function prepareZmianaStanSheet(sheet: Excel.Worksheet, stanList: IOfertaR
             'Inwestycja': v.inwestycjaId,
             'Mieszkanie': v.ofertaId,
             'Kiedy': new Date(v.timestamp),
-            'Opis': { 'richText': v.richMessage }
+            'Opis': { 'richText': v.richMessage },
+            'Wersja': v.version,
         }, ''));
 }
 

@@ -4,6 +4,7 @@ export enum Status {
     WOLNE = 1,
     REZERWACJA = 2,
     SPRZEDANE = 3,
+    // 4 stary status "sprzedane" - nie do wykorzystania
 }
 
 export const StatusHelper = {
@@ -23,7 +24,9 @@ export function status2string(status: Status | IRawData | undefined | null): str
     switch (status) {
         case Status.WOLNE: return 'Wolne';
         case Status.REZERWACJA: return 'Rezerwacja';
-        case Status.SPRZEDANE: return 'Sprzedane';
+        case Status.SPRZEDANE:
+        case 4: return 'Sprzedane'; // 
+
         default: return '' + status;
     }
 }

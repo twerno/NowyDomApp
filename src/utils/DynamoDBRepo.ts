@@ -32,7 +32,7 @@ export class DynamoDBRepo<Key extends IStringMap<any>, T extends Key> {
         }).promise();
     }
 
-    public async getOne(key: NonNullable<Key>): Promise<T> {
+    public async getOne(key: NonNullable<Key>): Promise<T | undefined> {
         return db.get({
             TableName: this.tableName,
             Key: key
