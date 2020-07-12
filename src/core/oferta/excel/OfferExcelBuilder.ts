@@ -1,18 +1,23 @@
+import { exec } from 'child_process';
 import Excel from 'exceljs';
-import { IRawData, isRawData, IOfertaRecord, ZASOBY } from '../model/IOfertaModel';
+import { IOfertaRecord, IRawData, isRawData, ZASOBY } from '../model/IOfertaModel';
 import { OdbiorTypeHelper } from '../model/OdbiorType';
 import { StatusHelper } from '../model/Status';
 import { StronaSwiataHelper } from '../model/StronySwiata';
 import { TypHelper } from '../model/Typ';
 import { IEnv } from '../tasks/IEnv';
-import { exec } from 'child_process';
+import { buildOpeLogList, buildOpeRecordLogMap } from './OpeLogBuilder';
 
 export async function buildExcel(env: IEnv, openXLSX?: boolean) {
 
     const workbook = new Excel.Workbook();
     const sheet = workbook.addWorksheet('Stan');
+    const zmianySheet = workbook.addWorksheet('Zmiany');
 
-    await writeOfertaStanSheet(sheet, env);
+    const stanList = await env.stanService.getAll();
+
+    await prepareOfertaStanSheet(sheet, stanList);
+    await prepareZmianaStanSheet(zmianySheet, stanList, env);
 
     await workbook.xlsx.writeFile('test.xlsx');
     if (openXLSX === undefined || openXLSX) {
@@ -22,8 +27,7 @@ export async function buildExcel(env: IEnv, openXLSX?: boolean) {
     console.log('plik test.xlsx został wygenerowany');
 }
 
-async function writeOfertaStanSheet(sheet: Excel.Worksheet, env: IEnv) {
-    const stanList = await env.stanService.getAll();
+async function prepareOfertaStanSheet(sheet: Excel.Worksheet, stanList: IOfertaRecord[]) {
 
     sheet.views = [
         { state: 'frozen', xSplit: 2, ySplit: 1, activeCell: 'A1' }
@@ -89,6 +93,33 @@ async function writeOfertaStanSheet(sheet: Excel.Worksheet, env: IEnv) {
         }
 
         );
+}
+
+async function prepareZmianaStanSheet(sheet: Excel.Worksheet, stanList: IOfertaRecord[], env: IEnv) {
+
+    const opeList = await env.opeService.getAll();
+
+    const opeLogMap = buildOpeRecordLogMap(stanList, opeList);
+
+    const logList = buildOpeLogList(opeLogMap);
+
+    registerColumns(sheet,
+        [
+            column('Kiedy', { width: 12 }),
+            column('Inwestycja', { width: 20 }),
+            column('Mieszkanie', { width: 28 }),
+            column('Opis', { width: 50 }),
+        ]
+    );
+
+    logList
+        .sort((a, b) => b.timestamp - a.timestamp)
+        .forEach(v => sheet.addRow({
+            'Inwestycja': v.inwestycjaId,
+            'Mieszkanie': v.ofertaId,
+            'Kiedy': new Date(v.timestamp),
+            'Opis': { 'richText': v.richMessage }
+        }, ''));
 }
 
 function sortFn(a: IOfertaRecord, b: IOfertaRecord): number {

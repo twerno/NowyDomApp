@@ -4,12 +4,14 @@ import { safeSaveFile } from "../../../utils/FileSave";
 
 export interface IOfertaOpeService {
     getByOfertaId(ofertaId: string): Promise<IOfertaRecordOpe[]>,
-    save(record: IOfertaRecordOpe): Promise<any>
+    save(record: IOfertaRecordOpe): Promise<any>;
+    getAll(): Promise<IOfertaRecordOpe[]>;
 }
 
 export const dynamoDbOfertaOpeService: IOfertaOpeService = {
     save: async (recordOpe) => ofertaOpeRepo.put(recordOpe),
-    getByOfertaId: async (ofertaId) => ofertaOpeRepo.queryByPartitionKey(ofertaId)
+    getByOfertaId: async (ofertaId) => ofertaOpeRepo.queryByPartitionKey(ofertaId),
+    getAll: async () => ofertaOpeRepo.scan()
 };
 
 export const devOfertaOpeService: IOfertaOpeService = {
