@@ -18,7 +18,17 @@ export const AsyncTaskRunner = <P>(tasks: IAsyncTask<P>[], config: IAsyncTaskRun
 
         const taskLimit = config?.concurency || 5;
 
-        runTasks(tasks, taskLimit, config.props, ref, errors || [], resolve);
+        const runTasksFn = () => {
+            if (tasks.length === 0) {
+                if (ref.runningTasks === 0) {
+                    resolve();
+                }
+                return;
+            }
+            runTasks(tasks, taskLimit, config.props, ref, errors || [], runTasksFn);
+        }
+
+        runTasksFn();
     });
 
 }
@@ -42,29 +52,33 @@ function getNextTask(tasks: IAsyncTask[]): IAsyncTask | null {
     return nextTask;
 }
 
+let taskCount = 0;
+
 async function runNextTask<P>(
     tasks: IAsyncTask[],
     props: P,
     ref: { runningTasks: number },
-    errors: any[],
-    callback: () => void
+    errors: any[]
 ) {
     const task = getNextTask(tasks);
     const taskName = (task as any)?.__proto__?.constructor?.name;
     try {
         ref.runningTasks++;
-        console.log('run task', taskName);
-        console.log(`runningTasks: ${ref.runningTasks}`, `pendingTasks: ${tasks.length}`, `errors: ${errors?.length || 0}`);
-        const result = await task?.run(errors, props) || [];
+        if (taskCount++ % 5 === 0) {
+            // console.log(`runningTasks: ${ref.runningTasks}`, `pendingTasks: ${tasks.length}`, `errors: ${errors?.length || 0}`, `all: ${taskCount}`);
+        }
+        const result = await Promise.race([
+            task?.run(errors, props),
+            new Promise((resolve, reject) => setTimeout(() => reject(`task timeout ${taskName}`), 1000 * 30))
+        ]) || [];
         tasks.push.apply(tasks, result instanceof Array ? result : [result]);
     }
     catch (err) {
+        console.log(`task error: ${err}`);
         TaskHelper.silentErrorReporter(errors, { method: 'runNextTask', task })(err);
     }
     finally {
-        console.log('task finished', taskName);
         ref.runningTasks--;
-        callback();
     }
 }
 
@@ -74,23 +88,16 @@ function runTasks<P>(
     props: P,
     ref: { runningTasks: number },
     errors: any[],
-    callback: () => void
+    runTasksFn: () => void,
 ) {
     if (ref.runningTasks >= taskLimit) {
-        return;
-    }
-
-    if (tasks.length === 0) {
-        if (ref.runningTasks === 0) {
-            callback();
-        }
         return;
     }
 
     const taskToBeExecuted = Math.min(taskLimit - ref.runningTasks, tasks.length);
 
     for (let i = 0; i < taskToBeExecuted; i++) {
-        runNextTask(tasks, props, ref, errors, () => runTasks(tasks, taskLimit, props, ref, errors, callback));
+        runNextTask(tasks, props, ref, errors)
+            .then(runTasksFn);
     }
-
 }

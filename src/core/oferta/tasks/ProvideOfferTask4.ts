@@ -53,7 +53,7 @@ class ProvideOfferTask4<T extends IListElement = IListElement, D = any> extends 
         const stan = stanCached || await this.pobierzStan(this.ofertaId, props);
         const zmiana = { ...stan?.data, zasobyPobrane: [...stan?.data.zasobyPobrane || [], { id: zasob.id, s3Filename }] };
         const result = await this.wyliczZmianyIZapisz(this.ofertaId, zmiana, errors, { ...props, stats: getEmptyProvideOfferStats() }, stan);
-        props.stats.resourcesDownloaded.count.add(`${this.ofertaId}-${zasob.id}`);
+        props.stats.resourcesDownloaded.count++;
         return result;
 
     }

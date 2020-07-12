@@ -27,7 +27,9 @@ async function runAll(env: IEnv) {
     const tasks = inwestycje
         .map(inwestycja => new ProvideOfferTask1(inwestycja));
 
-    const { date, summary } = await InwestycjaDataProviderTaskRunner.procesInwestycjaSeq(tasks, env);
+    const sortedTasks = tasks.sort(() => Math.random() - 0.5);
+
+    const { date, summary } = await InwestycjaDataProviderTaskRunner.procesInwestycjaSeq(sortedTasks, env);
 
     logTaskStatus(date, summary);
     saveTaskStatus(date, summary);

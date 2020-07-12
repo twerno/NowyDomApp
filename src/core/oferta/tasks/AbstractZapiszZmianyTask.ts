@@ -23,7 +23,7 @@ export interface IProvideOfferStats {
         records: { id: string }[]
     },
     resourcesDownloaded: {
-        count: Set<string>
+        count: number
     }
 };
 
@@ -74,7 +74,7 @@ export function add2Summary(
     result.added += stats.added.count.size;
     result.updated += stats.updated.count.size;
     result.deleted += stats.deleted.count.size;
-    result.resourcesDownloaded += stats.resourcesDownloaded.count.size;
+    result.resourcesDownloaded += stats.resourcesDownloaded.count;
 
     result.byInwestycja[dataProvider.inwestycjaId] = {
         errors,
@@ -83,7 +83,7 @@ export function add2Summary(
         added: stats.added.count.size,
         updated: stats.updated.count.size,
         deleted: stats.deleted.count.size,
-        resourcesDownloaded: stats.resourcesDownloaded.count.size,
+        resourcesDownloaded: stats.resourcesDownloaded.count,
     };
 
     return result;
@@ -96,7 +96,7 @@ export const getEmptyProvideOfferStats = (): IProvideOfferStats => (
         added: { count: new Set<string>(), records: [] },
         updated: { count: new Set<string>(), records: [] },
         deleted: { count: new Set<string>(), records: [] },
-        resourcesDownloaded: { count: new Set<string>() },
+        resourcesDownloaded: { count: 0 },
     }
 );
 
