@@ -31,25 +31,25 @@ export class OfertaStanRecomputeService {
             const operacje = (await this.env.opeService.getByOfertaId(oferta.ofertaId))
                 .sort((a, b) => a.version - b.version);
 
-            let data: IOfertaDane = {} as any;
-            let wyliczonyStan: IOfertaRecord | null = null;
-            let zmiana: IOfertaWyliczonaZmina | null = null;
+            let wyliczonyStan: IOfertaRecord = {
+                developerId: dataProvider.developerId,
+                inwestycjaId: dataProvider.inwestycjaId,
+                ofertaId: oferta.ofertaId,
+                version: undefined as any,
+                data: {} as any,
+                created_at: undefined as any,
+                updated_at: undefined as any
+            };
             for (const ope of operacje) {
-                data = { ...data, ...ope.data };
-                zmiana = OfertaUpdateHelper.wyliczZmiane(
-                    { id: oferta.ofertaId, data },
-                    wyliczonyStan,
-                    dataProvider,
-                    null,
-                    { now: () => new Date(ope.timestamp) }
-                );
-                if (zmiana?.rekord) {
-                    wyliczonyStan = zmiana?.rekord || null;
-                    wyliczonyStan = { ...wyliczonyStan, data: { ...wyliczonyStan?.data, typ: Typ.DOM } }
+                wyliczonyStan.data = { ...wyliczonyStan.data, ...ope.data };
+                wyliczonyStan.version = ope.version;
+                wyliczonyStan.updated_at = ope.timestamp;
+                if (ope.version === 1) {
+                    wyliczonyStan.created_at = ope.timestamp;
                 }
             }
 
-            if (wyliczonyStan && !TypeUtils.deepEqual(wyliczonyStan, oferta)) {
+            if (!TypeUtils.deepEqual(wyliczonyStan, oferta)) {
                 await this.env.stanService.save(wyliczonyStan);
             }
 

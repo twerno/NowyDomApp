@@ -5,6 +5,7 @@ import DataParserHelper from '../helpers/ParserHelper';
 import { HtmlParser } from '../helpers/HtmlParser';
 import { IGarvenaParkParserProps } from './GarvenaPark';
 import { IGarvenaParkListElement } from './GarvenaParkModel';
+import { IStringMap } from '@src/utils/IMap';
 
 export default (
     html: string,
@@ -15,8 +16,11 @@ export default (
     const root = parse(html.substring(html.indexOf('<table'), html.indexOf('</table>')));
     const rows = root.querySelectorAll('tr');
 
-    const items: IGarvenaParkListElement[] = rows
-        .filter((_, idx) => idx !== 0)
+    const rowsMap: IStringMap<HTMLElement> = {}
+    rows.forEach(row => rowsMap[row.structuredText] = row);
+
+    const items: IGarvenaParkListElement[] = Object.values(rowsMap)
+        .filter((row, idx) => idx !== 0)
         .map((row, idx) => {
             const parserId = `${props.dataProvider.inwestycjaId} X ${idx}`;
             const h = new HtmlParser<IGarvenaParkListElement>(parserId, errors);
