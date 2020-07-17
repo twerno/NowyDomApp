@@ -6,7 +6,7 @@ export default {
 }
 
 function safeFileName(url: string): string {
-    return url.replace(/[^\w\.-]/g, '_');
+    return url.replace(/[^\w\.-\s]/g, '_');
 }
 
 async function saveHtml(data: { html: string | null, url: string }, path: string, fileService: IFileService) {
