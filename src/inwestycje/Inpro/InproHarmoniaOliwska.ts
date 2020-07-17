@@ -7,7 +7,7 @@ export default InproDataProviderBuilder({
     url: 'https://www.inpro.com.pl/harmonia-oliwska/mieszkania-gdansk-oliwa',
     data: {
         cechy: {
-            data: {}
+            map: {}
         },
         typ: Typ.MIESZKANIE,
     }

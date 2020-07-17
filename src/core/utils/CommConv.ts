@@ -1,6 +1,7 @@
 export default {
     miesiac2str,
-    lp2Rzymskie
+    lp2Rzymskie,
+    rzymskie2arabskie
 }
 
 const miesiace = [
@@ -22,4 +23,15 @@ function lp2Rzymskie(lp: number): string {
     const result = lpRzymskie[lp - 1];
 
     return result || `${lp}`;
+}
+
+function rzymskie2arabskie(liczbaRzymska: string): number {
+    switch (liczbaRzymska) {
+        case 'I': return 1;
+        case 'II': return 2;
+        case 'III': return 3;
+        case 'IV': return 4;
+    }
+
+    throw new Error(`"${liczbaRzymska}" nie jest rozpoznawalną liczbą rzymską.`);
 }

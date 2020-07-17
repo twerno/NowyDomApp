@@ -24,7 +24,8 @@ export interface IOfertaRecordOpe {
     data: Partial<IOfertaDane>;
 }
 
-export type MapWithRawType<T extends {}> = { data: Partial<T>, raw?: string[] };
+export type MapWithRawType<T extends {}> = { map: Partial<T>, raw?: string[] };
+export type ListWithRawType<T> = { list: T[], raw?: string[] };
 
 export enum ZASOBY {
     PDF = 'ofertaPdf',

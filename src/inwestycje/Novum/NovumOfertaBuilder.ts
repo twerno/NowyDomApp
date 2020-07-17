@@ -4,6 +4,8 @@ import { INovumDetails, INovumListElement } from './NovumSchema';
 import { StronaSwiata, StronaSwiataHelper } from '../../core/oferta/model/StronySwiata';
 import { Status } from '../../core/oferta/model/Status';
 import { Typ } from '../../core/oferta/model/Typ';
+import CommConv from '@src/core/utils/CommConv';
+import TypeUtils from '@src/utils/TypeUtils';
 
 export default (listItem: INovumListElement, detale: INovumDetails | null): { id: string, dane: IOfertaDane } => {
 
@@ -49,23 +51,12 @@ function odbiorMapper(listItem: INovumListElement): IRawData | { rok: number, kw
 
     if (val) {
         return {
-            kwartal: rzymskie2arabskie(val[1]),
+            kwartal: CommConv.rzymskie2arabskie(val[1]),
             rok: Number.parseInt(val[2])
         };
     }
 
     return { raw: listItem.odbiór };
-}
-
-function rzymskie2arabskie(liczbaRzymska: string): number {
-    switch (liczbaRzymska) {
-        case 'I': return 1;
-        case 'II': return 2;
-        case 'III': return 3;
-        case 'IV': return 4;
-    }
-
-    throw new Error(`"${liczbaRzymska}" nie jest rozpoznawalną liczbą rzymską.`);
 }
 
 function statusMapper(listItem: INovumListElement): Status | IRawData {
@@ -85,18 +76,15 @@ function kierunekMapper(detale: INovumDetails | null): Array<StronaSwiata | IRaw
     const result = detale.stronyŚwiata
         .split(',')
         .map(v => v.trim())
-        .map(stronaSwiataValMapper);
+        .map(StronaSwiataHelper.raw2StronaSwiata)
+        .filter(TypeUtils.notEmpty);
 
     return result;
 }
 
-function stronaSwiataValMapper(val: string): StronaSwiata | IRawData {
-    return StronaSwiataHelper.raw2StronaSwiata(val);
-}
-
 function standardMapper(detale: INovumDetails | null): MapWithRawType<ICechy> {
     const result: MapWithRawType<ICechy> = {
-        data: { ...Novum.data.cechy.data },
+        map: { ...Novum.data.cechy.map },
         raw: [...Novum.data.cechy.raw || []]
     };
 
@@ -106,7 +94,7 @@ function standardMapper(detale: INovumDetails | null): MapWithRawType<ICechy> {
         .forEach(val => {
             const partial = standardValMapper(val);
             if (partial) {
-                result.data = { ...result.data, ...partial };
+                result.map = { ...result.map, ...partial };
             }
             else {
                 result.raw?.push(val)

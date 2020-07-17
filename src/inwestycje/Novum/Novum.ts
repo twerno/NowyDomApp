@@ -19,7 +19,7 @@ export const Novum: INovumDataProvider = {
     url: 'https://novumrumia.pl',
     data: {
         cechy: {
-            data: {
+            map: {
                 winda: true
             },
             raw: [

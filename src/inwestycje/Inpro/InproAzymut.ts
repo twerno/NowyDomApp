@@ -7,7 +7,7 @@ export default InproDataProviderBuilder({
     url: 'https://www.inpro.com.pl/azymut/mieszkania-gdynia-maly-kack',
     data: {
         cechy: {
-            data: {}
+            map: {}
         },
         typ: Typ.MIESZKANIE,
     }

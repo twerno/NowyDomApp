@@ -7,7 +7,7 @@ export default InproDataProviderBuilder({
     url: 'https://www.inpro.com.pl/start/mieszania-gdansk-kokoszki',
     data: {
         cechy: {
-            data: {}
+            map: {}
         },
         typ: Typ.MIESZKANIE,
     }

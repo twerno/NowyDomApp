@@ -26,6 +26,7 @@ class ProvideOfferTask2<T extends IListElement = IListElement, D = any> implemen
         const detail = await this.parseDetails(dataList, errors);
 
         const oferta = this.buildOffer(detail, errors);
+        oferta.id = ProviderOfferHelper.safeFileName(oferta.id);
 
         return new ProvideOfferTask3(oferta.id, oferta.dane, this.dataProvider, (this.priority || 0) + 1);
     }

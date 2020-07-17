@@ -7,6 +7,7 @@ import { HtmlParser } from '../../../inwestycje/helpers/HtmlParser';
 import ParserHelper from '../../../inwestycje/helpers/ParserHelper';
 import { IInproDataProvider, IInproParserProps } from '../InproDataProviderBuilder';
 import { IInproListElement, IInproOfferDetails } from './InproModel';
+import TypeUtils from '@src/utils/TypeUtils';
 
 export default {
     listMapper,
@@ -94,7 +95,7 @@ function cenaEl(el: HTMLElement | undefined): HTMLElement | undefined {
 }
 
 function cechyParser(el: HTMLElement | undefined, h: HtmlParser<IInproListElement>): MapWithRawType<ICechy> {
-    const result: MapWithRawType<ICechy> = { data: {}, raw: [] };
+    const result: MapWithRawType<ICechy> = { map: {}, raw: [] };
 
     el?.querySelectorAll('span').forEach(e => {
         const cecha = h.readAttributeOf(e, 'data-tip', { fieldInfo: 'cechy' });
@@ -103,7 +104,7 @@ function cechyParser(el: HTMLElement | undefined, h: HtmlParser<IInproListElemen
         }
     })
 
-    if (raw2StronaSwiata.length === 0) {
+    if (result.raw?.length === 0) {
         delete result.raw;
     }
     return result;
@@ -119,6 +120,7 @@ function stronySwiataParser(el: HTMLElement | undefined, h: HtmlParser<IInproLis
                 .replace('Ekspozycja okien:', '')
                 .split(',')
                 .map(StronaSwiataHelper.raw2StronaSwiata)
+                .filter(TypeUtils.notEmpty)
                 .forEach(v => result.push(v));
         }
     });

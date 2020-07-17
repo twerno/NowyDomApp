@@ -14,7 +14,7 @@ export interface IInproListElement extends IListElement {
     status: Status;
     cena?: number | IRawData;
     offerDetailsUrl?: string;
-    cechy: { data: Partial<ICechy>, raw?: string[] };
+    cechy: { map: Partial<ICechy>, raw?: string[] };
     stronySwiata: Array<StronaSwiata | IRawData>;
 }
 

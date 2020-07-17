@@ -20,6 +20,14 @@ import InproOptima from "./Inpro/InproOptima";
 import InproHarmoniaOliwska from "./Inpro/InproHarmoniaOliwska";
 import InproDebiut from "./Inpro/InproDebiut";
 import InproAzymut from "./Inpro/InproAzymut";
+import OsiedleBeauforta from "./EuroStyl/OsiedleBeauforta";
+import OsiedlePrzyBloniach from "./EuroStyl/OsiedlePrzyBloniach";
+import OsiedleLocus from "./EuroStyl/OsiedleLocus";
+import NaszeMiejsce from "./EuroStyl/NaszeMiejsce";
+import ZielonyPoludnik from "./EuroStyl/ZielonyPoludnik";
+import OsiedlePerspektywa from "./EuroStyl/OsiedlePerspektywa";
+import OsiedleCis from "./EuroStyl/OsiedleCis";
+import Idea from "./EuroStyl/Idea";
 
 export const inwestycje: IDataProvider<any, any>[] = [
     //<-- Inpro
@@ -57,4 +65,16 @@ export const inwestycje: IDataProvider<any, any>[] = [
     LipovaParkIEtap,
     LipovaParkIIEtap,
     // MultiDom -->
+
+    //<-- EuroStyl
+    OsiedleBeauforta,
+    OsiedlePrzyBloniach,
+    OsiedleLocus,
+    NaszeMiejsce,
+    ZielonyPoludnik,
+    OsiedlePerspektywa,
+    OsiedleCis,
+    Idea,
+
+    // EuroStyl -->
 ];

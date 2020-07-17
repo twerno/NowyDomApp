@@ -7,7 +7,7 @@ export default (listItem: IGarvenaParkListElement, detale: IGarvenaParkDetails |
     const result: IOfertaDane = {
         typ: Typ.DOM
         , ...listItem
-        , cechy: { data: {} },
+        , cechy: { map: {} },
         budynek: undefined,
         cena: undefined,
         pietro: undefined,

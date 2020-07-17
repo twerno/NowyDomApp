@@ -16,7 +16,11 @@ export const StronaSwiataHelper = {
     stronaSwiata2Short
 }
 
-export function raw2StronaSwiata(raw: string): StronaSwiata | IRawData {
+export function raw2StronaSwiata(raw: string | null | undefined): StronaSwiata | IRawData | null {
+    if (raw === null || raw === undefined) {
+        return null;
+    }
+
     switch (raw.toUpperCase().trim()) {
         case 'PÓŁNOC': return StronaSwiata.PÓŁNOC;
         case 'PÓŁNOCNY-WSCHÓD': return StronaSwiata["PÓŁNOCNY-WSCHÓD"];

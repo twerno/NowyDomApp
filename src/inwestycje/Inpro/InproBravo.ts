@@ -7,7 +7,7 @@ export default InproDataProviderBuilder({
     url: 'https://www.inpro.com.pl/brawo/mieszkania-pruszcz-gdanski',
     data: {
         cechy: {
-            data: {}
+            map: {}
         },
         typ: Typ.MIESZKANIE,
     }

@@ -7,7 +7,7 @@ export default InproDataProviderBuilder({
     url: 'https://www.inpro.com.pl/ostoja/mieszkania-rumia',
     data: {
         cechy: {
-            data: {
+            map: {
                 winda: true
             }
         },

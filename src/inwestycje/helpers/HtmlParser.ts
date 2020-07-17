@@ -1,6 +1,6 @@
 import parse, { HTMLElement } from 'node-html-parser';
 import { parseDOM, DomUtils } from 'htmlparser2';
-import { IRawData, MapWithRawType, isRawData } from '../../core/oferta/model/IOfertaModel';
+import { IRawData, MapWithRawType, isRawData, ListWithRawType } from '../../core/oferta/model/IOfertaModel';
 import TypeUtils, { PropertiesOfTheType as PropertiesByTheType } from '../../utils/TypeUtils';
 
 export interface IElReaderOptions {
@@ -22,7 +22,7 @@ export interface IElReaderOptions {
 
 /**
  * mapper otrzymuje string lub śmieci
- * zwraca string jeśli mapowanie się powidło
+ * zwraca T jeśli mapowanie się powidło
  * zwraca IRawData jeśli chcemy wymusić mapowanie (brak błędów mapowania)
  * zwraca undefined dla pola typu optional, (dla pola nie optional zachowuje sie jak null)
  * null w.p.p.
@@ -36,6 +36,14 @@ type THtmlParserMapper<T> = (rawText: string | undefined | null) => T | null | I
  * null w przypadku niepowodzenia mapowania
  */
 type THtmlParserMapMapper<Type> = (rawText: string | undefined | null) => Partial<Type> | string | null;
+
+/**
+ * mapper dla elementów listy, otrzymuje string lub śmieci
+ * zwraca Type jeśli mapowanie na "Type" się powidło
+ * zwraca string w przypadku uproszczonego mapowania na typ raw
+ * null w przypadku niepowodzenia mapowania
+ */
+type THtmlParserListMapper<Type> = (rawText: string | undefined | null) => Type | IRawData | null;
 
 export class HtmlParser<T extends object> {
 
@@ -220,7 +228,7 @@ export class HtmlParser<T extends object> {
         options?: IElReaderOptions,
         type?: 'text' | { attributeName: string },
     ): Record<K, MapWithRawType<Type>> {
-        const result: MapWithRawType<Type> = { data: {}, raw: [] };
+        const result: MapWithRawType<Type> = { map: {}, raw: [] };
 
         if (!elList?.length) {
             if (options?.mustExist || options?.mustExist === undefined) {
@@ -243,7 +251,7 @@ export class HtmlParser<T extends object> {
                         result.raw?.push(val.data);
                     }
                     else {
-                        result.data = { ...result.data, ...val.data }
+                        result.map = { ...result.map, ...val.data }
                     }
                 });
         }
@@ -252,6 +260,49 @@ export class HtmlParser<T extends object> {
             delete result.raw;
         }
         return this.asRecord<K, MapWithRawType<Type>>(field, result);
+    }
+
+    public asList<Type, K extends keyof PropertiesByTheType<T, ListWithRawType<Type>>>(
+        field: K,
+        elList: Array<HTMLElement | string> | undefined | null,
+        mapper: THtmlParserListMapper<Type>,
+        options?: IElReaderOptions,
+        type?: 'text' | { attributeName: string },
+    ): Record<K, ListWithRawType<Type>> {
+        const result: ListWithRawType<Type> = { list: [], raw: [] };
+
+        if (!elList?.length) {
+            if (options?.mustExist || options?.mustExist === undefined) {
+                this.addError(field, `Lista elementów jest pusta!`);
+            }
+        }
+        else {
+            elList
+                .map(el => typeof el === 'string'
+                    ? el
+                    : this.readValueOf(el, type || 'text', { fieldInfo: field, ...options })
+                )
+                .filter(TypeUtils.notEmpty)
+                .map(rawText => ({ data: mapper(rawText), raw: rawText }))
+                .forEach(val => {
+                    if (val.data === null || val.data === undefined) {
+                        result.raw?.push(val.raw);
+                    }
+                    else if (isRawData(val.data)) {
+                        if (val.data.raw) {
+                            result.raw?.push(val.data.raw);
+                        }
+                    }
+                    else {
+                        result.list.push(val.data);
+                    }
+                });
+        }
+
+        if (!result.raw?.length) {
+            delete result.raw;
+        }
+        return this.asRecord<K, ListWithRawType<Type>>(field, result);
     }
 
     public readValueOf(
@@ -327,7 +378,7 @@ export class HtmlParser<T extends object> {
             return undefined;
         }
 
-        let rawText: string | undefined = el.structuredText?.trim();
+        let rawText: string | undefined = el.structuredText?.trim().replace(/&nbsp;/g, ' ');
 
         if (!rawText) {
             if (props.errorWhenEmpty || props.errorWhenEmpty === undefined) {
