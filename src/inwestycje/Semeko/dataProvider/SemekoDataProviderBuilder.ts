@@ -8,8 +8,9 @@ import semekoTabelaLokaliParser from "./semekoTabelaLokaliParser";
 export interface ISemekoDataProviderProps {
     inwestycjaId: string;
     url: string;
-    data: ISemekoDataProviderBuilderData,
-    listaLokaliUrl: string
+    data: ISemekoDataProviderBuilderData;
+    listaLokaliUrl: string;
+    lokalizacja: string;
 }
 
 interface ISemekoDataProviderBuilderData {
@@ -26,6 +27,7 @@ export const SemekoDataProviderBuilder = (props: ISemekoDataProviderProps): ISem
         inwestycjaId: props.inwestycjaId,
         url: props.url,
         data: props.data,
+        lokalizacja: props.lokalizacja,
 
         getListUrl: () => props.listaLokaliUrl,
         parseListHtml: semekoTabelaLokaliParser,

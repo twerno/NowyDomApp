@@ -1,9 +1,17 @@
 
-import { IOfertaDane, isRawData } from '../../../core/oferta/model/IOfertaModel';
+import { IOfertaDane, isRawData, IRawData } from '../../../core/oferta/model/IOfertaModel';
 import { IEuroStylListElement, IEuroStylOfferDetails } from './EuroStylModel';
+import { StronaSwiata } from '@src/core/oferta/model/StronySwiata';
 
 
 export default (listItem: IEuroStylListElement, detale: IEuroStylOfferDetails | null): { id: string, dane: IOfertaDane } => {
+
+    const stronySwiata: Array<StronaSwiata | IRawData> = listItem.stronySwiata.list;
+    if (listItem.stronySwiata.raw?.length) {
+        listItem.stronySwiata.raw
+            .map(raw => ({ raw }))
+            .forEach(r => stronySwiata.push(r));
+    };
 
     const result: IOfertaDane = {
         zasobyDoPobrania: [],
@@ -16,8 +24,8 @@ export default (listItem: IEuroStylListElement, detale: IEuroStylOfferDetails | 
         typ: listItem.typ,
         ...detale,
         liczbaKondygnacji: undefined,
-        stronySwiata: undefined,
-        odbior: undefined,
+        stronySwiata,
+        odbior: listItem.odbior,
         offerDetailsUrl: isRawData(listItem.offerDetailsUrl) ? undefined : listItem.offerDetailsUrl,
         budynek: detale?.budynek,
         cena: detale?.cena

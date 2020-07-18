@@ -7,6 +7,7 @@ import { StronaSwiataHelper } from '../model/StronySwiata';
 import { TypHelper } from '../model/Typ';
 import { IEnv } from '../tasks/IEnv';
 import { buildOpeLogList, buildOpeRecordLogMap } from './OpeLogBuilder';
+import { inwestycjeMap } from '@src/inwestycje/inwestycje';
 
 export async function buildExcel(env: IEnv, openXLSX?: boolean) {
 
@@ -35,7 +36,7 @@ async function prepareOfertaStanSheet(sheet: Excel.Worksheet, stanList: IOfertaR
 
     registerColumns(sheet,
         [
-            column('Inwestycja', { width: 15 }),
+            column('Inwestycja', { width: 20 }),
             column('Lokal', { width: 9 }),
             column('Metraż', { numFmt: '# ##0.00 "m²"', width: 10 }),
             column('Liczba pokoi'),
@@ -48,6 +49,7 @@ async function prepareOfertaStanSheet(sheet: Excel.Worksheet, stanList: IOfertaR
             column('Strony świata'),
             column('Dodane'),
             column('Sprzedane'),
+            column('Lokalizacja', { width: 15 }),
             column('Typ'),
             column('Status', { hidden: true }),
             column('Id'),
@@ -74,6 +76,7 @@ async function prepareOfertaStanSheet(sheet: Excel.Worksheet, stanList: IOfertaR
                     'Oferta': ofertaUrl(v),
                     'Odbiór': OdbiorTypeHelper.odbior2Str(v.data.odbior),
                     'Piętro': number2Excel(v.data.pietro),
+                    'Lokalizacja': inwestycjeMap[v.inwestycjaId]?.lokalizacja,
                     'Typ': TypHelper.typ2str(v.data.typ),
                     'Strony świata': v.data.stronySwiata?.map(StronaSwiataHelper.stronaSwiata2Short).join(', '),
                     "Id": v.ofertaId,
@@ -109,7 +112,7 @@ async function prepareZmianaStanSheet(sheet: Excel.Worksheet, stanList: IOfertaR
             column('Inwestycja', { width: 20 }),
             column('Mieszkanie', { width: 28 }),
             column('Opis', { width: 100 }),
-            // column('Wersja', { width: 10 }),
+            column('Wersja', { width: 10 }),
         ]
     );
 

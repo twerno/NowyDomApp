@@ -8,8 +8,10 @@ import { Typ } from "@src/core/oferta/model/Typ";
 export interface IInproDataProviderProps {
     inwestycjaId: string;
     url: string;
-    data: IInproDataProviderBuilderData,
-    listaLokaliUrl: string
+    data: IInproDataProviderBuilderData;
+    listaLokaliUrl: string;
+    lokalizacja: string;
+
 }
 
 interface IInproDataProviderBuilderData {
@@ -27,6 +29,7 @@ export const InproDataProviderBuilder = (props: IInproDataProviderProps): IInpro
         inwestycjaId: props.inwestycjaId,
         url: props.url,
         data: props.data,
+        lokalizacja: props.lokalizacja,
 
         getListUrl: () => props.listaLokaliUrl,
         parseListHtml: InproParser.listMapper,

@@ -8,4 +8,5 @@ export default EuroStylDataProviderBuilder({
         typ: Typ.MIESZKANIE,
     },
     url: 'https://www.eurostyl.com.pl/osiedle-przy-bloniach-rumia-janowo/',
+    lokalizacja: 'Rumia Janowo Park'
 });

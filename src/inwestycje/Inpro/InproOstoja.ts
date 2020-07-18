@@ -12,5 +12,6 @@ export default InproDataProviderBuilder({
             }
         },
         typ: Typ.MIESZKANIE,
-    }
+    },
+    lokalizacja: 'Rumia Biała Rzeka'
 });

@@ -11,7 +11,8 @@ interface IBuilderProps {
     inwestycjaId: string;
     url: string;
     data: IEuroStylDataProviderBuilderData,
-    listaLokaliUrl: string
+    listaLokaliUrl: string,
+    lokalizacja: string,
 }
 
 interface IEuroStylDataProviderBuilderData {
@@ -28,6 +29,7 @@ export const EuroStylDataProviderBuilder = (props: IBuilderProps): IEuroStylData
         inwestycjaId: props.inwestycjaId,
         url: props.url,
         data: props.data,
+        lokalizacja: props.lokalizacja,
 
         getListUrl: () => props.listaLokaliUrl,
         parseListHtml: EuroStylTabelaLokaliParser,

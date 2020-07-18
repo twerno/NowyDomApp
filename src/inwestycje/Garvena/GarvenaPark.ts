@@ -25,5 +25,7 @@ export const GarvenaPark: IGarvenaParkDataProvider = {
 
     parseOfferHtml: null,
 
-    offerBuilder: GarvenaOfferBuilder
+    offerBuilder: GarvenaOfferBuilder,
+
+    lokalizacja: 'Rumia'
 };

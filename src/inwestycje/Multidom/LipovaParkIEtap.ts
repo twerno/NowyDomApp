@@ -8,4 +8,5 @@ export default MultidomDataProviderBuilder({
         typ: Typ.MIESZKANIE,
     },
     url: 'https://multidom.pl/lipova-park-reda-i-etap',
+    lokalizacja: 'Reda Ciechocino'
 });

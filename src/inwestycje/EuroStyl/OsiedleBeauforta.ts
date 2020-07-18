@@ -8,4 +8,5 @@ export default EuroStylDataProviderBuilder({
         typ: Typ.MIESZKANIE,
     },
     url: 'htts://www.eurostyl.com.pl/osiedle-beauforta-gdynia-pogorze',
+    lokalizacja: 'Gdynia pogórze'
 });

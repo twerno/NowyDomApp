@@ -8,4 +8,5 @@ export default MultidomDataProviderBuilder({
         typ: Typ.MIESZKANIE,
     },
     url: 'https://multidom.pl/apartamenty-marengo',
+    lokalizacja: 'Rumia Biała Rzeka'
 });

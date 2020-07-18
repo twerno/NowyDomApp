@@ -28,6 +28,7 @@ import ZielonyPoludnik from "./EuroStyl/ZielonyPoludnik";
 import OsiedlePerspektywa from "./EuroStyl/OsiedlePerspektywa";
 import OsiedleCis from "./EuroStyl/OsiedleCis";
 import Idea from "./EuroStyl/Idea";
+import { IStringMap } from "@src/utils/IMap";
 
 export const inwestycje: IDataProvider<any, any>[] = [
     //<-- Inpro
@@ -78,3 +79,7 @@ export const inwestycje: IDataProvider<any, any>[] = [
 
     // EuroStyl -->
 ];
+
+export const inwestycjeMap: IStringMap<IDataProvider<any, any>> = {};
+
+inwestycje.forEach(i => inwestycjeMap[i.inwestycjaId] = i);

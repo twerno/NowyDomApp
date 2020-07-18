@@ -10,8 +10,9 @@ import { Typ } from "../../../core/oferta/model/Typ"
 interface IBuilderProps {
     inwestycjaId: string;
     url: string;
-    data: IMultidomDataProviderBuilderData,
-    listaLokaliUrl: string
+    data: IMultidomDataProviderBuilderData;
+    listaLokaliUrl: string;
+    lokalizacja: string;
 }
 
 interface IMultidomDataProviderBuilderData {
@@ -28,6 +29,7 @@ export const MultidomDataProviderBuilder = (props: IBuilderProps): IMultiDomData
         inwestycjaId: props.inwestycjaId,
         url: props.url,
         data: props.data,
+        lokalizacja: props.lokalizacja,
 
         getListUrl: () => props.listaLokaliUrl,
         parseListHtml: MultidomTabelaLokaliParser,

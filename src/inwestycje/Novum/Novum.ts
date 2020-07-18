@@ -31,6 +31,7 @@ export const Novum: INovumDataProvider = {
             ]
         }
     },
+    lokalizacja: 'Rumia Biała Rzeka',
 
     getListUrl: () => 'https://novumrumia.pl/mieszkania/',
 

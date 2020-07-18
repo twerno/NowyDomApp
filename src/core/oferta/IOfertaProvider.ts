@@ -10,8 +10,9 @@ export interface IDataProviderParserProps<T extends IListElement = IListElement,
 export interface IDataProvider<T extends IListElement = IListElement, Details = any, Data = any> {
     readonly inwestycjaId: string;
     readonly developerId: string;
-    readonly url: string,
-    readonly data: Data,
+    readonly url: string;
+    readonly data: Data;
+    readonly lokalizacja: string;
 
     getListUrl: () => string,
     parseListHtml: (html: string, errors: any[], props: IDataProviderParserProps<T, Details, Data>) => { items: T[], tasks?: IAsyncTask[] };

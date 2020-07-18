@@ -10,5 +10,6 @@ export default InproDataProviderBuilder({
             map: {}
         },
         typ: Typ.MIESZKANIE,
-    }
+    },
+    lokalizacja: 'Gdańsk Kokoszki'
 });
