@@ -20,12 +20,12 @@ export async function buildExcel(env: IEnv, openXLSX?: boolean) {
     await prepareOfertaStanSheet(sheet, stanList);
     await prepareZmianaStanSheet(zmianySheet, stanList, env);
 
-    await workbook.xlsx.writeFile('test.xlsx');
+    await workbook.xlsx.writeFile('raport.xlsx');
     if (openXLSX === undefined || openXLSX) {
-        exec('test.xlsx');
+        exec('raport.xlsx');
     };
 
-    console.log('plik test.xlsx został wygenerowany');
+    console.log('plik raport.xlsx został wygenerowany');
 }
 
 async function prepareOfertaStanSheet(sheet: Excel.Worksheet, stanList: IOfertaRecord[]) {

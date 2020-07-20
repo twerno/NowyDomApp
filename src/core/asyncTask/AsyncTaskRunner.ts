@@ -69,7 +69,7 @@ async function runNextTask<P>(
         }
         const result = await Promise.race([
             task?.run(errors, props),
-            new Promise((resolve, reject) => setTimeout(() => reject(`task timeout ${taskName}`), 1000 * 30))
+            new Promise((resolve, reject) => setTimeout(() => reject(`task timeout ${taskName}; ${JSON.stringify(task, null, 2)}`), 1000 * 30))
         ]) || [];
         tasks.push.apply(tasks, result instanceof Array ? result : [result]);
     }

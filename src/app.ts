@@ -10,13 +10,13 @@ import ApartamentyMarengo from "./inwestycje/Multidom/ApartamentyMarengo";
 
 // Methods.runAll(devEnv);
 
-// Methods.runAll(prodEnv)
-//     .then(() => buildExcel(devEnv))
-// .catch (console.error);
+Methods.runAll(prodEnv)
+    .then(() => buildExcel(devEnv))
+    .catch(console.error);
 
 // buildExcel(devEnv);
 
-Methods.runOne(ApartamentyMarengo, devEnv);
+// Methods.runOne(ApartamentyMarengo, devEnv);
 
 // new OfertaStanRecomputeService(prodEnv).garvenaFix();
 // new OfertaStanRecomputeService(prodEnv).recomputeStan('GarvenaPark');
