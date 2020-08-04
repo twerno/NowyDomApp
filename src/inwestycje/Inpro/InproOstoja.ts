@@ -6,6 +6,7 @@ export default InproDataProviderBuilder({
     listaLokaliUrl: 'https://www.inpro.com.pl/ostoja/cennik',
     url: 'https://www.inpro.com.pl/ostoja/mieszkania-rumia',
     data: {
+        odbior: { rok: 2021, miesiac: 10 },
         cechy: {
             map: {
                 winda: true

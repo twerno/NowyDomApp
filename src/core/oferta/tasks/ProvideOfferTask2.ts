@@ -2,10 +2,12 @@ import TypeUtils from "../../../utils/TypeUtils";
 import WebDownloader from "../../../utils/WebDownloader";
 import { IAsyncTask } from "../../asyncTask/IAsyncTask";
 import TaskHelper from '../../asyncTask/TaskHelper';
-import { IDataProvider, IListElement } from "../IOfertaProvider";
+import { IDataProvider, IListElement, IDataProviderParserProps } from "../IOfertaProvider";
 import { IProvideOfferTaskProps } from "./ProvideOfferTask1";
 import ProvideOfferTask3 from "./ProvideOfferTask3";
 import ProviderOfferHelper from "./ProviderOfferHelper";
+import { Details } from "aws-sdk/clients/dataexchange";
+import { Data } from "aws-sdk/clients/firehose";
 
 /**
  * Pobieranie detali oferty, przygotowanie ofert znormalizowanej IOfertaDane
@@ -77,7 +79,11 @@ class ProvideOfferTask2<T extends IListElement = IListElement, D = any> implemen
         detail: D | null,
         errors: any[]
     ) {
-        return this.dataProvider.offerBuilder(this.offer, detail);
+        return this.dataProvider.offerBuilder(
+            this.offer,
+            detail,
+            { dataProvider: this.dataProvider, priority: this.priority }
+        );
     }
 
     private async saveHtml(dataList: Array<{ html: string | null, url: string }>, props: IProvideOfferTaskProps) {

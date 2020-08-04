@@ -20,7 +20,7 @@ export interface IDataProvider<T extends IListElement = IListElement, Details = 
     getOfferUrl: (listItem: T) => string | string[] | undefined;
     parseOfferHtml: ((html: string[] | string, errors: any[], offerId: string, props: IDataProviderParserProps<T, Details, Data>) => Promise<Details>) | null;
 
-    offerBuilder: (listItem: T, details: Details | null) => { id: string, dane: IOfertaDane };
+    offerBuilder: (listItem: T, details: Details | null, props: IDataProviderParserProps<T, Details, Data>) => { id: string, dane: IOfertaDane };
 }
 
 export interface IListElement {

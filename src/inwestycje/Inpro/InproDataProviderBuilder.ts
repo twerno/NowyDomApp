@@ -4,6 +4,7 @@ import { IInproListElement, IInproOfferDetails } from "./internal/InproModel";
 import InproParser from "./internal/InproParser";
 import InproOfertaBuilder from "./internal/InproOfertaBuilder";
 import { Typ } from "@src/core/oferta/model/Typ";
+import { OdbiorType } from "@src/core/oferta/model/OdbiorType";
 
 export interface IInproDataProviderProps {
     inwestycjaId: string;
@@ -14,9 +15,10 @@ export interface IInproDataProviderProps {
 
 }
 
-interface IInproDataProviderBuilderData {
+export interface IInproDataProviderBuilderData {
     cechy: MapWithRawType<ICechy>,
     typ: Typ,
+    odbior?: OdbiorType,
 }
 
 export type IInproDataProvider = IDataProvider<IInproListElement, IInproOfferDetails, IInproDataProviderBuilderData>;
