@@ -18,7 +18,7 @@ interface IOpeRecordLog {
 
 interface IRichText {
     text: string,
-    font?: { bold?: boolean }
+    font?: { bold?: boolean, color?: { 'argb'?: string } },
 }
 
 interface IOpeLog {
@@ -60,6 +60,9 @@ export function buildOpeRecordLogMap(stanList: IOfertaRecord[], opeList: IOferta
     return map;
 }
 
+const colorOK = '13ca21';
+const colorWARN = 'E70812';
+
 
 export function buildOpeLogList(stanList: IOfertaRecord[], opeRecordLogMap: IStringMap<IOpeRecordLog>): IOpeLog[] {
     const result: IOpeLog[] = [];
@@ -84,26 +87,29 @@ export function buildOpeLogList(stanList: IOfertaRecord[], opeRecordLogMap: IStr
                 list.push({ ...l, ofertaId: rec.ofertaId });
                 nowaInwestycjaGroup[rec.inwestycjaId] = list;
             } else if (l.version === 1 && status !== Status.SPRZEDANE) {
+                const color = { argb: status === Status.WOLNE ? colorOK : colorWARN };
                 messagePart.push(
                     { text: `Nowa pozycja, status: ` },
-                    { text: `${StatusHelper.status2string(l.status)}`, font: { bold: true } }
+                    { text: `${StatusHelper.status2string(l.status)}`, font: { bold: true, color } }
                 );
             } else {
-                if (prevCena !== cena && cena !== undefined && !isRawData(cena) && prevCena !== undefined) {
+                if (prevCena !== cena && typeof cena === 'number' && typeof prevCena === 'number') {
+                    const color = { argb: cena > prevCena ? colorWARN : colorOK };
                     messagePart.push(
                         { text: `Cena: ` },
                         { text: `${cenaFormater(prevCena)}`, font: { bold: true } },
                         { text: ` --> ` },
-                        { text: `${cenaFormater(cena)}`, font: { bold: true } }
+                        { text: `${cenaFormater(cena)}`, font: { bold: true, color } }
                     );
                 }
 
                 if (prevStatus !== status && status !== undefined && !isRawData(status) && prevStatus !== undefined) {
+                    const color = { argb: status === Status.WOLNE ? colorOK : colorWARN };
                     messagePart.push(
                         { text: `Status: ` },
                         { text: `${StatusHelper.status2string(prevStatus)}`, font: { bold: true } },
                         { text: ` --> ` },
-                        { text: `${StatusHelper.status2string(status)}`, font: { bold: true } }
+                        { text: `${StatusHelper.status2string(status)}`, font: { bold: true, color } }
                     );
                 }
             }
@@ -129,8 +135,9 @@ export function buildOpeLogList(stanList: IOfertaRecord[], opeRecordLogMap: IStr
 }
 
 function cenaFormater(cena: number | IRawData | undefined): string {
-    if (!isRawData(cena) && cena !== undefined) {
-        return Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' }).format(cena);
+    if (typeof cena === 'number') {
+        return Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN', maximumFractionDigits: 0, minimumFractionDigits: 0 })
+            .format(cena);
     }
     return '';
 }
