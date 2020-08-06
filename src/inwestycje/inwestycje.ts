@@ -29,6 +29,8 @@ import OsiedlePerspektywa from "./EuroStyl/OsiedlePerspektywa";
 import OsiedleCis from "./EuroStyl/OsiedleCis";
 import Idea from "./EuroStyl/Idea";
 import { IStringMap } from "@src/utils/IMap";
+import LesnaZatoka from "./MaskoInvest/LesnaZatoka";
+import Rodziewiczowny from "./MaskoInvest/Rodziewiczowny";
 
 export const inwestycje: IDataProvider<any, any>[] = [
     //<-- Inpro
@@ -78,6 +80,11 @@ export const inwestycje: IDataProvider<any, any>[] = [
     Idea,
 
     // EuroStyl -->
+
+    //<-- MaskoInvest
+    LesnaZatoka,
+    Rodziewiczowny
+    // MaskoInvest -->
 ];
 
 export const inwestycjeMap: IStringMap<IDataProvider<any, any>> = {};

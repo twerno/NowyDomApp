@@ -1,14 +1,8 @@
 // tslint:disable-next-line:no-var-requires
 require('module-alias/register');
-import Methods from "./Methods";
 import { buildExcel } from "./core/oferta/excel/OfferExcelBuilder";
-import { dynamoDbOfertaStateService } from "./core/oferta/service/IOfertaStateService";
 import { devEnv, prodEnv } from "./core/oferta/tasks/IEnv";
-import { OfertaStanRecomputeService } from "./fix/OfertaStanRecomputeService";
-import { inwestycje } from "./inwestycje/inwestycje";
-import ApartamentyMarengo from "./inwestycje/Multidom/ApartamentyMarengo";
-
-// Methods.runAll(devEnv);
+import Methods from "./Methods";
 
 Methods.runAll(prodEnv)
     .then(() => buildExcel(devEnv))
@@ -16,7 +10,7 @@ Methods.runAll(prodEnv)
 
 // buildExcel(devEnv);
 
-// Methods.runOne(ApartamentyMarengo, devEnv);
+// Methods.runOne(Rodziewiczowny, devEnv);
 
 // new OfertaStanRecomputeService(prodEnv).garvenaFix();
 // new OfertaStanRecomputeService(prodEnv).recomputeStan('GarvenaPark');

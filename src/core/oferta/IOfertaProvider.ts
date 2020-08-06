@@ -27,12 +27,15 @@ export interface IListElement {
     id: string;
 }
 
-export function ofertaIdBuilderExcept(skladowe: Array<string | undefined | IRawData>): string {
+export function ofertaIdBuilderExcept(skladowe: Array<string | undefined | IRawData | null>): string {
     for (const sk of skladowe) {
         if (isRawData(sk)) {
             throw new Error(`Błąd budowania id z pól: ${JSON.stringify(skladowe)}`);
         }
     }
 
-    return skladowe.filter(TypeUtils.notEmpty).join('-');
+    return skladowe
+        .filter(TypeUtils.notEmpty)
+        .join('-')
+        .replace(/\s+/g, '-');
 }

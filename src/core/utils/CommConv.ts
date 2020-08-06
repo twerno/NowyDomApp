@@ -17,7 +17,7 @@ function miesiac2str(idx: number): string {
     return result || `${idx}`;
 }
 
-const lpRzymskie = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+const lpRzymskie = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
 
 function lp2Rzymskie(lp: number): string {
     const result = lpRzymskie[lp - 1];
@@ -26,11 +26,10 @@ function lp2Rzymskie(lp: number): string {
 }
 
 function rzymskie2arabskie(liczbaRzymska: string): number {
-    switch (liczbaRzymska) {
-        case 'I': return 1;
-        case 'II': return 2;
-        case 'III': return 3;
-        case 'IV': return 4;
+    const result = lpRzymskie.findIndex(v => v === liczbaRzymska.toUpperCase());
+
+    if (result >= 0) {
+        return result + 1;
     }
 
     throw new Error(`"${liczbaRzymska}" nie jest rozpoznawalną liczbą rzymską.`);
