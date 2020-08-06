@@ -58,9 +58,13 @@ function status(rawText: string | null | undefined): number | null | IRawData {
 
     switch (text) {
         case 'sprzedane': return Status.SPRZEDANE;
+
         case 'zarezerwowane': return Status.REZERWACJA;
         case 'rezerwacja': return Status.REZERWACJA;
+
         case 'wolne': return Status.WOLNE;
+        case 'dostępne': return Status.WOLNE;
+        case 'dostępny': return Status.WOLNE;
     }
     return null;
 }
