@@ -1,4 +1,3 @@
-import { exec } from 'child_process';
 import Excel from 'exceljs';
 import { IOfertaRecord, IRawData, isRawData, ZASOBY } from '../model/IOfertaModel';
 import { OdbiorTypeHelper } from '../model/OdbiorType';
@@ -9,7 +8,7 @@ import { IEnv } from '../tasks/IEnv';
 import { buildOpeLogList, buildOpeRecordLogMap } from './OpeLogBuilder';
 import { inwestycjeMap } from '@src/inwestycje/inwestycje';
 
-export async function buildExcel(env: IEnv, openXLSX?: boolean) {
+export async function buildExcel(env: IEnv) {
 
     const workbook = new Excel.Workbook();
     const sheet = workbook.addWorksheet('Stan');
@@ -21,9 +20,6 @@ export async function buildExcel(env: IEnv, openXLSX?: boolean) {
     await prepareZmianaStanSheet(zmianySheet, stanList, env);
 
     await workbook.xlsx.writeFile('raport.xlsx');
-    if (openXLSX === undefined || openXLSX) {
-        exec('raport.xlsx');
-    };
 
     console.log('plik raport.xlsx został wygenerowany');
 }

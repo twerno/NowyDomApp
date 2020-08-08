@@ -6,13 +6,17 @@ import Methods from "./Methods";
 import Rodziewiczowny from "./inwestycje/MaskoInvest/Rodziewiczowny";
 import S3Utils from "./utils/S3Utils";
 import * as fs from 'fs';
+import Utils from "./utils/Utils";
 
 Methods.runAll(prodEnv)
     .then(() => buildExcel(devEnv))
     .then(() => S3Utils.putFile('', 'raport.xlsx', fs.readFileSync('raport.xlsx')))
+    .then(() => Utils.startFile('raport.xlsx'))
     .catch(console.error);
 
-// buildExcel(devEnv);
+// buildExcel(devEnv)
+//     .then(() => Utils.startFile('raport.xlsx'))
+//     .catch(console.error);
 
 // Methods.runOne(Rodziewiczowny, devEnv);
 
