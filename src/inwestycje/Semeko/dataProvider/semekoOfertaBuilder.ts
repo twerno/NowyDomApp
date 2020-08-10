@@ -13,7 +13,7 @@ export default (item: ISemekoListElement, detale: ISemekoDetails | null): { id: 
         zasobyDoPobrania,
         zasobyPobrane: [],
         liczbaKondygnacji: undefined,
-        stronySwiata: undefined,
+        stronySwiata: detale?.stronySwiata,
         cena: undefined,
         offerDetailsUrl: isRawData(item.offerDetailsUrl) ? undefined : item.offerDetailsUrl
     };

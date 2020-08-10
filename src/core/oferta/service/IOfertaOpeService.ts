@@ -20,7 +20,11 @@ export const devOfertaOpeService: IOfertaOpeService = {
     ...dynamoDbOfertaOpeService,
 
     save: async (recordOpe) => {
-        safeSaveFile(`tmp/ope`, `${recordOpe.ofertaId}-${recordOpe.version}`, JSON.stringify(recordOpe, null, 2));
+        safeSaveFile(
+            `tmp/ope`,
+            `${recordOpe.ofertaId}-${recordOpe.version}`,
+            JSON.stringify(recordOpe, (_, v) => v === undefined ? null : v, 2)
+        );
         return undefined;
     },
 };

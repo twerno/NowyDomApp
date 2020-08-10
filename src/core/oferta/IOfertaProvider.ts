@@ -35,6 +35,8 @@ export function ofertaIdBuilderExcept(skladowe: Array<string | undefined | IRawD
         }
     }
 
-    const id = skladowe.filter(TypeUtils.notEmpty).join('-');
+    const id = skladowe.filter(TypeUtils.notEmpty)
+        .join('-')
+        .replace(/\s+/g, '-');
     return ProviderOfferHelper.safeFileName(id);
 }

@@ -48,10 +48,21 @@ export class DynamoDBRepo<Key extends IStringMap<any>, T extends Key> {
     }
 
     public async scan(): Promise<T[]> {
-        return db.scan({
-            TableName: this.tableName
-        }).promise()
-            .then(val => val.Items as T[]);
+        let result: T[] = [];
+        let lastEvaluatedKey: any = undefined;
+
+        while (lastEvaluatedKey !== null) {
+            lastEvaluatedKey = await db.scan({
+                TableName: this.tableName,
+                ExclusiveStartKey: lastEvaluatedKey
+            }).promise()
+                .then(val => {
+                    result = [...result, ...val.Items as any[]];
+                    return val.LastEvaluatedKey || null;
+                });
+        }
+
+        return result;
     }
 
     public async queryByPartitionKey(key: string): Promise<T[]> {
