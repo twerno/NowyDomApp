@@ -1,6 +1,7 @@
 import { IOfertaDane, ICechy, IRawData, isRawData } from "../../core/oferta/model/IOfertaModel";
 import { IAsyncTask } from "../asyncTask/IAsyncTask";
 import TypeUtils from "../../utils/TypeUtils";
+import ProviderOfferHelper from "./tasks/ProviderOfferHelper";
 
 export interface IDataProviderParserProps<T extends IListElement = IListElement, Details = any, Data = any> {
     dataProvider: IDataProvider<T, Details, Data>;
@@ -34,8 +35,6 @@ export function ofertaIdBuilderExcept(skladowe: Array<string | undefined | IRawD
         }
     }
 
-    return skladowe
-        .filter(TypeUtils.notEmpty)
-        .join('-')
-        .replace(/\s+/g, '-');
+    const id = skladowe.filter(TypeUtils.notEmpty).join('-');
+    return ProviderOfferHelper.safeFileName(id);
 }
