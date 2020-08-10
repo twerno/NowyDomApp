@@ -6,7 +6,7 @@ import { StronaSwiataHelper } from '../model/StronySwiata';
 import { TypHelper } from '../model/Typ';
 import { IEnv } from '../tasks/IEnv';
 import { buildOpeLogList, buildOpeRecordLogMap } from './OpeLogBuilder';
-import { inwestycjeMap } from '@src/inwestycje/inwestycje';
+import { inwestycjeMap, inwestycje } from '@src/inwestycje/inwestycje';
 
 export async function buildExcel(env: IEnv) {
 
@@ -105,9 +105,12 @@ async function prepareZmianaStanSheet(sheet: Excel.Worksheet, stanList: IOfertaR
     registerColumns(sheet,
         [
             column('Kiedy', { width: 12 }),
-            column('Inwestycja', { width: 20 }),
+            column('Gdzie', { width: 20 }),
+            column('Developer'),
             column('Mieszkanie', { width: 28 }),
-            column('Opis', { width: 100 }),
+            column('Metraż', { numFmt: '# ##0.00 "m²"', width: 10 }),
+            column('Liczba pokoi', { width: 10 }),
+            column('Opis', { width: 75 }),
             column('Wersja', { width: 10 }),
         ]
     );
@@ -115,9 +118,12 @@ async function prepareZmianaStanSheet(sheet: Excel.Worksheet, stanList: IOfertaR
     logList
         .sort((a, b) => b.timestamp - a.timestamp)
         .forEach(v => sheet.addRow({
-            'Inwestycja': v.inwestycjaId,
-            'Mieszkanie': v.ofertaId,
             'Kiedy': new Date(v.timestamp),
+            'Gdzie': inwestycjeMap[v.inwestycjaId]?.lokalizacja,
+            'Developer': v.stan?.developerId,
+            'Mieszkanie': v.ofertaId,
+            'Metraż': v.stan?.data.metraz,
+            'Liczba pokoi': number2Excel(v.stan?.data.lpPokoj),
             'Opis': { 'richText': v.richMessage },
             'Wersja': v.version,
         }, ''));

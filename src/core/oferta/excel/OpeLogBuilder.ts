@@ -27,6 +27,7 @@ interface IOpeLog {
     richMessage: IRichText[],
     inwestycjaId: string,
     version: number,
+    stan: IOfertaRecord | undefined,
 }
 
 export function buildOpeRecordLogMap(stanList: IOfertaRecord[], opeList: IOfertaRecordOpe[]): IStringMap<IOpeRecordLog> {
@@ -60,22 +61,23 @@ export function buildOpeRecordLogMap(stanList: IOfertaRecord[], opeList: IOferta
     return map;
 }
 
-const colorOK = '13ca21';
+const colorOK = '009f0c';
 const colorWARN = 'E70812';
-
+type nowaInwestycjaGroupType = IStringMap<{ list: Array<IOpeRecordLogListEl & { ofertaId: string }>, stan?: IOfertaRecord }>;
 
 export function buildOpeLogList(stanList: IOfertaRecord[], opeRecordLogMap: IStringMap<IOpeRecordLog>): IOpeLog[] {
     const result: IOpeLog[] = [];
 
     const inwestycjaMinDateMap = minDateOfInwestycja(stanList);
-    const nowaInwestycjaGroup: IStringMap<Array<IOpeRecordLogListEl & { ofertaId: string }>> = {};
+    const nowaInwestycjaGroup: nowaInwestycjaGroupType = {};
 
     for (const rec of Object.values(opeRecordLogMap)) {
         let prevStatus: Status | IRawData | undefined = undefined;
         let prevCena: number | IRawData | undefined = undefined;
 
-        for (const l of rec.logList) {
+        const stan = stanList.find(v => v.ofertaId === rec.ofertaId);
 
+        for (const l of rec.logList) {
             let messagePart: IRichText[] = [];
             const cena: number | IRawData | undefined = l.cena;
             const status: Status | IRawData | undefined = l.status;
@@ -83,9 +85,9 @@ export function buildOpeLogList(stanList: IOfertaRecord[], opeRecordLogMap: IStr
             const inwestycjaMinDate = inwestycjaMinDateMap[rec.inwestycjaId];
 
             if (isSameDay(inwestycjaMinDate, l.timestamp)) {
-                const list = nowaInwestycjaGroup[rec.inwestycjaId] || [];
+                const { list } = nowaInwestycjaGroup[rec.inwestycjaId] || { list: [] };
                 list.push({ ...l, ofertaId: rec.ofertaId });
-                nowaInwestycjaGroup[rec.inwestycjaId] = list;
+                nowaInwestycjaGroup[rec.inwestycjaId] = { list, stan };
             } else if (l.version === 1 && status !== Status.SPRZEDANE) {
                 const color = { argb: status === Status.WOLNE ? colorOK : colorWARN };
                 messagePart.push(
@@ -123,7 +125,8 @@ export function buildOpeLogList(stanList: IOfertaRecord[], opeRecordLogMap: IStr
                     inwestycjaId: rec.inwestycjaId,
                     timestamp: l.timestamp,
                     richMessage: messagePart,
-                    version: l.version
+                    version: l.version,
+                    stan
                 });
             }
         }
@@ -163,7 +166,7 @@ function isSameDay(timestamp1: number, timestamp2: number): boolean {
         && date1.getDate() === date2.getDate();
 }
 
-function nowaInwestycjaGroup2Msg(nowaInwestycjaGroup: IStringMap<Array<IOpeRecordLogListEl & { ofertaId: string }>>) {
+function nowaInwestycjaGroup2Msg(nowaInwestycjaGroup: nowaInwestycjaGroupType) {
 
     const result: IOpeLog[] = [];
 
@@ -171,19 +174,20 @@ function nowaInwestycjaGroup2Msg(nowaInwestycjaGroup: IStringMap<Array<IOpeRecor
         const map: IStringMap<Status | IRawData> = {};
 
         nowaInwestycjaGroup[inwestycjaId]
+            .list
             .forEach(l => {
                 if (l.status !== undefined) {
                     map[l.ofertaId] = l.status;
                 }
             });
 
-        const timestamp = nowaInwestycjaGroup[inwestycjaId][0].timestamp;
+        const timestamp = nowaInwestycjaGroup[inwestycjaId].list[0].timestamp;
         const statusy = podliczStatusy(map);
 
         const message: IRichText[] = [
             { text: `Nowa inwestycja` },
             { text: ` "${inwestycjaId}"`, font: { bold: true } },
-            { text: `wolnych: ` },
+            { text: ` wolnych: ` },
             { text: `${statusy[Status.WOLNE]}`, font: { bold: true } },
             { text: ` , zarezerwowanych: ` },
             { text: `${statusy[Status.REZERWACJA]}`, font: { bold: true } },
@@ -198,13 +202,16 @@ function nowaInwestycjaGroup2Msg(nowaInwestycjaGroup: IStringMap<Array<IOpeRecor
             )
         }
 
+        const stan = nowaInwestycjaGroup[inwestycjaId].stan;
+
         if (timestamp !== undefined) {
             result.push({
                 inwestycjaId,
                 ofertaId: '',
                 timestamp,
                 richMessage: message,
-                version: -1
+                version: -1,
+                stan
             });
         }
     }
