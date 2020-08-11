@@ -1,6 +1,8 @@
 import { IStringMap } from '@src/utils/IMap';
-import { IOfertaRecord, IOfertaRecordOpe, IRawData, isRawData } from '../model/IOfertaModel';
+import { IOfertaRecord, IOfertaRecordOpe, IRawData, isRawData, valueOfRaw } from '../model/IOfertaModel';
 import { Status, StatusHelper } from '../model/Status';
+import { inwestycjeMap } from '@src/inwestycje/inwestycje';
+import Utils from '@src/utils/Utils';
 
 interface IOpeRecordLogListEl {
     version: number,
@@ -21,13 +23,14 @@ interface IRichText {
     font?: { bold?: boolean, color?: { 'argb'?: string } },
 }
 
-interface IOpeLog {
+export interface IOpeLog {
     ofertaId: string,
     timestamp: number,
     richMessage: IRichText[],
     inwestycjaId: string,
     version: number,
     stan: IOfertaRecord | undefined,
+    typ: 'oferta' | 'grupa'
 }
 
 export function buildOpeRecordLogMap(stanList: IOfertaRecord[], opeList: IOfertaRecordOpe[]): IStringMap<IOpeRecordLog> {
@@ -35,7 +38,7 @@ export function buildOpeRecordLogMap(stanList: IOfertaRecord[], opeList: IOferta
     const map: IStringMap<IOpeRecordLog> = {};
 
     const reductor = (ope: IOfertaRecordOpe) => {
-        let log: IOpeRecordLog = map[ope.ofertaId];
+        let log = map[ope.ofertaId];
         if (log === undefined) {
             log = {
                 ofertaId: ope.ofertaId,
@@ -72,6 +75,9 @@ export function buildOpeLogList(stanList: IOfertaRecord[], opeRecordLogMap: IStr
     const nowaInwestycjaGroup: nowaInwestycjaGroupType = {};
 
     for (const rec of Object.values(opeRecordLogMap)) {
+        if (rec === undefined) {
+            continue;
+        }
         let prevStatus: Status | IRawData | undefined = undefined;
         let prevCena: number | IRawData | undefined = undefined;
 
@@ -84,7 +90,7 @@ export function buildOpeLogList(stanList: IOfertaRecord[], opeRecordLogMap: IStr
 
             const inwestycjaMinDate = inwestycjaMinDateMap[rec.inwestycjaId];
 
-            if (isSameDay(inwestycjaMinDate, l.timestamp)) {
+            if (Utils.isSameDay(inwestycjaMinDate, l.timestamp)) {
                 const { list } = nowaInwestycjaGroup[rec.inwestycjaId] || { list: [] };
                 list.push({ ...l, ofertaId: rec.ofertaId });
                 nowaInwestycjaGroup[rec.inwestycjaId] = { list, stan };
@@ -107,11 +113,16 @@ export function buildOpeLogList(stanList: IOfertaRecord[], opeRecordLogMap: IStr
 
                 if (prevStatus !== status && status !== undefined && !isRawData(status) && prevStatus !== undefined) {
                     const color = { argb: status === Status.WOLNE ? colorOK : colorWARN };
+                    const cenaSprzedazy = status === Status.SPRZEDANE
+                        ? stanList.find(s => s.ofertaId === rec.ofertaId)?.data.cena
+                        : undefined;
+
                     messagePart.push(
                         { text: `Status: ` },
                         { text: `${StatusHelper.status2string(prevStatus)}`, font: { bold: true } },
                         { text: ` --> ` },
-                        { text: `${StatusHelper.status2string(status)}`, font: { bold: true, color } }
+                        { text: `${StatusHelper.status2string(status)}`, font: { bold: true, color } },
+                        { text: cenaSprzedazy ? ` (${cenaFormater(cenaSprzedazy)})` : '' }
                     );
                 }
             }
@@ -126,7 +137,8 @@ export function buildOpeLogList(stanList: IOfertaRecord[], opeRecordLogMap: IStr
                     timestamp: l.timestamp,
                     richMessage: messagePart,
                     version: l.version,
-                    stan
+                    stan,
+                    typ: 'oferta'
                 });
             }
         }
@@ -157,14 +169,7 @@ function minDateOfInwestycja(stanList: IOfertaRecord[]) {
     return inwestycjaObserwowanaOd;
 }
 
-function isSameDay(timestamp1: number, timestamp2: number): boolean {
-    const date1 = new Date(timestamp1);
-    const date2 = new Date(timestamp2);
 
-    return date1.getFullYear() === date2.getFullYear()
-        && date1.getMonth() === date2.getMonth()
-        && date1.getDate() === date2.getDate();
-}
 
 function nowaInwestycjaGroup2Msg(nowaInwestycjaGroup: nowaInwestycjaGroupType) {
 
@@ -173,15 +178,14 @@ function nowaInwestycjaGroup2Msg(nowaInwestycjaGroup: nowaInwestycjaGroupType) {
     for (const inwestycjaId in nowaInwestycjaGroup) {
         const map: IStringMap<Status | IRawData> = {};
 
-        nowaInwestycjaGroup[inwestycjaId]
-            .list
+        nowaInwestycjaGroup[inwestycjaId]?.list
             .forEach(l => {
                 if (l.status !== undefined) {
                     map[l.ofertaId] = l.status;
                 }
             });
 
-        const timestamp = nowaInwestycjaGroup[inwestycjaId].list[0].timestamp;
+        const timestamp = nowaInwestycjaGroup[inwestycjaId]?.list[0].timestamp;
         const statusy = podliczStatusy(map);
 
         const message: IRichText[] = [
@@ -202,7 +206,7 @@ function nowaInwestycjaGroup2Msg(nowaInwestycjaGroup: nowaInwestycjaGroupType) {
             )
         }
 
-        const stan = nowaInwestycjaGroup[inwestycjaId].stan;
+        const stan = nowaInwestycjaGroup[inwestycjaId]?.stan;
 
         if (timestamp !== undefined) {
             result.push({
@@ -211,7 +215,8 @@ function nowaInwestycjaGroup2Msg(nowaInwestycjaGroup: nowaInwestycjaGroupType) {
                 timestamp,
                 richMessage: message,
                 version: -1,
-                stan
+                stan,
+                typ: 'grupa'
             });
         }
     }
@@ -249,3 +254,20 @@ function podliczStatusy(map: IStringMap<Status | IRawData>) {
     return result;
 }
 
+export const opeLogSort = (a: IOpeLog, b: IOpeLog) => {
+    const sortKeyA = sortDateKey(a);
+    const sortKeyB = sortDateKey(b);
+
+    const developerA = inwestycjeMap[a.inwestycjaId]?.developerId || '';
+    const developerB = inwestycjeMap[b.inwestycjaId]?.developerId || '';
+
+    return sortKeyB.localeCompare(sortKeyA)
+        || developerB.localeCompare(developerA)
+        || b.ofertaId.localeCompare(a.ofertaId)
+        || a.version - b.version;
+}
+
+function sortDateKey(a: IOpeLog) {
+    const dateA = new Date(a.timestamp);
+    return `${dateA.getFullYear()}-${dateA.getMonth().toString().padStart(2, '0')}-${dateA.getDate().toString().padStart(2, '0')}`
+}

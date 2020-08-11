@@ -78,3 +78,9 @@ export interface ICechy {
     "hala garażowa"?: number;
     "garaż indywidualny"?: number;
 }
+
+export function valueOfRaw<T>(val: T | IRawData | undefined | null): T | string | undefined | null {
+    return isRawData(val)
+        ? val.raw
+        : val;
+}

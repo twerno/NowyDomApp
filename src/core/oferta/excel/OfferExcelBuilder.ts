@@ -5,8 +5,8 @@ import { StatusHelper } from '../model/Status';
 import { StronaSwiataHelper } from '../model/StronySwiata';
 import { TypHelper } from '../model/Typ';
 import { IEnv } from '../tasks/IEnv';
-import { buildOpeLogList, buildOpeRecordLogMap } from './OpeLogBuilder';
-import { inwestycjeMap, inwestycje } from '@src/inwestycje/inwestycje';
+import { buildOpeLogList, buildOpeRecordLogMap, opeLogSort } from './OpeLogBuilder';
+import { inwestycjeMap } from '@src/inwestycje/inwestycje';
 
 export async function buildExcel(env: IEnv) {
 
@@ -116,14 +116,14 @@ async function prepareZmianaStanSheet(sheet: Excel.Worksheet, stanList: IOfertaR
     );
 
     logList
-        .sort((a, b) => b.timestamp - a.timestamp)
+        .sort(opeLogSort)
         .forEach(v => sheet.addRow({
-            'Kiedy': new Date(v.timestamp),
+            'Kiedy': new Date(v.timestamp).toLocaleDateString(),
             'Gdzie': inwestycjeMap[v.inwestycjaId]?.lokalizacja,
             'Developer': v.stan?.developerId,
             'Mieszkanie': v.ofertaId,
-            'Metraż': v.stan?.data.metraz,
-            'Liczba pokoi': number2Excel(v.stan?.data.lpPokoj),
+            'Metraż': v.typ === 'grupa' ? '' : v.stan?.data.metraz,
+            'Liczba pokoi': v.typ === 'grupa' ? '' : number2Excel(v.stan?.data.lpPokoj),
             'Opis': { 'richText': v.richMessage },
             'Wersja': v.version,
         }, ''));

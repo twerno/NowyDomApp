@@ -1,3 +1,3 @@
 export interface IStringMap<T = string> {
-    [key: string]: T
+    [key: string]: T | undefined
 }
