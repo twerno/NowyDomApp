@@ -1,7 +1,7 @@
-import { OrlexInvestataProviderBuilder } from "./internal/OrlexInvestDataBuilder";
+import { OrlexInvestDataProviderBuilder } from "./internal/OrlexInvestDataBuilder";
 import { Typ } from "@src/core/oferta/model/Typ";
 
-export default OrlexInvestataProviderBuilder({
+export default OrlexInvestDataProviderBuilder({
     listaLokaliUrl: [
         'https://www.orlexinvest.pl/inwestycje/osiedle-nowe-janowo',
         'https://www.orlexinvest.pl/inwestycje/rumia-osiedle-nowe-janowo-budynek-b',

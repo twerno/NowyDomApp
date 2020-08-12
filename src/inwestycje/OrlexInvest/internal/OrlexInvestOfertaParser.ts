@@ -1,12 +1,12 @@
-import { IOrlexInvestarserProps } from './OrlexInvestDataBuilder';
-import { IOrlexInvestfferDetails } from './OrlexInvestModel';
+import { IOrlexInvestParserProps } from './OrlexInvestDataBuilder';
+import { IOrlexInvestOfferDetails } from './OrlexInvestModel';
 
 export default async (
     html: string[] | string,
     errors: any[],
     offerId: string,
-    props: IOrlexInvestarserProps
-): Promise<IOrlexInvestfferDetails> => {
+    props: IOrlexInvestParserProps
+): Promise<IOrlexInvestOfferDetails> => {
 
     if (html instanceof Array) {
         throw new Error('maper przenaczony dla pojedynczego rekordu, otrzymano tablicę');

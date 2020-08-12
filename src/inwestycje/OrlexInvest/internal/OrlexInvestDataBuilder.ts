@@ -1,29 +1,29 @@
 import { IDataProvider, IDataProviderParserProps } from "../../../core/oferta/IOfertaProvider";
 import { isRawData } from "../../../core/oferta/model/IOfertaModel";
 import { Typ } from "../../../core/oferta/model/Typ";
-import { IOrlexInvestistElement, IOrlexInvestfferDetails } from "./OrlexInvestModel";
-import OrlexInvestfertaBuilder from "./OrlexInvestOfertaBuilder";
-import OrlexInvestfertaParser from "./OrlexInvestOfertaParser";
-import OrlexInvestabelaLokaliParser from "./OrlexInvestTabelaLokaliParser";
+import { IOrlexInvestListElement, IOrlexInvestOfferDetails } from "./OrlexInvestModel";
+import OrlexInvestOfertaBuilder from "./OrlexInvestOfertaBuilder";
+import OrlexInvestOfertaParser from "./OrlexInvestOfertaParser";
+import OrlexInvestTabelaLokaliParser from "./OrlexInvestTabelaLokaliParser";
 
 
 interface IBuilderProps {
     inwestycjaId: string;
     url: string;
-    data: IOrlexInvestataProviderBuilderData,
+    data: IOrlexInvestDataProviderBuilderData,
     listaLokaliUrl: string | string[],
     lokalizacja: string,
 }
 
-interface IOrlexInvestataProviderBuilderData {
+interface IOrlexInvestDataProviderBuilderData {
     typ: Typ,
     budynek: string | undefined,
 }
 
-export type IOrlexInvestataProvider = IDataProvider<IOrlexInvestistElement, IOrlexInvestfferDetails, IOrlexInvestataProviderBuilderData>;
-export type IOrlexInvestarserProps = IDataProviderParserProps<IOrlexInvestistElement, IOrlexInvestfferDetails, IOrlexInvestataProviderBuilderData>;
+export type IOrlexInvestDataProvider = IDataProvider<IOrlexInvestListElement, IOrlexInvestOfferDetails, IOrlexInvestDataProviderBuilderData>;
+export type IOrlexInvestParserProps = IDataProviderParserProps<IOrlexInvestListElement, IOrlexInvestOfferDetails, IOrlexInvestDataProviderBuilderData>;
 
-export const OrlexInvestataProviderBuilder = (props: IBuilderProps): IOrlexInvestataProvider => {
+export const OrlexInvestDataProviderBuilder = (props: IBuilderProps): IOrlexInvestDataProvider => {
 
     return {
         developerId: 'OrlexInvest',
@@ -33,10 +33,10 @@ export const OrlexInvestataProviderBuilder = (props: IBuilderProps): IOrlexInves
         lokalizacja: props.lokalizacja,
 
         getListUrl: () => props.listaLokaliUrl,
-        parseListHtml: OrlexInvestabelaLokaliParser,
+        parseListHtml: OrlexInvestTabelaLokaliParser,
         getOfferUrl: (element) => isRawData(element.offerDetailsUrl) ? undefined : element.offerDetailsUrl,
-        parseOfferHtml: OrlexInvestfertaParser,
-        offerBuilder: OrlexInvestfertaBuilder
+        parseOfferHtml: OrlexInvestOfertaParser,
+        offerBuilder: OrlexInvestOfertaBuilder
     }
 
 }

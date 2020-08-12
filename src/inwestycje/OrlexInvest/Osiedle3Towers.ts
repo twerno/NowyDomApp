@@ -1,7 +1,7 @@
-import { OrlexInvestataProviderBuilder } from "./internal/OrlexInvestDataBuilder";
+import { OrlexInvestDataProviderBuilder } from "./internal/OrlexInvestDataBuilder";
 import { Typ } from "@src/core/oferta/model/Typ";
 
-export default OrlexInvestataProviderBuilder({
+export default OrlexInvestDataProviderBuilder({
     listaLokaliUrl: 'https://www.orlexinvest.pl/inwestycje/3-towers-reda-budynek-a',
     inwestycjaId: 'Osiedle3Towers',
     lokalizacja: 'Reda',

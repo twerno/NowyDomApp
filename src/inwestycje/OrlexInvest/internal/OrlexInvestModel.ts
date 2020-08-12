@@ -3,7 +3,7 @@ import { IRawData } from "../../../core/oferta/model/IOfertaModel";
 import { Status } from "../../../core/oferta/model/Status";
 import { Typ } from "../../../core/oferta/model/Typ";
 
-export interface IOrlexInvestistElement extends IListElement {
+export interface IOrlexInvestListElement extends IListElement {
     typ: Typ,
     lpPokoj: number | IRawData;
     nrLokalu: string | IRawData;
@@ -16,8 +16,5 @@ export interface IOrlexInvestistElement extends IListElement {
     zasobyDoPobrania: { id: string, url: string }[];
 }
 
-export interface IOrlexInvestfferDetails {
-    // liczbaKondygnacji?: number | IRawData;
-    // cechy: MapWithRawType<ICechy>;
-    // zasobyDoPobrania: { id: string, url: string }[];
+export interface IOrlexInvestOfferDetails {
 }
