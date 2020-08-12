@@ -1,10 +1,13 @@
-import { OrlexDataProviderBuilder } from "./internal/OrlexDataBuilder";
+import { OrlexInvestataProviderBuilder } from "./internal/OrlexInvestDataBuilder";
 import { Typ } from "@src/core/oferta/model/Typ";
 
-export default OrlexDataProviderBuilder({
+export default OrlexInvestataProviderBuilder({
     listaLokaliUrl: 'https://www.orlexinvest.pl/inwestycje/pogorze-osiedle-kosciuszki-v',
     inwestycjaId: 'OsiedleKosciuszki',
-    lokalizacja: '',
+    lokalizacja: 'Pogórze',
     url: 'https://www.orlexinvest.pl/inwestycje/pogorze-osiedle-kosciuszki-v',
-    data: { typ: Typ.MIESZKANIE }
+    data: {
+        typ: Typ.MIESZKANIE,
+        budynek: 'V'
+    }
 });

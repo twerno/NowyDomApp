@@ -3,22 +3,22 @@ import { IAsyncTask } from "../../../core/asyncTask/IAsyncTask";
 import { ofertaIdBuilderExcept } from '../../../core/oferta/IOfertaProvider';
 import { HtmlParser } from '../../helpers/HtmlParser';
 import DataParserHelper from '../../helpers/ParserHelper';
-import { IOrlexDataProvider, IOrlexParserProps } from './OrlexDataBuilder';
-import { IOrlexListElement } from './OrlexModel';
+import { IOrlexInvestataProvider, IOrlexInvestarserProps } from './OrlexInvestDataBuilder';
+import { IOrlexInvestistElement } from './OrlexInvestModel';
 import { ZASOBY } from '@src/core/oferta/model/IOfertaModel';
 
 export default (
     html: string,
     errors: any[],
-    props: IOrlexParserProps
-): { items: IOrlexListElement[], tasks?: IAsyncTask[] } => {
+    props: IOrlexInvestarserProps
+): { items: IOrlexInvestistElement[], tasks?: IAsyncTask[] } => {
 
     const root = HtmlParser.parseHtml(html);
     const rows = root.querySelectorAll('div.flat-item');
 
-    const items: IOrlexListElement[] = rows?.map(
+    const items: IOrlexInvestistElement[] = rows?.map(
         (row, idx) => {
-            const h = new HtmlParser<IOrlexListElement>(`${props.dataProvider.inwestycjaId} X ${idx}`, errors);
+            const h = new HtmlParser<IOrlexInvestistElement>(`${props.dataProvider.inwestycjaId} X ${idx}`, errors);
             return rowMapper(row, h, props.dataProvider);
         }
     );
@@ -32,9 +32,9 @@ export default (
 
 function rowMapper(
     row: HTMLElement | undefined,
-    h: HtmlParser<IOrlexListElement>,
-    dataProvider: IOrlexDataProvider
-): IOrlexListElement {
+    h: HtmlParser<IOrlexInvestistElement>,
+    dataProvider: IOrlexInvestataProvider
+): IOrlexInvestistElement {
 
     const infoList = row?.querySelector('div.big-flex-info').querySelectorAll('div.div-flex-mini-info');
     const infoListFinder =
@@ -44,7 +44,7 @@ function rowMapper(
 
     const cols: HTMLElement[] = row?.querySelectorAll('a') || [];
 
-    const result: IOrlexListElement = {
+    const result: IOrlexInvestistElement = {
         id: 'tmp_id',
         typ: dataProvider.data.typ,
         budynek: dataProvider.data.budynek,
@@ -68,12 +68,12 @@ function rowMapper(
 // mapper utils
 // ****************************
 
-function zasobyDoPobrania(row: HTMLElement | undefined, h: HtmlParser<IOrlexListElement>): { id: string, url: string }[] {
-    const pdfLink = h.readAttributeOf(
-        row?.querySelector('a.dyn_link_card'),
-        'href',
-        { fieldInfo: { fieldName: 'zasobyDoPobrania', comment: 'pdfLink' } }
-    );
+function zasobyDoPobrania(row: HTMLElement | undefined, h: HtmlParser<IOrlexInvestistElement>): { id: string, url: string }[] {
+    // const pdfLink = h.readAttributeOf(
+    //     row?.querySelector('a.dyn_link_card'),
+    //     'href',
+    //     { fieldInfo: { fieldName: 'zasobyDoPobrania', comment: 'pdfLink' } }
+    // );
     const imgLink = h.readAttributeOf(
         row?.querySelector('div.link-block-photo').querySelector('img.img-rzut-inv'),
         'src',
@@ -81,9 +81,10 @@ function zasobyDoPobrania(row: HTMLElement | undefined, h: HtmlParser<IOrlexList
     );
     const result: { id: string, url: string }[] = [];
 
-    if (pdfLink) {
-        result.push({ id: ZASOBY.PDF, url: pdfLink });
-    }
+    // pdf siedzą na google drive - pobieranie problematyczne
+    // if (pdfLink) {
+    //     result.push({ id: ZASOBY.PDF, url: pdfLink });
+    // }
 
     if (imgLink) {
         result.push({ id: ZASOBY.IMG, url: imgLink });
@@ -92,7 +93,7 @@ function zasobyDoPobrania(row: HTMLElement | undefined, h: HtmlParser<IOrlexList
     return result;
 }
 
-function offerDetailsUrl(row: HTMLElement | undefined, h: HtmlParser<IOrlexListElement>) {
+function offerDetailsUrl(row: HTMLElement | undefined, h: HtmlParser<IOrlexInvestistElement>) {
     const detailsUrl = h.readAttributeOf(row?.querySelector('a.div-name'), 'href', { fieldInfo: 'offerDetailsUrl' });
     if (detailsUrl) {
         // na stronie z detalami nie ma nic ciekawego

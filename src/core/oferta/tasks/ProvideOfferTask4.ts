@@ -13,7 +13,7 @@ class ProvideOfferTask4<T extends IListElement = IListElement, D = any> extends 
 
     public constructor(
         private ofertaId: string,
-        private stan: IOfertaRecord,
+        private stan: IOfertaRecord | undefined,
         dataProvider: IDataProvider<T, D>,
         public readonly priority?: number) {
         super(dataProvider);
@@ -21,24 +21,28 @@ class ProvideOfferTask4<T extends IListElement = IListElement, D = any> extends 
 
     public async run(errors: any[], props: IProvideOfferTaskProps) {
 
-        const doPobrania = this.stan.data.zasobyDoPobrania
-            .filter(z => !this.zasobPobrany(z));
+        const stan = this.stan;
 
-        let stanCached = this.stan;
+        if (stan) {
+            const doPobrania = stan.data.zasobyDoPobrania
+                .filter(z => !this.zasobPobrany(z, stan));
 
-        // const resourcesDownloaded = {count: new Set<string>()};
-        // wywolywanie operacji synchroniczne
-        for (const res of doPobrania) {
-            const zmiana = await this.pobierzIZapisz(res, stanCached, errors, props);
-            stanCached = zmiana?.rekord || stanCached;
+            let stanCached = stan;
+
+            // const resourcesDownloaded = {count: new Set<string>()};
+            // wywolywanie operacji synchroniczne
+            for (const res of doPobrania) {
+                const zmiana = await this.pobierzIZapisz(res, stanCached, errors, props);
+                stanCached = zmiana?.rekord || stanCached;
+            }
         }
 
         return [];
     }
 
-    private zasobPobrany(zasob: { id: string }) {
-        return !!this.stan.data.zasobyPobrane
-            && !!this.stan.data.zasobyPobrane.find(z => z.id === zasob.id);
+    private zasobPobrany(zasob: { id: string }, stan: IOfertaRecord) {
+        return !!stan.data.zasobyPobrane
+            && !!stan.data.zasobyPobrane.find(z => z.id === zasob.id);
     }
 
     private async pobierzIZapisz(

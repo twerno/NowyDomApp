@@ -31,6 +31,11 @@ import Idea from "./EuroStyl/Idea";
 import { IStringMap } from "@src/utils/IMap";
 import LesnaZatoka from "./MaskoInvest/LesnaZatoka";
 import Rodziewiczowny from "./MaskoInvest/Rodziewiczowny";
+import OsiedleKosciuszkiV from "./OrlexInvest/OsiedleKosciuszkiV";
+import OsiedleNoweJanowo from "./OrlexInvest/OsiedleNoweJanowo";
+import Osiedle3Towers from "./OrlexInvest/Osiedle3Towers";
+import OsiedleNoweGoscicino from "./OrlexInvest/OsiedleNoweGoscicino";
+import OsiedlePolna from "./OrlexInvest/OsiedlePolna";
 
 export const inwestycje: IDataProvider<any, any>[] = [
     //<-- Inpro
@@ -83,8 +88,16 @@ export const inwestycje: IDataProvider<any, any>[] = [
 
     //<-- MaskoInvest
     LesnaZatoka,
-    Rodziewiczowny
+    Rodziewiczowny,
     // MaskoInvest -->
+
+    //<-- OrlexInvest
+    Osiedle3Towers,
+    OsiedleKosciuszkiV,
+    OsiedleNoweGoscicino,
+    OsiedleNoweJanowo,
+    OsiedlePolna,
+    // OrlexInvest -->
 ];
 
 export const inwestycjeMap: IStringMap<IDataProvider<any, any>> = {};

@@ -15,7 +15,7 @@ export interface IDataProvider<T extends IListElement = IListElement, Details = 
     readonly data: Data;
     readonly lokalizacja: string;
 
-    getListUrl: () => string,
+    getListUrl: () => string | string[],
     parseListHtml: (html: string, errors: any[], props: IDataProviderParserProps<T, Details, Data>) => { items: T[], tasks?: IAsyncTask[] };
 
     getOfferUrl: (listItem: T) => string | string[] | undefined;

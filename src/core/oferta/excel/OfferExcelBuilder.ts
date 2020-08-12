@@ -246,14 +246,15 @@ function cellEqualsRule(formulae: string, style: Partial<Excel.Style>): Excel.Ce
 }
 
 function ofertaUrl(record: IOfertaRecord) {
-    const filename = record.data.zasobyPobrane?.find(v => v.id === ZASOBY.PDF)?.s3Filename;
+    const filename = record.data.zasobyPobrane?.find(v => v.id === ZASOBY.PDF)
+        || record.data.zasobyPobrane?.find(v => v.id === ZASOBY.IMG);
 
     if (!filename) {
         return null;
     }
 
     return {
-        text: 'pdf',
-        hyperlink: `https://nowydom.s3-eu-west-1.amazonaws.com/${record.inwestycjaId}/${filename}`,
+        text: filename.id,
+        hyperlink: `https://nowydom.s3-eu-west-1.amazonaws.com/${record.inwestycjaId}/${filename.s3Filename}`,
     };
 }

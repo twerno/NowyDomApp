@@ -1,8 +1,8 @@
 
 import { IOfertaDane, isRawData } from '../../../core/oferta/model/IOfertaModel';
-import { IOrlexListElement, IOrlexOfferDetails } from './OrlexModel';
+import { IOrlexInvestistElement, IOrlexInvestfferDetails } from './OrlexInvestModel';
 
-export default (listItem: IOrlexListElement, detale: IOrlexOfferDetails | null): { id: string, dane: IOfertaDane } => {
+export default (listItem: IOrlexInvestistElement, detale: IOrlexInvestfferDetails | null): { id: string, dane: IOfertaDane } => {
 
     const result: IOfertaDane = {
         zasobyDoPobrania: listItem.zasobyDoPobrania,
