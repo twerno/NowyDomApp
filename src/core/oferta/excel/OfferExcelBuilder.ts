@@ -47,7 +47,7 @@ async function prepareOfertaStanSheet(sheet: Excel.Worksheet, stanList: IOfertaR
             column('Sprzedane'),
             column('Lokalizacja', { width: 15 }),
             column('Typ'),
-            column('Status', { hidden: true }),
+            column('Status', { hidden: false }),
             column('Id'),
             column('Developer'),
         ]
@@ -110,7 +110,7 @@ async function prepareZmianaStanSheet(sheet: Excel.Worksheet, stanList: IOfertaR
             column('Mieszkanie', { width: 28 }),
             column('Metraż', { numFmt: '# ##0.00 "m²"', width: 10 }),
             column('Liczba pokoi', { width: 10 }),
-            column('Opis', { width: 75 }),
+            column('Opis', { width: 100 }),
             column('Wersja', { width: 10 }),
         ]
     );
@@ -162,14 +162,14 @@ function setColStyle(sheet: Excel.Worksheet, recordList: any[]) {
         ]
     });
 
-    sheet.addConditionalFormatting({
-        ref: `${statusCol.letter}2:${statusCol.letter}${recordList.length + 1}`,
-        rules: [
-            cellEqualsRule('"Wolne"', { fill: solidBgPattern(wolnyColor) }),
-            cellEqualsRule('"Rezerwacja"', { fill: solidBgPattern(rezerwacjaKolor) }),
-            cellEqualsRule('"Sprzedane"', { fill: solidBgPattern(sprzedaneColor) }),
-        ]
-    });
+    // sheet.addConditionalFormatting({
+    //     ref: `${statusCol.letter}2:${statusCol.letter}${recordList.length + 1}`,
+    //     rules: [
+    //         cellEqualsRule('"Wolne"', { fill: solidBgPattern(wolnyColor) }),
+    //         cellEqualsRule('"Rezerwacja"', { fill: solidBgPattern(rezerwacjaKolor) }),
+    //         cellEqualsRule('"Sprzedane"', { fill: solidBgPattern(sprzedaneColor) }),
+    //     ]
+    // });
 }
 
 function valOrRaw2Str<T>(valOrRaw: T | IRawData, mapper?: (val: T) => string): string | null {

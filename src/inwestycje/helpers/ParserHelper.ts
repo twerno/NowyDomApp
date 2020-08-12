@@ -65,6 +65,7 @@ function status(rawText: string | null | undefined): number | null | IRawData {
         case 'wolne': return Status.WOLNE;
         case 'dostępne': return Status.WOLNE;
         case 'dostępny': return Status.WOLNE;
+        case 'promocja': return Status.WOLNE;
     }
     return null;
 }
