@@ -262,8 +262,8 @@ export const opeLogSort = (a: IOpeLog, b: IOpeLog) => {
     const developerB = inwestycjeMap[b.inwestycjaId]?.developerId || '';
 
     return sortKeyB.localeCompare(sortKeyA)
-        || developerB.localeCompare(developerA)
-        || b.ofertaId.localeCompare(a.ofertaId)
+        || developerA.localeCompare(developerB)
+        || a.ofertaId.localeCompare(b.ofertaId)
         || a.version - b.version;
 }
 
