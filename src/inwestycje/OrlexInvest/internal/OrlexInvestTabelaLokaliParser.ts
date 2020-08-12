@@ -96,8 +96,7 @@ function zasobyDoPobrania(row: HTMLElement | undefined, h: HtmlParser<IOrlexInve
 function offerDetailsUrl(row: HTMLElement | undefined, h: HtmlParser<IOrlexInvestListElement>) {
     const detailsUrl = h.readAttributeOf(row?.querySelector('a.div-name'), 'href', { fieldInfo: 'offerDetailsUrl' });
     if (detailsUrl) {
-        // na stronie z detalami nie ma nic ciekawego
-        // return `https://www.orlexinvest.pl${detailsUrl}`;
+        return `https://www.orlexinvest.pl${detailsUrl}`;
     }
     return undefined;
 }

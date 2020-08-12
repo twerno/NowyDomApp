@@ -27,7 +27,7 @@ function pietro(rawText: string | null | undefined): number | null | IRawData {
     }
 
     // wyłapujemy słowo "parter"
-    if (text === 'parter') {
+    if (text === 'parter' || text === 'p') {
         return 0;
     }
 

@@ -36,6 +36,8 @@ import OsiedleNoweJanowo from "./OrlexInvest/OsiedleNoweJanowo";
 import Osiedle3Towers from "./OrlexInvest/Osiedle3Towers";
 import OsiedleNoweGoscicino from "./OrlexInvest/OsiedleNoweGoscicino";
 import OsiedlePolna from "./OrlexInvest/OsiedlePolna";
+import PrzystanRumia from "./MatBud/PrzystanRumia";
+import LesneTarasy from "./MatBud/LesneTarasy";
 
 export const inwestycje: IDataProvider<any, any>[] = [
     //<-- Inpro
@@ -98,6 +100,11 @@ export const inwestycje: IDataProvider<any, any>[] = [
     OsiedleNoweJanowo,
     OsiedlePolna,
     // OrlexInvest -->
+
+    //<-- MatBud
+    PrzystanRumia,
+    LesneTarasy,
+    // MatBud -->
 ];
 
 export const inwestycjeMap: IStringMap<IDataProvider<any, any>> = {};

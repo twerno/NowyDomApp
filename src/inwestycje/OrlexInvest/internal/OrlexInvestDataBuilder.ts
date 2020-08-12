@@ -1,9 +1,7 @@
 import { IDataProvider, IDataProviderParserProps } from "../../../core/oferta/IOfertaProvider";
-import { isRawData } from "../../../core/oferta/model/IOfertaModel";
 import { Typ } from "../../../core/oferta/model/Typ";
 import { IOrlexInvestListElement, IOrlexInvestOfferDetails } from "./OrlexInvestModel";
 import OrlexInvestOfertaBuilder from "./OrlexInvestOfertaBuilder";
-import OrlexInvestOfertaParser from "./OrlexInvestOfertaParser";
 import OrlexInvestTabelaLokaliParser from "./OrlexInvestTabelaLokaliParser";
 
 
@@ -34,8 +32,9 @@ export const OrlexInvestDataProviderBuilder = (props: IBuilderProps): IOrlexInve
 
         getListUrl: () => props.listaLokaliUrl,
         parseListHtml: OrlexInvestTabelaLokaliParser,
-        getOfferUrl: (element) => isRawData(element.offerDetailsUrl) ? undefined : element.offerDetailsUrl,
-        parseOfferHtml: OrlexInvestOfertaParser,
+        // na stronie z detalami nie ma nic ciekawego
+        getOfferUrl: () => undefined,
+        parseOfferHtml: null,
         offerBuilder: OrlexInvestOfertaBuilder
     }
 

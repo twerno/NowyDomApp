@@ -59,7 +59,7 @@ export interface IOfertaDane {
 }
 
 export function isRawData(x: any): x is IRawData {
-    return typeof x === 'object'
+    return x instanceof Object
         && (x.raw === null || typeof x.raw === 'string');
 }
 
