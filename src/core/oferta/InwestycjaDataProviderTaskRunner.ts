@@ -15,9 +15,11 @@ async function procesInwestycjaSeq(tasks: ProvideOfferTask1[], env: IEnv) {
 
     let summary: IIProvideOfferSummary | undefined = undefined;
 
-    for (const task of tasks) {
+    for (let i = 0; i < tasks.length; i++) {
+        const task = tasks[i];
         const errors: any[] = [];
         const stats = getEmptyProvideOfferStats();
+        console.log(`Przetwarzanie "${task.dataProvider.inwestycjaId}" [${i + 1}/${tasks.length}]`);
 
         const updateService = new OfertaUpdateService(task.dataProvider, env, stats);
         await updateService.buildCache();

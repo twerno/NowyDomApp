@@ -49,6 +49,18 @@ export class OfertaUpdateService {
         }
     }
 
+    public usunByInwestycja(inwestycjaId: string) {
+        for (const [key, val] of Object.entries(this.cache)) {
+            if (val?.inwestycjaId === inwestycjaId) {
+                delete this.cache[key];
+            }
+        }
+    }
+
+    public usunByOferta(ofertaId: string) {
+        delete this.cache[ofertaId];
+    }
+
 }
 
 export enum ZmianaType { NEW, UPDATE, DELETE };

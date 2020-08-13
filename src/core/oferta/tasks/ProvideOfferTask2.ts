@@ -23,12 +23,19 @@ class ProvideOfferTask2<T extends IListElement = IListElement, D = any> implemen
     }
 
     public async run(errors: any[], props: IProvideOfferTaskProps) {
+        const errorCount = errors.length;
         const dataList = await this.downloadDetails(errors);
         await this.saveHtml(dataList, props)
         const detail = await this.parseDetails(dataList, errors);
 
         const oferta = this.buildOffer(detail, errors);
         oferta.id = ProviderOfferHelper.safeFileName(oferta.id);
+
+        // jeśli są błędy pomijamy dalsze operacje na inwestycji
+        if (errorCount !== errors.length) {
+            props.updateService.usunByOferta(this.offer.id);
+            return [];
+        }
 
         return new ProvideOfferTask3(oferta.id, oferta.dane, this.dataProvider, (this.priority || 0) + 1);
     }

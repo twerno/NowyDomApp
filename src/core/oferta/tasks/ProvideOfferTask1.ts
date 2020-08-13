@@ -37,7 +37,13 @@ class ProvideOfferTask1<T extends IListElement = IListElement, D = any> implemen
                 extraTasks: [...prev.extraTasks, ...curr.extraTasks]
             }));
 
-        return [...results.taskList, ...results.extraTasks];
+        // jeśli są błędy pomijamy dalsze operacje na inwestycji
+        if (errors.length > 0) {
+            props.updateService.usunByInwestycja(this.dataProvider.inwestycjaId);
+            return [];
+        }
+
+        return [...results.extraTasks, ...results.taskList];
     }
 
     private async downloadLists(url: string, errors: any[]) {
