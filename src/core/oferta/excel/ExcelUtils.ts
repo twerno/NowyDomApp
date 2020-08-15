@@ -20,7 +20,11 @@ export default {
     cellEqualsRule,
     ofertaUrl,
     colors,
-    solidFgPattern
+    solidFgPattern,
+    addNextCell,
+    emptyLine,
+    nextRowIdx,
+    getNextRow
 };
 
 function valOrRaw2Str<T>(valOrRaw: T | IRawData, mapper?: (val: T) => string): string | null {
@@ -116,4 +120,42 @@ function ofertaUrl(record: IOfertaRecord) {
         text: filename.id,
         hyperlink: `https://nowydom.s3-eu-west-1.amazonaws.com/${record.inwestycjaId}/${filename.s3Filename}`,
     };
+}
+
+export interface IAddNextCellOptions {
+    width?: number;
+    bold?: boolean;
+}
+
+function addNextCell(row: Excel.Row, label: Excel.CellValue, options?: IAddNextCellOptions) {
+    const colIdx = row.actualCellCount + 1;
+    const cell = row.getCell(colIdx);
+    cell.value = label;
+
+    if (options?.width !== undefined) {
+        row.worksheet.getColumn(colIdx).width = options?.width;
+    }
+
+    if (options?.bold !== undefined) {
+        cell.font = { ...cell.font, bold: true };
+    }
+
+    return cell;
+};
+
+function emptyLine(sheet: Excel.Worksheet) {
+    const row = getNextRow(sheet);
+    row.values = [''];
+    row.border = { bottom: { style: 'thin' }, top: { style: 'thin' } };
+    row.fill = { type: 'pattern', pattern: 'gray125', fgColor: {} };
+
+    return row;
+}
+
+function nextRowIdx(sheet: Excel.Worksheet) {
+    return sheet.actualRowCount + 1;
+}
+
+function getNextRow(sheet: Excel.Worksheet) {
+    return sheet.getRow(nextRowIdx(sheet));
 }

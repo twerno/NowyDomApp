@@ -4,16 +4,19 @@ import Excel from 'exceljs';
 import { IDataProvider } from '../IOfertaProvider';
 import { IOfertaRecord } from '../model/IOfertaModel';
 import { Status } from '../model/Status';
-import ExcelUtils from './ExcelUtils';
+import ExcelUtils, { IAddNextCellOptions } from './ExcelUtils';
 import Utils from '@src/utils/Utils';
+import TypeUtils from '@src/utils/TypeUtils';
+
+const startMonth = new Date('06.01.2020');
 
 export const OfferExcelStatsBuilder = (statsSheet: Excel.Worksheet, stanList: IOfertaRecord[]) => {
-
-    const months = calculateMonths(new Date('06.01.2020'), new Date());
 
     statsSheet.views = [
         { state: 'frozen', ySplit: 2, xSplit: 3, activeCell: 'A1' }
     ];
+
+    const months = internalUtils.calculateMonthsBetween(startMonth, new Date());
 
     buildHeader(statsSheet, months);
     buildRows(statsSheet, months, stanList);
@@ -21,135 +24,103 @@ export const OfferExcelStatsBuilder = (statsSheet: Excel.Worksheet, stanList: IO
 
 const buildHeader = (statsSheet: Excel.Worksheet, months: TMonths) => {
     const groupRow = statsSheet.getRow(1);
-    groupRow.getCell(4).value = 'Wszystkie obserwowane oferty';
-    groupRow.getCell(4).style.alignment = { horizontal: 'center' };
-    statsSheet.mergeCells('D1:G1');
+    const addHeaderGroup = (label: string, colStart: number, groupLength: number) => {
+        // cell
+        const cell = groupRow.getCell(colStart);
+        cell.value = label;
+        cell.style.alignment = { horizontal: 'center' };
 
-    let colIdx = 1;
-    const headerRow = statsSheet.getRow(2);
-    statsSheet.getColumn(colIdx).width = 20;
-    headerRow.getCell(colIdx++).value = 'Inwestycja';
+        // merge
+        const A = statsSheet.getColumn(colStart).letter;
+        const B = statsSheet.getColumn(colStart + groupLength).letter;
+        statsSheet.mergeCells(`${A}1:${B}1`);
 
-    statsSheet.getColumn(colIdx).width = 16;
-    headerRow.getCell(colIdx++).value = 'Lokalizacja';
-
-    statsSheet.getColumn(colIdx).width = 12;
-    headerRow.getCell(colIdx++).value = 'Filtr';
-
-    headerRow.getCell(colIdx++).value = 'All';
-    headerRow.getCell(colIdx++).value = 'Free';
-    headerRow.getCell(colIdx++).value = 'Sold';
-    statsSheet.getColumn(colIdx).width = 11;
-    headerRow.getCell(colIdx++).value = 'Reserved';
-
-    months.forEach(month => {
-        groupRow.getCell(colIdx).value = `${CommConv.miesiac2str(month.idx + 1)} ${month.year}`;
-        groupRow.getCell(colIdx).style.alignment = { horizontal: 'center' };
-        statsSheet.mergeCells(`${groupRow.getCell(colIdx).address}:${groupRow.getCell(colIdx + 3).address}`);
-        statsSheet.getColumn(colIdx).border = {
-            left: { style: "thin", color: { argb: '000' } },
+        // border
+        statsSheet.getColumn(colStart + groupLength).border = {
+            right: { style: 'thin' }
         };
-
-        headerRow.getCell(colIdx++).value = 'New';
-        headerRow.getCell(colIdx++).value = 'Free';
-        headerRow.getCell(colIdx++).value = 'Sold';
-        statsSheet.getColumn(colIdx).width = 11;
-        headerRow.getCell(colIdx++).value = 'Reserved';
-    });
-    statsSheet.getColumn(colIdx).border = {
-        left: { style: "thin", color: { argb: '000' } },
     };
 
-    headerRow.eachCell(cell => cell.style.font = { bold: true });
-}
+    const headerRow = statsSheet.getRow(2);
+    const addHeader = (label: string, options?: IAddNextCellOptions) => {
+        return ExcelUtils.addNextCell(headerRow, label, { bold: true, ...options });
+    };
 
-type TMonth = { idx: number, year: number };
-type TMonths = TMonth[];
+    addHeaderGroup('Wszystkie obserwowane oferty', 4, 3);
 
-function calculateMonths(from: Date, to: Date) {
-    const result: TMonths = [];
+    addHeader('Inwestycja', { width: 20 });
+    addHeader('Lokalizacja', { width: 16 });
+    addHeader('Filtr', { width: 12 });
+    addHeader('All');
+    addHeader('Free');
+    addHeader('Sold');
+    addHeader('Reserved', { width: 11 });
 
-    let month = from.getMonth();
-    let year = from.getFullYear();
+    months.forEach(month => {
+        const groupLabel = `${CommConv.miesiac2str(month.idx + 1)} ${month.year}`;
+        addHeaderGroup(groupLabel, headerRow.actualCellCount + 1, 3);
 
-    result.push({ idx: month, year });
+        addHeader('New');
+        addHeader('Free');
+        addHeader('Sold');
+        addHeader('Reserved', { width: 11 });
+    });
 
-    while (year < to.getFullYear() || month < to.getMonth()) {
-        if (++month >= 12) {
-            month = 0;
-            year++;
-        }
-        result.push({ idx: month, year });
-    }
-
-    return result;
 }
 
 const buildRows = (statsSheet: Excel.Worksheet, months: TMonths, stanList: IOfertaRecord[]) => {
-    const inwestycje = Object.entries(inwestycjeMap).sort((a, b) => a[0].localeCompare(b[0]));
 
-    const dataRowIdx = 3;
-    let rowIdx = dataRowIdx;
+    const inwestycje = Object.values(inwestycjeMap)
+        .filter(TypeUtils.notEmpty)
+        .sort((a, b) => a.inwestycjaId.localeCompare(b.inwestycjaId));
 
-    for (const [_, inwestycja] of inwestycje) {
-        if (inwestycja === undefined) {
-            continue;
-        }
-        // new line
-        const row = statsSheet.getRow(rowIdx++);
-        row.values = [''];
-        row.border = { bottom: { style: 'thin' }, top: { style: 'thin' } };
-        row.fill = { type: 'pattern', pattern: 'gray125', fgColor: {} };
+    for (const inwestycja of inwestycje) {
 
         const oferty = stanList
             .filter(o => o.inwestycjaId === inwestycja.inwestycjaId);
 
-        buildRow(statsSheet.getRow(rowIdx++), inwestycja, months, RowFilter.ALL, oferty)
-        buildRow(statsSheet.getRow(rowIdx++), inwestycja, months, RowFilter.ROOMS_2, oferty);
-        buildRow(statsSheet.getRow(rowIdx++), inwestycja, months, RowFilter.ROOMS_3, oferty);
-        buildRow(statsSheet.getRow(rowIdx++), inwestycja, months, RowFilter.ROOMS_4, oferty)
+        ExcelUtils.emptyLine(statsSheet);
+        buildRow(ExcelUtils.getNextRow(statsSheet), inwestycja, months, RowFilter.ALL, oferty)
+        buildRow(ExcelUtils.getNextRow(statsSheet), inwestycja, months, RowFilter.ROOMS_2, oferty);
+        buildRow(ExcelUtils.getNextRow(statsSheet), inwestycja, months, RowFilter.ROOMS_3, oferty);
+        buildRow(ExcelUtils.getNextRow(statsSheet), inwestycja, months, RowFilter.ROOMS_4, oferty)
     }
 }
 
 function buildRow(row: Excel.Row, inwestycja: IDataProvider, months: TMonths, filter: RowFilter, oferty: IOfertaRecord[]) {
 
-    let colIdx = 1;
-    row.getCell(colIdx++).value = inwestycja.inwestycjaId;
-    row.getCell(colIdx++).value = inwestycja.lokalizacja;
-    row.getCell(colIdx++).value = RowFilterLabelConv[filter];
-
     // filtrujemy wg liczby pomieszczen
-    const ofertyByFilter = oferty.filter(filterByPokoje(filter));
+    const ofertyByLpPokoj = oferty.filter(filterByPokoje(filter));
 
-    // grupa Wszystkie obserwowane oferty
-    [null, Status.WOLNE, Status.SPRZEDANE, Status.REZERWACJA]
-        .forEach(status => {
-            const cell = row.getCell(colIdx++);
-            cell.value = cellValue(ofertyByFilter, ofertaByStatusFilter(status));
-            cellStyle(cell, status || 'nowy');
-        });
+    const nextCell = (list: IOfertaRecord[], filterFn: (o: IOfertaRecord) => boolean, status: Status | null) => {
+        const cell = ExcelUtils.addNextCell(row, internalUtils.cellValue(list, filterFn));
+        cell.style = { ...cell.style, ...internalUtils.buildStyleFor(status) };
+    }
+
+    // row header
+    ExcelUtils.addNextCell(row, inwestycja.inwestycjaId);
+    ExcelUtils.addNextCell(row, inwestycja.lokalizacja);
+    nextCell(ofertyByLpPokoj, ofertaByStatusFilter(null), null);
+    nextCell(ofertyByLpPokoj, ofertaByStatusFilter(Status.WOLNE), Status.WOLNE);
+    nextCell(ofertyByLpPokoj, ofertaByStatusFilter(Status.SPRZEDANE), Status.SPRZEDANE);
+    nextCell(ofertyByLpPokoj, ofertaByStatusFilter(Status.REZERWACJA), Status.REZERWACJA);
+
 
     // usuwamy oferty, których sprzedaz nastapila przed pierwszym parsowaniem inwestycji 
-    const ofertyByFilter2 = ofertyByFilter
-        .filter(o => !(o.data.status === Status.SPRZEDANE
-            && Utils.isSameDay(o.created_at, o.data.sprzedaneData)));
+    const ofertyByFilter = ofertyByLpPokoj
+        .filter(notSoldInAPast);
 
-    // z podzialem na miesiace
     months.forEach(month => {
-        const cell = row.getCell(colIdx++);
-        cell.value = cellValue(ofertyByFilter2, ofertaNoweByMonth(month));
-        cellStyle(cell, 'nowy');
-
-        [Status.WOLNE, Status.SPRZEDANE, Status.REZERWACJA]
-            .forEach(status => {
-                const cell = row.getCell(colIdx++);
-                cell.value = cellValue(ofertyByFilter2, ofertaByStatusAndMonthFilter(status, month));
-                cellStyle(cell, status);
-            });
+        nextCell(ofertyByFilter, ofertaNoweByMonth(month), null);
+        nextCell(ofertyByFilter, ofertaByStatusAndMonthFilter(Status.WOLNE, month), Status.WOLNE);
+        nextCell(ofertyByFilter, ofertaByStatusAndMonthFilter(Status.SPRZEDANE, month), Status.SPRZEDANE);
+        nextCell(ofertyByFilter, ofertaByStatusAndMonthFilter(Status.REZERWACJA, month), Status.REZERWACJA);
     });
 
     return row;
 }
+
+// FILTERS
 
 enum RowFilter {
     ALL = '',
@@ -163,13 +134,6 @@ const RowFilterLabelConv = {
     [RowFilter.ROOMS_2]: '2 lub mniej',
     [RowFilter.ROOMS_3]: '3-pokojowe',
     [RowFilter.ROOMS_4]: '4 lub więcej',
-}
-
-function getNextMonth(month: TMonth): TMonth {
-    return {
-        idx: month.idx === 11 ? 0 : month.idx + 1,
-        year: month.idx === 11 ? month.year + 1 : month.year
-    };
 }
 
 function ofertaByStatusFilter(status: Status | null) {
@@ -211,29 +175,6 @@ function ofertaByStatusAndMonthFilter(status: Status, month: TMonth) {
 
 }
 
-function cellValue(list: IOfertaRecord[], filterFn: (o: IOfertaRecord) => boolean) {
-    const result = list.filter(filterFn).length;
-
-    return result > 0 ? result : '';
-}
-
-function cellStyle(cell: Excel.Cell, status: Status | null | 'nowy') {
-    if (!cell.value || status === null) {
-        return;
-    }
-
-    const argb = status === 'nowy'
-        ? ExcelUtils.colors.navy
-        : status === Status.WOLNE
-            ? ExcelUtils.colors.darkGreen
-            : status === Status.REZERWACJA
-                ? ExcelUtils.colors.darkYellow
-                : ExcelUtils.colors.darkRed;
-
-    cell.style.font = { color: { argb }, bold: true };
-    cell.style.alignment = { horizontal: 'center' }
-}
-
 function filterByPokoje(filter: RowFilter) {
     return (o: IOfertaRecord) => {
 
@@ -250,4 +191,54 @@ function filterByPokoje(filter: RowFilter) {
         // RowFilter.ALL
         return true;
     };
+}
+
+function notSoldInAPast(o: IOfertaRecord) {
+    return !(o.data.status === Status.SPRZEDANE && Utils.isSameDay(o.created_at, o.data.sprzedaneData));
+}
+
+
+type TMonth = { idx: number, year: number };
+type TMonths = TMonth[];
+
+const internalUtils = {
+    cellValue(list: IOfertaRecord[], filterFn: (o: IOfertaRecord) => boolean) {
+        const result = list.filter(filterFn).length;
+
+        return result > 0 ? result : '';
+    },
+
+    buildStyleFor(status: Status | null): Partial<Excel.Style> {
+        const argb = status === null
+            ? ExcelUtils.colors.navy
+            : status === Status.WOLNE
+                ? ExcelUtils.colors.darkGreen
+                : status === Status.REZERWACJA
+                    ? ExcelUtils.colors.darkYellow
+                    : ExcelUtils.colors.darkRed;
+
+        return {
+            font: { color: { argb }, bold: true },
+            alignment: { horizontal: 'center' },
+        }
+    },
+
+    calculateMonthsBetween(from: Date, to: Date) {
+        const result: TMonths = [];
+
+        let month = from.getMonth();
+        let year = from.getFullYear();
+
+        result.push({ idx: month, year });
+
+        while (year < to.getFullYear() || month < to.getMonth()) {
+            if (++month >= 12) {
+                month = 0;
+                year++;
+            }
+            result.push({ idx: month, year });
+        }
+
+        return result;
+    },
 }
