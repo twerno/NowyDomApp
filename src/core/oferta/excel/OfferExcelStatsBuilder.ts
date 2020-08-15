@@ -12,7 +12,7 @@ export const OfferExcelStatsBuilder = (statsSheet: Excel.Worksheet, stanList: IO
     const months = calculateMonths(new Date('06.01.2020'), new Date());
 
     statsSheet.views = [
-        { state: 'frozen', ySplit: 2, activeCell: 'A1' }
+        { state: 'frozen', ySplit: 2, xSplit: 3, activeCell: 'A1' }
     ];
 
     buildHeader(statsSheet, months);
@@ -37,7 +37,6 @@ const buildHeader = (statsSheet: Excel.Worksheet, months: TMonths) => {
     statsSheet.getColumn(colIdx).width = 12;
     headerRow.getCell(colIdx++).value = 'Filtr';
 
-    statsSheet.getColumn(colIdx).border = { left: { style: "thin", color: { argb: '000' } } };
     headerRow.getCell(colIdx++).value = 'All';
     headerRow.getCell(colIdx++).value = 'Free';
     headerRow.getCell(colIdx++).value = 'Sold';
@@ -58,6 +57,9 @@ const buildHeader = (statsSheet: Excel.Worksheet, months: TMonths) => {
         statsSheet.getColumn(colIdx).width = 11;
         headerRow.getCell(colIdx++).value = 'Reserved';
     });
+    statsSheet.getColumn(colIdx).border = {
+        left: { style: "thin", color: { argb: '000' } },
+    };
 
     headerRow.eachCell(cell => cell.style.font = { bold: true });
 }

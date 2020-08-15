@@ -15,12 +15,12 @@ export async function buildExcel(env: IEnv) {
     const workbook = new Excel.Workbook();
     const sheet = workbook.addWorksheet('Stan');
     const zmianySheet = workbook.addWorksheet('Zmiany');
-    const statsSheet = workbook.addWorksheet('Stytystyki');
+    const statsSheet = workbook.addWorksheet('Statystyki');
 
     const stanList = await env.stanService.getAll();
 
     await prepareOfertaStanSheet(sheet, stanList);
-    // await prepareZmianaStanSheet(zmianySheet, stanList, env);
+    await prepareZmianaStanSheet(zmianySheet, stanList, env);
     OfferExcelStatsBuilder(statsSheet, stanList);
 
     await workbook.xlsx.writeFile('raport.xlsx');
