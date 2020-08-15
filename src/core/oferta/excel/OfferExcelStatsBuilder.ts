@@ -1,50 +1,53 @@
-import Excel, { CellFormulaValue } from 'exceljs';
-import { IOfertaRecord, IRawData, isRawData, ZASOBY } from '../model/IOfertaModel';
-import { OdbiorTypeHelper } from '../model/OdbiorType';
-import { StatusHelper, Status } from '../model/Status';
-import { StronaSwiataHelper } from '../model/StronySwiata';
-import { TypHelper } from '../model/Typ';
-import { IEnv } from '../tasks/IEnv';
-import { buildOpeLogList, buildOpeRecordLogMap, opeLogSort } from './OpeLogBuilder';
-import { inwestycjeMap } from '@src/inwestycje/inwestycje';
-import ExcelUtils from './ExcelUtils';
-import { FileSystemCredentials } from 'aws-sdk';
 import CommConv from '@src/core/utils/CommConv';
+import { inwestycjeMap } from '@src/inwestycje/inwestycje';
+import Excel, { CellFormulaValue } from 'exceljs';
 import { IDataProvider } from '../IOfertaProvider';
+import { Status, StatusHelper } from '../model/Status';
 
 export const OfferExcelStatsBuilder = (statsSheet: Excel.Worksheet, statsRulesSheet: Excel.Worksheet) => {
 
     const months = calculateMonths(new Date('06.01.2020'), new Date());
 
-    header(statsSheet, months);
-    fillWithValues(statsSheet, months, statsRulesSheet);
+    buildHeader(statsSheet, months);
+    buildRows(statsSheet, months, statsRulesSheet);
 
 }
 
-const header = (statsSheet: Excel.Worksheet, months: TMonths) => {
-    const firstRow = statsSheet.getRow(1);
-    firstRow.getCell(4).value = 'Stan';
-    firstRow.getCell(4).style.alignment = { horizontal: 'center' };
+const buildHeader = (statsSheet: Excel.Worksheet, months: TMonths) => {
+    const groupRow = statsSheet.getRow(1);
+    groupRow.getCell(4).value = 'Stan';
+    groupRow.getCell(4).style.alignment = { horizontal: 'center' };
     statsSheet.mergeCells('D1:G1');
 
     let colIdx = 1;
-    const row = statsSheet.getRow(2);
-    row.getCell(colIdx++).value = 'Inwestycja';
-    row.getCell(colIdx++).value = 'Lokalizacja';
-    row.getCell(colIdx++).value = 'Filtr';
-    row.getCell(colIdx++).value = 'Wszystkie';
-    row.getCell(colIdx++).value = 'Wolne';
-    row.getCell(colIdx++).value = 'Sprzedane';
-    row.getCell(colIdx++).value = 'Rezerwacja';
+    const headerRow = statsSheet.getRow(2);
+    statsSheet.getColumn(colIdx).width = 20;
+    headerRow.getCell(colIdx++).value = 'Inwestycja';
+
+    statsSheet.getColumn(colIdx).width = 16;
+    headerRow.getCell(colIdx++).value = 'Lokalizacja';
+
+    statsSheet.getColumn(colIdx).width = 12;
+    headerRow.getCell(colIdx++).value = 'Filtr';
+
+    statsSheet.getColumn(colIdx).border = { left: { style: "thin", color: { argb: '000' } } };
+    headerRow.getCell(colIdx++).value = 'All';
+    headerRow.getCell(colIdx++).value = 'Free';
+    headerRow.getCell(colIdx++).value = 'Sold';
+    headerRow.getCell(colIdx++).value = 'Reserved';
 
     months.forEach(month => {
-        firstRow.getCell(colIdx).value = `${CommConv.miesiac2str(month.month)} ${month.year}`;
-        firstRow.getCell(colIdx).style.alignment = { horizontal: 'center' };
-        statsSheet.mergeCells(`${firstRow.getCell(colIdx).address}:${firstRow.getCell(colIdx + 2).address}`);
+        groupRow.getCell(colIdx).value = `${CommConv.miesiac2str(month.month)} ${month.year}`;
+        groupRow.getCell(colIdx).style.alignment = { horizontal: 'center' };
+        statsSheet.mergeCells(`${groupRow.getCell(colIdx).address}:${groupRow.getCell(colIdx + 2).address}`);
+        statsSheet.getColumn(colIdx).border = {
+            left: { style: "thin", color: { argb: '000' } },
+            right: { style: "thin", color: { argb: '000' } }
+        };
 
-        row.getCell(colIdx++).value = 'Wolne';
-        row.getCell(colIdx++).value = 'Sprzedane';
-        row.getCell(colIdx++).value = 'Rezerwacja';
+        headerRow.getCell(colIdx++).value = 'Free';
+        headerRow.getCell(colIdx++).value = 'Sold';
+        headerRow.getCell(colIdx++).value = 'Reserved';
     });
 }
 
@@ -70,63 +73,54 @@ function calculateMonths(from: Date, to: Date) {
     return result;
 }
 
-const fillWithValues = (statsSheet: Excel.Worksheet, months: TMonths, statsRulesSheet: Excel.Worksheet) => {
+const buildRows = (statsSheet: Excel.Worksheet, months: TMonths, statsRulesSheet: Excel.Worksheet) => {
     const inwestycje = Object.entries(inwestycjeMap).sort((a, b) => a[0].localeCompare(b[0]));
 
     const dataRowIdx = 3;
     let rowIdx = 0;
 
-    for (let i = 0; i < inwestycje.length; i++) {
-        const inwestycja = inwestycje[i][1];
+    for (const [_, inwestycja] of inwestycje) {
         if (inwestycja === undefined) {
             continue;
         }
         const row = statsSheet.getRow(rowIdx++);
 
-        buildRows(statsSheet.getRow(dataRowIdx + rowIdx), rowIdx++, i, inwestycja, months, RowFilter.ALL, statsRulesSheet);
-        buildRows(statsSheet.getRow(dataRowIdx + rowIdx), rowIdx++, i, inwestycja, months, RowFilter.ROOMS_2, statsRulesSheet);
-        buildRows(statsSheet.getRow(dataRowIdx + rowIdx), rowIdx++, i, inwestycja, months, RowFilter.ROOMS_3, statsRulesSheet);
-        buildRows(statsSheet.getRow(dataRowIdx + rowIdx), rowIdx++, i, inwestycja, months, RowFilter.ROOMS_4, statsRulesSheet);
+        buildRow(statsSheet.getRow(dataRowIdx + rowIdx), rowIdx++, inwestycja, months, RowFilter.ALL, statsRulesSheet);
+        buildRow(statsSheet.getRow(dataRowIdx + rowIdx), rowIdx++, inwestycja, months, RowFilter.ROOMS_2, statsRulesSheet);
+        buildRow(statsSheet.getRow(dataRowIdx + rowIdx), rowIdx++, inwestycja, months, RowFilter.ROOMS_3, statsRulesSheet);
+        buildRow(statsSheet.getRow(dataRowIdx + rowIdx), rowIdx++, inwestycja, months, RowFilter.ROOMS_4, statsRulesSheet);
     }
 }
 
-function buildRows(row: Excel.Row, rowIdx: number, inwestycjaIdx: number, inwestycja: IDataProvider, months: TMonths, filter: RowFilter, statsRulesSheet: Excel.Worksheet) {
+const ROWS_PER_INWESTYCJA = 4;
+
+function buildRow(row: Excel.Row, rowIdx: number, inwestycja: IDataProvider, months: TMonths, filter: RowFilter, statsRulesSheet: Excel.Worksheet) {
 
     let colIdx = 1;
     row.getCell(colIdx++).value = inwestycja.inwestycjaId;
     row.getCell(colIdx++).value = inwestycja.lokalizacja;
     row.getCell(colIdx++).value = RowFilterLabelConv[filter];
 
-    const queryRowIdx = rowIdx * 4 + 1;
+    const queryRowIdx = rowIdx * ROWS_PER_INWESTYCJA + 1;
 
     let queryColStartIdx = 1;
-    let queryColEndIdx = buildQuery(queryRowIdx, queryColStartIdx, filter, inwestycja, null, statsRulesSheet);
-    row.getCell(colIdx++).value = getFormula(queryRowIdx, queryColStartIdx, queryColEndIdx, statsRulesSheet);
-    queryColStartIdx = queryColEndIdx + 2;
+    let queryColEndIdx = -1;
+    [null, Status.WOLNE, Status.SPRZEDANE, Status.REZERWACJA]
+        .forEach(status => {
+            queryColEndIdx = buildQueryForStan(queryRowIdx, queryColStartIdx, filter, inwestycja, status, statsRulesSheet);
+            row.getCell(colIdx++).value = getFormula(queryRowIdx, queryColStartIdx, queryColEndIdx, statsRulesSheet);
+            queryColStartIdx = queryColEndIdx + 2;
+        });
 
-    queryColEndIdx = buildQuery(queryRowIdx, queryColStartIdx, filter, inwestycja, Status.WOLNE, statsRulesSheet);
-    row.getCell(colIdx++).value = getFormula(queryRowIdx, queryColStartIdx, queryColEndIdx, statsRulesSheet);
-    queryColStartIdx = queryColEndIdx + 2;
+    months.forEach(month => {
 
-    queryColEndIdx = buildQuery(queryRowIdx, queryColStartIdx, filter, inwestycja, Status.SPRZEDANE, statsRulesSheet);
-    row.getCell(colIdx++).value = getFormula(queryRowIdx, queryColStartIdx, queryColEndIdx, statsRulesSheet);
-    queryColStartIdx = queryColEndIdx + 2;
+        queryColEndIdx = buildQueryForMonthWolne(queryRowIdx, queryColStartIdx, filter, inwestycja, month, statsRulesSheet);
+        row.getCell(colIdx++).value = getFormula(queryRowIdx, queryColStartIdx, queryColEndIdx, statsRulesSheet);
+        row.getCell(colIdx++).value = getFormula(queryRowIdx, queryColStartIdx, queryColEndIdx, statsRulesSheet);
+        row.getCell(colIdx++).value = getFormula(queryRowIdx, queryColStartIdx, queryColEndIdx, statsRulesSheet);
+        queryColStartIdx = queryColEndIdx + 2;
+    })
 
-    queryColEndIdx = buildQuery(queryRowIdx, queryColStartIdx, filter, inwestycja, Status.REZERWACJA, statsRulesSheet);
-    row.getCell(colIdx++).value = getFormula(queryRowIdx, queryColStartIdx, queryColEndIdx, statsRulesSheet);
-    queryColStartIdx = queryColEndIdx + 2;
-
-    // queryColEndIdx = buildFilterStan(rowAbsoluteIdx * 3 + 1, filterEndIdx + 2, filter, inwestycja, Status.WOLNE, statsRulesSheet);
-    // row.getCell(colIdx++).value = getFormula(queryRowIdx, queryColStartIdx, queryColEndIdx, statsRulesSheet);
-    // { formula: `DCOUNTA($Stan.A:P,,$${statsRulesSheet.name}.${statsRulesSheet.getCell(1, 1).address}:C3)`, date1904: false };
-    // DCOUNTA
-
-    // filterEndIdx = buildFilterStan(rowAbsoluteIdx * 3 + 1, filterEndIdx + 2, filter, inwestycja, Status.SPRZEDANE, statsRulesSheet);
-    // filterEndIdx = buildFilterStan(rowAbsoluteIdx * 3 + 1, filterEndIdx + 2, filter, inwestycja, Status.REZERWACJA, statsRulesSheet);
-    // row.getCell(colIdx++).value = 'Wszystkie';
-    // row.getCell(colIdx++).value = 'Wolne';
-    // row.getCell(colIdx++).value = 'Sprzedane';
-    // row.getCell(colIdx++).value = 'Rezerwacja';
 }
 
 enum RowFilter {
@@ -143,7 +137,7 @@ const RowFilterLabelConv = {
     [RowFilter.ROOMS_4]: '4-pokojowe',
 }
 
-function buildQuery(rowIdx: number, colIdx: number, filter: RowFilter, inwestycja: IDataProvider, status: Status | null, statsRulesSheet: Excel.Worksheet) {
+function buildQueryForStan(rowIdx: number, colIdx: number, filter: RowFilter, inwestycja: IDataProvider, status: Status | null, statsRulesSheet: Excel.Worksheet) {
     let row = statsRulesSheet.getRow(rowIdx);
     row.getCell(colIdx).value = 'Inwestycja';
     row.getCell(colIdx + 1).value = 'Liczba pokoi';
@@ -157,6 +151,33 @@ function buildQuery(rowIdx: number, colIdx: number, filter: RowFilter, inwestycj
     return colIdx + 2;
 }
 
+function buildQueryForMonthWolne(rowIdx: number, colIdx: number, filter: RowFilter, inwestycja: IDataProvider, month: TMonth, statsRulesSheet: Excel.Worksheet) {
+    let row = statsRulesSheet.getRow(rowIdx);
+    row.getCell(colIdx).value = 'Inwestycja';
+    row.getCell(colIdx + 1).value = 'Liczba pokoi';
+    row.getCell(colIdx + 2).value = 'Status';
+    row.getCell(colIdx + 3).value = 'Sprzedane';
+    row.getCell(colIdx + 4).value = 'Dodane';
+
+    const nextMonth = getNextMonth(month);
+
+    row = statsRulesSheet.getRow(rowIdx + 1);
+    row.getCell(colIdx).value = inwestycja.inwestycjaId;
+    row.getCell(colIdx + 1).value = filter;
+    row.getCell(colIdx + 2).value = '';
+    row.getCell(colIdx + 3).value = `>=1.${nextMonth.month + 1}.${nextMonth.year}`;
+    row.getCell(colIdx + 4).value = ``;
+
+    row = statsRulesSheet.getRow(rowIdx + 2);
+    row.getCell(colIdx).value = inwestycja.inwestycjaId;
+    row.getCell(colIdx + 1).value = filter;
+    row.getCell(colIdx + 2).value = StatusHelper.status2string(Status.WOLNE);
+    row.getCell(colIdx + 3).value = '';
+    row.getCell(colIdx + 4).value = `<1.${nextMonth.month + 1}.${nextMonth.year}`;
+
+    return colIdx + 4;
+}
+
 function getFormula(queryRow: number, queryColStart: number, queryColEnd: number, statsRulesSheet: Excel.Worksheet): CellFormulaValue {
 
     const querySheetName = `${statsRulesSheet.name}`;
@@ -166,5 +187,12 @@ function getFormula(queryRow: number, queryColStart: number, queryColEnd: number
     return {
         formula: `DCOUNTA(Stan!A:P,,${querySheetName}!${queryCell1}:${queryCell2})`,
         date1904: true
+    };
+}
+
+function getNextMonth(month: TMonth): TMonth {
+    return {
+        month: month.month === 11 ? 0 : month.month + 1,
+        year: month.month === 11 ? month.year + 1 : month.year
     };
 }
