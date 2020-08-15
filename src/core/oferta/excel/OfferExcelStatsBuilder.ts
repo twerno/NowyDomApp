@@ -119,9 +119,7 @@ function buildRow(row: Excel.Row, inwestycja: IDataProvider, months: TMonths, fi
     row.getCell(colIdx++).value = RowFilterLabelConv[filter];
 
     // filtrujemy wg liczby pomieszczen
-    const ofertyByFilter = filter === RowFilter.ALL
-        ? oferty
-        : oferty.filter(o => typeof o.data.lpPokoj === 'number' && o.data.lpPokoj === filter);
+    const ofertyByFilter = oferty.filter(filterByPokoje(filter));
 
     // grupa Wszystkie obserwowane oferty
     [null, Status.WOLNE, Status.SPRZEDANE, Status.REZERWACJA]
@@ -162,9 +160,9 @@ enum RowFilter {
 
 const RowFilterLabelConv = {
     [RowFilter.ALL]: '',
-    [RowFilter.ROOMS_2]: '2-pokojowe',
+    [RowFilter.ROOMS_2]: '2 lub mniej',
     [RowFilter.ROOMS_3]: '3-pokojowe',
-    [RowFilter.ROOMS_4]: '4-pokojowe',
+    [RowFilter.ROOMS_4]: '4 lub więcej',
 }
 
 function getNextMonth(month: TMonth): TMonth {
@@ -234,4 +232,22 @@ function cellStyle(cell: Excel.Cell, status: Status | null | 'nowy') {
 
     cell.style.font = { color: { argb }, bold: true };
     cell.style.alignment = { horizontal: 'center' }
+}
+
+function filterByPokoje(filter: RowFilter) {
+    return (o: IOfertaRecord) => {
+
+        if (filter === RowFilter.ROOMS_2) {
+            return typeof o.data.lpPokoj === 'number' && o.data.lpPokoj <= 2
+        }
+        else if (filter === RowFilter.ROOMS_3) {
+            return o.data.lpPokoj === 3
+        }
+        else if (filter === RowFilter.ROOMS_4) {
+            return typeof o.data.lpPokoj === 'number' && o.data.lpPokoj >= 4
+        }
+
+        // RowFilter.ALL
+        return true;
+    };
 }
