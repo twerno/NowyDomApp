@@ -17,7 +17,6 @@ export const OfferExcelStatsBuilder = (statsSheet: Excel.Worksheet, stanList: IO
 
     buildHeader(statsSheet, months);
     buildRows(statsSheet, months, stanList);
-
 }
 
 const buildHeader = (statsSheet: Excel.Worksheet, months: TMonths) => {
@@ -109,7 +108,6 @@ const buildRows = (statsSheet: Excel.Worksheet, months: TMonths, stanList: IOfer
         buildRow(statsSheet.getRow(rowIdx++), inwestycja, months, RowFilter.ROOMS_2, oferty);
         buildRow(statsSheet.getRow(rowIdx++), inwestycja, months, RowFilter.ROOMS_3, oferty);
         buildRow(statsSheet.getRow(rowIdx++), inwestycja, months, RowFilter.ROOMS_4, oferty)
-
     }
 }
 
@@ -120,6 +118,7 @@ function buildRow(row: Excel.Row, inwestycja: IDataProvider, months: TMonths, fi
     row.getCell(colIdx++).value = inwestycja.lokalizacja;
     row.getCell(colIdx++).value = RowFilterLabelConv[filter];
 
+    // filtrujemy wg liczby pomieszczen
     const ofertyByFilter = filter === RowFilter.ALL
         ? oferty
         : oferty.filter(o => typeof o.data.lpPokoj === 'number' && o.data.lpPokoj === filter);

@@ -53,3 +53,29 @@ export const naprawOpePoBledachPolaczenia = async (rok: number, miesiac: number,
         }
     }
 }
+
+export const brakDatySprzedazyFix = async (inwestycjaId: string, env: IEnv) => {
+    const list = (await env.stanService.getByInwestycja(inwestycjaId))
+        .filter(o => o.data.status === Status.SPRZEDANE && o.data.sprzedaneData === undefined);
+
+    const promises = list.map(o => {
+        o.data.sprzedaneData = o.created_at;
+        return env.stanService.save(o);
+    });
+
+    await Promise.all(promises);
+
+    const promiseOpe = list.map(async o => {
+        const opeList = await env.opeService.getByOfertaId(o.ofertaId);
+        const ope = opeList.find(o => o.data.status === Status.SPRZEDANE);
+        if (ope) {
+            ope.data.sprzedaneData = list.find(s => s.ofertaId === ope.ofertaId)?.created_at;
+            return env.opeService.save(ope);
+        }
+        else {
+            console.log(`blad: brak operacji dla ${o.ofertaId}`);
+        }
+    });
+
+    await Promise.all(promiseOpe);
+}
