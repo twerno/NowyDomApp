@@ -15,14 +15,13 @@ export async function buildExcel(env: IEnv) {
     const workbook = new Excel.Workbook();
     const sheet = workbook.addWorksheet('Stan');
     const zmianySheet = workbook.addWorksheet('Zmiany');
-    const statsSheet = workbook.addWorksheet('Stats');
-    const statsRulesSheet = workbook.addWorksheet('StatsReguly');
+    const statsSheet = workbook.addWorksheet('Stytystyki');
 
     const stanList = await env.stanService.getAll();
 
     await prepareOfertaStanSheet(sheet, stanList);
     // await prepareZmianaStanSheet(zmianySheet, stanList, env);
-    OfferExcelStatsBuilder(statsSheet, statsRulesSheet);
+    OfferExcelStatsBuilder(statsSheet, stanList);
 
     await workbook.xlsx.writeFile('raport.xlsx');
 
@@ -155,15 +154,24 @@ function setColStyle(sheet: Excel.Worksheet, recordList: any[]) {
     const statusCol = sheet.getColumn('Status');
 
     // kolorowanie statusu
-    const wolnyColor = 'd4ea6b';
-    const rezerwacjaKolor = 'ffffa6';
-    const sprzedaneColor = 'ff6d6d';
     sheet.addConditionalFormatting({
         ref: `A2:B${recordList.length + 1}`,
         rules: [
-            { type: 'expression', formulae: [`$${statusCol.letter}2="Wolne"`], style: { fill: ExcelUtils.solidBgPattern(wolnyColor), border: { right: { style: 'thin', color: { argb: '000000' } } } } },
-            { type: 'expression', formulae: [`$${statusCol.letter}2="Rezerwacja"`], style: { fill: ExcelUtils.solidBgPattern(rezerwacjaKolor) } },
-            { type: 'expression', formulae: [`$${statusCol.letter}2="Sprzedane"`], style: { fill: ExcelUtils.solidBgPattern(sprzedaneColor) } },
+            {
+                type: 'expression', formulae: [`$${statusCol.letter}2="Wolne"`],
+                style: {
+                    fill: ExcelUtils.solidBgPattern(ExcelUtils.colors.wolnyColor),
+                    border: { right: { style: 'thin', color: { argb: '000000' } } }
+                }
+            },
+            {
+                type: 'expression', formulae: [`$${statusCol.letter}2="Rezerwacja"`],
+                style: { fill: ExcelUtils.solidBgPattern(ExcelUtils.colors.rezerwacjaKolor) }
+            },
+            {
+                type: 'expression', formulae: [`$${statusCol.letter}2="Sprzedane"`],
+                style: { fill: ExcelUtils.solidBgPattern(ExcelUtils.colors.sprzedaneColor) }
+            },
         ]
     });
 

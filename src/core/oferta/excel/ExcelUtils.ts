@@ -1,6 +1,16 @@
 import Excel from 'exceljs';
 import { IOfertaRecord, IRawData, isRawData, ZASOBY } from '../model/IOfertaModel';
 
+const colors = {
+    wolnyColor: 'd4ea6b',
+    rezerwacjaKolor: 'ffffa6',
+    sprzedaneColor: 'ff6d6d',
+    darkGreen: '069a2e',
+    darkRed: 'ff0000',
+    darkYellow: 'b4a200',
+    navy: '00739c'
+}
+
 export default {
     valOrRaw2Str,
     registerColumns,
@@ -8,8 +18,10 @@ export default {
     number2Excel,
     solidBgPattern,
     cellEqualsRule,
-    ofertaUrl
-}
+    ofertaUrl,
+    colors,
+    solidFgPattern
+};
 
 function valOrRaw2Str<T>(valOrRaw: T | IRawData, mapper?: (val: T) => string): string | null {
     const val = isRawData(valOrRaw)
@@ -70,6 +82,14 @@ function solidBgPattern(color: string): Excel.FillPattern {
         bgColor: {
             argb: color
         }
+    };
+}
+
+function solidFgPattern(color: string): Excel.FillPattern {
+    return {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: color },
     };
 }
 
