@@ -137,7 +137,7 @@ const InternalOfertaUpdateHelper = {
         const timestamp = dateService.now().getTime();
 
         const data = { ...offerData };
-        if (data.status === Status.SPRZEDANE) {
+        if (data.status === Status.SPRZEDANE || data.status === Status.REZERWACJA) {
             data.sprzedaneData = timestamp;
         }
 
@@ -207,7 +207,10 @@ const InternalOfertaUpdateHelper = {
             return null;
         }
         else if (oferta.status === Status.REZERWACJA) {
-            delta = { status: Status.REZERWACJA };
+            delta = {
+                status: Status.REZERWACJA,
+                sprzedaneData: timestamp
+            };
         }
         else if (oferta.status === Status.SPRZEDANE) {
             return this.oznaczSprzedane(stan, dateService);

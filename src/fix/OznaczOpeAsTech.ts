@@ -54,28 +54,26 @@ export const naprawOpePoBledachPolaczenia = async (rok: number, miesiac: number,
     }
 }
 
-export const brakDatySprzedazyFix = async (inwestycjaId: string, env: IEnv) => {
-    const list = (await env.stanService.getByInwestycja(inwestycjaId))
-        .filter(o => o.data.status === Status.SPRZEDANE && o.data.sprzedaneData === undefined);
+export const brakDatySprzedazyFix = async (env: IEnv) => {
+    const stanList = (await env.stanService.getAll())
+        .filter(o => o.data.sprzedaneData === undefined && o.data.status !== Status.WOLNE);
 
-    const promises = list.map(o => {
-        o.data.sprzedaneData = o.created_at;
-        return env.stanService.save(o);
+    const promises = stanList.map(async (s) => {
+        const opeList = await env.opeService.getByOfertaId(s.ofertaId);
+        const ope = opeList.reverse()
+            .find(o => o.data.status === Status.SPRZEDANE || o.data.status === Status.REZERWACJA);
+
+        if (ope === undefined) {
+            console.log(`Nie znaleziono operacji zmieniającej ${s.ofertaId}`);
+            return;
+        }
+
+        ope.data.sprzedaneData = ope.timestamp;
+        await env.opeService.save(ope);
+
+        s.data.sprzedaneData = ope.timestamp;
+        return env.stanService.save(s);
     });
 
-    await Promise.all(promises);
-
-    const promiseOpe = list.map(async o => {
-        const opeList = await env.opeService.getByOfertaId(o.ofertaId);
-        const ope = opeList.find(o => o.data.status === Status.SPRZEDANE);
-        if (ope) {
-            ope.data.sprzedaneData = list.find(s => s.ofertaId === ope.ofertaId)?.created_at;
-            return env.opeService.save(ope);
-        }
-        else {
-            console.log(`blad: brak operacji dla ${o.ofertaId}`);
-        }
-    });
-
-    await Promise.all(promiseOpe);
+    return Promise.all(promises);
 }
