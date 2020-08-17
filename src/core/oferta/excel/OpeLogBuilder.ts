@@ -3,6 +3,7 @@ import { IOfertaRecord, IOfertaRecordOpe, IRawData, isRawData, valueOfRaw } from
 import { Status, StatusHelper } from '../model/Status';
 import { inwestycjeMap } from '@src/inwestycje/inwestycje';
 import Utils from '@src/utils/Utils';
+import ExcelUtils from './ExcelUtils';
 
 interface IOpeRecordLogListEl {
     version: number,
@@ -64,8 +65,8 @@ export function buildOpeRecordLogMap(stanList: IOfertaRecord[], opeList: IOferta
     return map;
 }
 
-const colorOK = '009f0c';
-const colorWARN = 'E70812';
+const colorOK = ExcelUtils.colors.darkGreen;
+const colorWARN = ExcelUtils.colors.darkRed;
 type nowaInwestycjaGroupType = IStringMap<{ list: Array<IOpeRecordLogListEl & { ofertaId: string }>, stan?: IOfertaRecord }>;
 
 export function buildOpeLogList(stanList: IOfertaRecord[], opeRecordLogMap: IStringMap<IOpeRecordLog>): IOpeLog[] {
@@ -107,7 +108,8 @@ export function buildOpeLogList(stanList: IOfertaRecord[], opeRecordLogMap: IStr
                         { text: `Cena: ` },
                         { text: `${cenaFormater(prevCena)}`, font: { bold: true } },
                         { text: ` --> ` },
-                        { text: `${cenaFormater(cena)}`, font: { bold: true, color } }
+                        { text: `${cenaFormater(cena)}`, font: { bold: true, color } },
+                        { text: `;  ${cenaFormater(cena - prevCena)}` }
                     );
                 }
 
@@ -151,7 +153,13 @@ export function buildOpeLogList(stanList: IOfertaRecord[], opeRecordLogMap: IStr
 
 function cenaFormater(cena: number | IRawData | undefined): string {
     if (typeof cena === 'number') {
-        return Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN', maximumFractionDigits: 0, minimumFractionDigits: 0 })
+        return Intl.NumberFormat('pl-PL', {
+            style: 'currency',
+            currency: 'PLN',
+            maximumFractionDigits: 0,
+            minimumFractionDigits: 0,
+            currencyDisplay: 'name'
+        })
             .format(cena);
     }
     return '';
