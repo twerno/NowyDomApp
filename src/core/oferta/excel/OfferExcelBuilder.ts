@@ -23,9 +23,9 @@ export async function buildExcel(env: IEnv) {
     await prepareZmianaStanSheet(zmianySheet, stanList, env);
     OfferExcelStatsBuilder(statsSheet, stanList);
 
-    await workbook.xlsx.writeFile('raport.xlsx');
-
     console.log('plik raport.xlsx został wygenerowany');
+
+    return workbook.xlsx.writeBuffer();
 }
 
 async function prepareOfertaStanSheet(sheet: Excel.Worksheet, stanList: IOfertaRecord[]) {

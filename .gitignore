@@ -2,6 +2,8 @@ test.txt
 dev/**
 tmp
 *.xlsx*
+deploy
+lambda.zip
 
 # Logs
 logs

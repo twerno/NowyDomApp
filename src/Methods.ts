@@ -19,8 +19,9 @@ async function runOne(task: string | IDataProvider<any, any>, env: IEnv) {
 
     const { date, summary } = await InwestycjaDataProviderTaskRunner.procesInwestycjaSeq(tasks, env);
 
-    logTaskStatus(date, summary);
-    saveTaskStatus(date, summary);
+    saveTaskStatus(date, summary, env);
+
+    return { date, summary };
 }
 
 async function runAll(env: IEnv) {
@@ -31,14 +32,12 @@ async function runAll(env: IEnv) {
 
     const { date, summary } = await InwestycjaDataProviderTaskRunner.procesInwestycjaSeq(sortedTasks, env);
 
-    logTaskStatus(date, summary);
-    saveTaskStatus(date, summary);
+    saveTaskStatus(date, summary, env);
+
+    return { date, summary };
 }
 
-function saveTaskStatus(date: Date, summary: IIProvideOfferSummary | undefined) {
-    InwestycjaDataProviderTaskRunner.saveLogFile(date, 'summary.txt', { summary });
+function saveTaskStatus(date: Date, summary: IIProvideOfferSummary | undefined, env: IEnv) {
+    InwestycjaDataProviderTaskRunner.saveLogFile(date, 'summary.txt', { summary }, env);
 }
 
-function logTaskStatus(date: Date, summary: IIProvideOfferSummary | undefined) {
-    console.log(JSON.stringify(summary, null, 2));
-}

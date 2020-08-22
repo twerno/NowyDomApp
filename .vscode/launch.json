@@ -11,9 +11,15 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\src\\app.ts",
+            "program": "${workspaceFolder}\\src\\index.ts",
             "outFiles": [
                 "${workspaceFolder}\\dist\\**\\*.js"
+            ],
+            "args": [
+                "--trace-deprecation"
+            ],
+            "runtimeArgs": [
+                "--trace-deprecation"
             ]
         }
     ]

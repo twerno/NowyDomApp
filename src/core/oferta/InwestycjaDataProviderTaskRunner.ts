@@ -1,5 +1,4 @@
 import { AsyncTaskRunner } from "../../core/asyncTask/AsyncTaskRunner";
-import { provideDir, saveFile } from "../../utils/FileSave";
 import { add2Summary, getEmptyProvideOfferStats, IIProvideOfferSummary, IProvideOfferStats } from "./tasks/AbstractZapiszZmianyTask";
 import { OfertaUpdateService } from "./tasks/OfertaUpdateService";
 import ProvideOfferTask1, { IProvideOfferTaskProps } from "./tasks/ProvideOfferTask1";
@@ -28,8 +27,8 @@ async function procesInwestycjaSeq(tasks: ProvideOfferTask1[], env: IEnv) {
             concurency: 10,
             props: { stats, env, updateService, executionDate: date }
         }, errors)
-            .then(() => taskLogger({ errors, task, date, stats }))
-            .catch(err => taskLogger({ err, errors, task, date, stats }));
+            .then(() => taskLogger({ errors, task, date, stats, env }))
+            .catch(err => taskLogger({ err, errors, task, date, stats, env }));
 
         await updateService.wyliczIZapiszUsuniete();
 
@@ -44,27 +43,26 @@ interface ITaskLoggerProps {
     errors: any[],
     task: ProvideOfferTask1<any, any>,
     date: Date,
-    stats: IProvideOfferStats
+    stats: IProvideOfferStats,
+    env: IEnv,
 }
 
-function taskLogger(props: ITaskLoggerProps) {
-    const { err, errors, task, date, stats } = props;
+async function taskLogger(props: ITaskLoggerProps) {
+    const { err, errors, task, date, stats, env } = props;
 
     const id = task.dataProvider.developerId + '_' + task.dataProvider.inwestycjaId;
 
     if (err) {
-        saveLogFile(date, `${id}_exception.txt`, { err });
+        saveLogFile(date, `${id}_exception.txt`, { err }, env);
     }
 
-    saveLogFile(date, `${id}.txt`, { errors, stats });
+    return saveLogFile(date, `${id}.txt`, { errors, stats }, env);
 }
 
-function saveLogFile(date: Date, filename: string, body: {}) {
+async function saveLogFile(date: Date, filename: string, body: {}, env: IEnv) {
     const textDay = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
     const textHour = `${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`;
     const path = `runs/${textDay}/${textHour}`;
 
-    provideDir(path);
-
-    saveFile(`${path}/${filename}`, JSON.stringify(body, null, 2));
+    return env.fileService.writeFile(path, filename, JSON.stringify(body, null, 2));
 }

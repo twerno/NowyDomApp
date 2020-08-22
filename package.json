@@ -23,7 +23,6 @@
     "node-html-parser": "^1.2.20"
   },
   "devDependencies": {
-    "@types/axios": "^0.14.0",
     "@types/cheerio": "^0.22.18",
     "@types/mime-types": "^2.1.0",
     "typescript": "^3.9.6"
