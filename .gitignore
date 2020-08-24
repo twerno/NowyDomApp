@@ -114,3 +114,4 @@ dist
 server/shared/lib/**
 /runs/*
 /test.xlsx
+/.gradle
