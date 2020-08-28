@@ -47,6 +47,8 @@ task buildLambda(type: Zip, dependsOn: ['build']) {
     exclude "typescript"
     into "node_modules"
   }
+  from("${project.projectDir}/package.json") {
+  }
 }
 
 task uploadLambda(type: Exec, dependsOn: ['buildLambda']) {
