@@ -3,10 +3,7 @@ import { Typ } from "@src/core/oferta/model/Typ";
 
 export default OrlexInvestDataProviderBuilder({
     listaLokaliUrl: [
-        'https://www.orlexinvest.pl/inwestycje/osiedle-nowe-janowo',
-        'https://www.orlexinvest.pl/inwestycje/rumia-osiedle-nowe-janowo-budynek-b',
-        'https://www.orlexinvest.pl/inwestycje/rumia-osiedle-nowe-janowo-budynek-c',
-        'https://www.orlexinvest.pl/inwestycje/rumia-osiedle-nowe-janowo-budynek-d'
+        'https://www.orlexinvest.pl/inwestycje/osiedle-nowe-janowo'
     ],
     inwestycjaId: 'OsiedleNoweJanowo',
     lokalizacja: 'Rumia Janowo',
