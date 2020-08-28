@@ -70,18 +70,21 @@ function status(rawText: string | null | undefined): number | null | IRawData {
     return null;
 }
 
-function cecha(rawText: string | null | undefined, convDataList: Array<{ text: string, cecha: ICechy }>): ICechy | null | IRawData {
+function cecha(rawText: string | null | undefined): Partial<ICechy> | null | string {
     if (rawText === null || rawText === undefined) {
         return null;
     }
 
     const text = rawText.trim().toLocaleLowerCase();
 
-    const convData = convDataList.find((v => v.text.trim().toLocaleLowerCase() === text));
-    if (convData) {
-        return convData.cecha;
-    }
+    switch (text) {
+        case 'taras': return { taras: true };
 
+        case 'ogród': return { ogród: true };
+        case 'ogródek': return { ogród: true };
+
+        case 'balkon': return { balkon: true };
+    }
     return null;
 }
 

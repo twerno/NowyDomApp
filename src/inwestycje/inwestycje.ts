@@ -1,4 +1,4 @@
-import { IDataProvider } from "../core/oferta/IOfertaProvider";
+import { IDataProvider, IListElement } from "../core/oferta/IOfertaProvider";
 import { Novum } from "./Novum/Novum";
 import SemekoZielonaLaguna2 from "./Semeko/SemekoZielonaLaguna2";
 import SemekoRemoda from "./Semeko/SemekoRemoda";
@@ -38,8 +38,12 @@ import OsiedleNoweGoscicino from "./OrlexInvest/OsiedleNoweGoscicino";
 import OsiedlePolna from "./OrlexInvest/OsiedlePolna";
 import PrzystanRumia from "./MatBud/PrzystanRumia";
 import LesneTarasy from "./MatBud/LesneTarasy";
+import OsiedleKocanki from "./Loker/OsiedleKocanki";
+import VelaPark from "./Loker/VelaPark";
+import OsiedlePrimula from "./Loker/OsiedlePrimula";
+import ZielonaDolina from "./Loker/ZielonaDolina";
 
-export const inwestycje: IDataProvider<any, any>[] = [
+export const inwestycje: IDataProvider<any>[] = [
     //<-- Inpro
     InproOstoja,
     InproBravo,
@@ -105,8 +109,16 @@ export const inwestycje: IDataProvider<any, any>[] = [
     PrzystanRumia,
     LesneTarasy,
     // MatBud -->
+
+    //<-- Loker
+    OsiedleKocanki,
+    VelaPark,
+    OsiedlePrimula,
+    ZielonaDolina
+    // Loker -->
+
 ];
 
-export const inwestycjeMap: IStringMap<IDataProvider<any, any>> = {};
+export const inwestycjeMap: IStringMap<IDataProvider> = {};
 
 inwestycje.forEach(i => inwestycjeMap[i.inwestycjaId] = i);
