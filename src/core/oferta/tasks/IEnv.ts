@@ -9,7 +9,7 @@ export interface IEnv {
     readonly fileService: IFileService,
 }
 
-export const prodEnv: IEnv = {
+export const awsEnv: IEnv = {
     stanService: dynamoDbOfertaStateService,
     opeService: dynamoDbOfertaOpeService,
     fileService: s3FileService,
