@@ -47,8 +47,8 @@ function rowMapper(
 
     const result: ISemekoListElement = {
         id: 'tmp_id',
-        ...h.asRaw('budynek', row?.querySelector('.c1')),
-        ...h.asRaw('nrLokalu', row?.querySelector('.c2')),
+        ...h.asText('budynek', row?.querySelector('.c1')),
+        ...h.asText('nrLokalu', row?.querySelector('.c2')),
         ...h.asInt('pietro', row?.querySelector('.c3')),
         ...h.asFloat('metraz', row?.querySelector('.c5')),
         ...h.asInt('lpPokoj', row?.querySelector('.c6'), ParserHelper.pokoj),

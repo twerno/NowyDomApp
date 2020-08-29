@@ -25,7 +25,7 @@ export default async (
 
     return {
         ...h.asFloatOptional('cena', findRowByName(rows, 'CENA BRUTTO'), ParserHelper.cena(/(-?[\d,.\s]+) zł/)),
-        ...h.asRaw('budynek', findRowByName(rows, 'BUDYNEK')),
+        ...h.asText('budynek', findRowByName(rows, 'BUDYNEK')),
         zasobyDoPobrania,
     };
 }

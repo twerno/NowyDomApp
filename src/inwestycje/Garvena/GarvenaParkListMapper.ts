@@ -47,7 +47,7 @@ function rowMapper(
 
     const result: IGarvenaParkListElement = {
         id: 'tmp_id',
-        ...h.asRaw('nrLokalu', rows[0]),
+        ...h.asText('nrLokalu', rows[0]),
         ...h.asFloat('liczbaKondygnacji', rows[1]),
         ...h.asInt('lpPokoj', rows[2]),
         ...h.asFloat('metraz', rows[3]),

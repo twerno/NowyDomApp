@@ -76,7 +76,7 @@ function rowMapper(
         ...h.asInt('lpPokoj', cols && cols[0]),
         ...h.asInt('pietro', cols && cols[1], ParserHelper.pietro),
         ...h.asFloat('metraz', cols && cols[2], ParserHelper.float()),
-        ...h.asRaw('nrLokalu', cols && cols[3]),
+        ...h.asText('nrLokalu', cols && cols[3]),
         ...h.asFloatOptional('cena', cenaEl(cols && cols[5]), ParserHelper.cena(/(-?[\d\s,.]+)/)),
         status: Status.WOLNE,
         ...h.asRawOptional('offerDetailsUrl', cols && cols[3].querySelector('a'), { attributeName: 'href' }),

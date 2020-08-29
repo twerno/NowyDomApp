@@ -19,9 +19,13 @@ export async function runAllAndBuildRaport() {
 async function localRunAllAndBuildRaport() {
     const { summary } = await Methods.runAll(awsEnv);
     console.log(JSON.stringify(summary, null, 2));
+    await localBuildRaport();
+    return summary;
+}
+
+async function localBuildRaport() {
     const buffer = await buildExcel(devEnv);
     await S3Utils.putFile('', filename, buffer);
     fs.writeFileSync(filename, Buffer.from(buffer));
     Utils.startFile(filename);
-    return summary;
 }

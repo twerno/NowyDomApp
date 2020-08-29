@@ -42,6 +42,8 @@ import OsiedleKocanki from "./Loker/OsiedleKocanki";
 import VelaPark from "./Loker/VelaPark";
 import OsiedlePrimula from "./Loker/OsiedlePrimula";
 import ZielonaDolina from "./Loker/ZielonaDolina";
+import Formeli17 from "./NorthStarDevelopment/Formeli17";
+import Sikorskiego36 from "./NorthStarDevelopment/Sikorskiego36";
 
 export const inwestycje: IDataProvider<any>[] = [
     //<-- Inpro
@@ -114,8 +116,13 @@ export const inwestycje: IDataProvider<any>[] = [
     OsiedleKocanki,
     VelaPark,
     OsiedlePrimula,
-    ZielonaDolina
+    ZielonaDolina,
     // Loker -->
+
+    //<-- North Star Development
+    Formeli17,
+    Sikorskiego36,
+    // North Star Development -->
 
 ];
 

@@ -49,7 +49,7 @@ function rowMapper(
         cechy: cechyParser(cols && cols[4], h),
         ...h.asCustom('status', cols && cols[5], ParserHelper.status),
         ...h.asCustom('odbior', cols && cols[6], odbiorParser),
-        ...h.asRaw('sourceOfertaPdfUrl', cols && cols[8]?.querySelector('a'), { attributeName: 'href' }),
+        ...h.asText('sourceOfertaPdfUrl', cols && cols[8]?.querySelector('a'), { attributeName: 'href' }),
         typ: dataProvider.data.typ,
     };
 

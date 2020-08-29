@@ -62,7 +62,7 @@ export class HtmlParser<T extends object> {
 
     // oczekiwana niepusta wartosc tekstowa
     // 
-    public asRaw<K extends keyof PropertiesByTheType<T, string>>(
+    public asText<K extends keyof PropertiesByTheType<T, string>>(
         field: K,
         el: HTMLElement | undefined,
         type?: 'text' | { attributeName: string },
