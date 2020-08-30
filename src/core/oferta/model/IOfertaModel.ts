@@ -29,7 +29,8 @@ export type ListWithRawType<T> = { list: T[], raw?: string[] };
 
 export enum ZASOBY {
     PDF = 'ofertaPdf',
-    IMG = 'planImg'
+    IMG = 'planImg',
+    IMG_GARAZ = 'garazImg',
 }
 
 export interface IOfertaDane {
@@ -50,7 +51,7 @@ export interface IOfertaDane {
     offerDetailsUrl: string | undefined;
 
     // id zasobu x url 
-    zasobyDoPobrania: { id: string, url: string }[];
+    zasobyDoPobrania: { id: string, url: string | string[] }[];
 
     // id zasobu x sciazka na s3
     zasobyPobrane?: { id: string, s3Filename: string }[];

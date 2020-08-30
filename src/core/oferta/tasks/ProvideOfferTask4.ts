@@ -46,7 +46,7 @@ class ProvideOfferTask4<T extends IListElement = IListElement, D = any> extends 
     }
 
     private async pobierzIZapisz(
-        zasob: { id: string; url: string; },
+        zasob: { id: string; url: string | string[] },
         stanCached: IOfertaRecord,
         errors: any[],
         props: IProvideOfferTaskProps
@@ -63,17 +63,32 @@ class ProvideOfferTask4<T extends IListElement = IListElement, D = any> extends 
     }
 
     private async pobierzIZapiszNaS3(
-        zasob: { id: string; url: string; },
+        zasob: { id: string; url: string | string[] },
         props: IProvideOfferTaskProps
     ) {
-        const file = await Axios({ responseType: 'arraybuffer', url: zasob.url });
-        const fileExt = this.readFileExt(file);
-        const filename = ProviderOfferHelper.safeFileName(
-            `${this.ofertaId}_${zasob.id}` + (fileExt ? `.${fileExt}` : '')
-        );
-        const cType = contentType(fileExt) || undefined;
-        await props.env.fileService.writeFile(this.dataProvider.inwestycjaId, filename, file.data, cType);
-        return filename;
+        const urls = typeof zasob.url === 'string' ? [zasob.url] : zasob.url;
+        for (let i = 0; i < urls.length; i++) {
+            const url = urls[i];
+            let file = null;
+
+            // pobieramy po kolei wszystkie urle, jesli żadnego nie udało się pobrać rzucamy ostatni otrzymany błąd
+            try {
+                file = await Axios({ responseType: 'arraybuffer', url });
+            } catch (err) {
+                if (i + 1 === urls.length) {
+                    throw err;
+                }
+                continue;
+            }
+            const fileExt = this.readFileExt(file);
+            const filename = ProviderOfferHelper.safeFileName(
+                `${this.ofertaId}_${zasob.id}` + (fileExt ? `.${fileExt}` : '')
+            );
+            const cType = contentType(fileExt) || undefined;
+            await props.env.fileService.writeFile(this.dataProvider.inwestycjaId, filename, file.data, cType);
+            return filename;
+        }
+        throw new Error(`Brak odnośników w zasobie: ${JSON.stringify(zasob)}`);
     }
 
     private readFileExt(file: AxiosResponse<any>): string {

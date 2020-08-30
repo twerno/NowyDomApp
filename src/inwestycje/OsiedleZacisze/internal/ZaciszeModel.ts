@@ -18,5 +18,5 @@ export interface IZaciszeListElement extends IListElement {
 }
 
 export type IZaciszeOfferDetails = {
-    zasobyDoPobrania: { id: string, url: string }[];
+    zasobyDoPobrania: { id: string, url: string | string[] }[];
 };

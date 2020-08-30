@@ -16,7 +16,7 @@ export default async function (
 
     const root = HtmlParser.parseHtml(html);
     const h = new HtmlParser<IZaciszeOfferDetails>(offerId, errors);
-    const zasobyDoPobrania: { id: string, url: string }[] = [];
+    const zasobyDoPobrania: { id: string, url: string | string[] }[] = [];
 
     const planMieszkaniaElement = root.querySelector('#content')?.querySelector('img');
     const planMieszkaniaUrl = h.readAttributeOf(planMieszkaniaElement, 'src', { fieldInfo: { fieldName: 'zasobyDoPobrania', comment: 'planMieszkania' } });
@@ -24,10 +24,13 @@ export default async function (
         zasobyDoPobrania.push({ id: ZASOBY.IMG, url: `https://osiedle-zacisze.com.pl/${planMieszkaniaUrl}` });
     }
 
-    const planGarazuElement = root.querySelector('#section.feature')?.querySelector('img');
+    const planGarazuElement = root.querySelector('section.feature')?.querySelector('img');
     const planGarazuUrl = h.readAttributeOf(planGarazuElement, 'src', { fieldInfo: { fieldName: 'zasobyDoPobrania', comment: 'planGarazu' }, mustExist: false });
     if (planGarazuUrl) {
-        zasobyDoPobrania.push({ id: ZASOBY.IMG + "-2", url: `https://osiedle-zacisze.com.pl/${planGarazuUrl}` });
+        // niektore odnosniki na stronie są popsute - probujemy zgadnąć prawidłową nazwę pliku
+        const url_1 = `https://osiedle-zacisze.com.pl/${planGarazuUrl}`;
+        const url_2 = url_1.replace(/_0/, '_');
+        zasobyDoPobrania.push({ id: ZASOBY.IMG_GARAZ, url: [url_1, url_2] });
     }
 
     return { zasobyDoPobrania };
