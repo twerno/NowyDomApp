@@ -1,5 +1,6 @@
 import { Status } from "../../core/oferta/model/Status";
 import { ICechy, IRawData } from "../../core/oferta/model/IOfertaModel";
+import CommConv from "@src/core/utils/CommConv";
 
 export default {
     pietro,
@@ -35,6 +36,17 @@ function pietro(rawText: string | null | undefined): number | null | IRawData {
     const exprResult = /(\d)+\s*pi[eę]tro/.exec(text);
     if (exprResult) {
         return Number.parseInt(exprResult[1]) || null;
+    }
+
+    // wyłapujemy liczby rzymskie
+    try {
+        return CommConv.rzymskie2arabskie(text)
+    } catch (e) {
+    }
+
+    // wyłapujemy ciąg "poddasze"
+    if (text.toLowerCase() === 'poddasze') {
+        return { raw: text };
     }
 
     // brak dopasowania

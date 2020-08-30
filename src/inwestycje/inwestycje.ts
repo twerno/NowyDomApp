@@ -44,6 +44,7 @@ import OsiedlePrimula from "./Loker/OsiedlePrimula";
 import ZielonaDolina from "./Loker/ZielonaDolina";
 import Formeli17 from "./NorthStarDevelopment/Formeli17";
 import Sikorskiego36 from "./NorthStarDevelopment/Sikorskiego36";
+import OsiedleZacisze from "./OsiedleZacisze/OsiedleZacisze";
 
 export const inwestycje: IDataProvider<any>[] = [
     //<-- Inpro
@@ -123,6 +124,10 @@ export const inwestycje: IDataProvider<any>[] = [
     Formeli17,
     Sikorskiego36,
     // North Star Development -->
+
+    // <-- Osiedle Zacisze Sp. z.o.o.
+    OsiedleZacisze
+    // Osiedle Zacisze Sp. z.o.o. -->
 
 ];
 
