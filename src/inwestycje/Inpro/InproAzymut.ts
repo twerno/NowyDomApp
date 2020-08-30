@@ -11,5 +11,6 @@ export default InproDataProviderBuilder({
         },
         typ: Typ.MIESZKANIE,
     },
-    lokalizacja: 'Gdynia Mały Kack',
+    miasto: 'Gdynia',
+    dzielnica: 'Mały Kack'
 });

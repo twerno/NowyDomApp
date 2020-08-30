@@ -8,5 +8,6 @@ export default EuroStylDataProviderBuilder({
         typ: Typ.MIESZKANIE,
     },
     url: 'https://www.eurostyl.com.pl/osiedle-cis-gdynia-cisowa/',
-    lokalizacja: 'Gdynia Cisowa'
+    miasto: 'Gdynia',
+    dzielnica: 'Cisowa'
 });

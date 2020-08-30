@@ -14,7 +14,8 @@ export default NorthStarDevDataProviderBuilder({
         typ: Typ.MIESZKANIE,
     },
     url: 'https://formeli17.pl',
-    lokalizacja: 'Rumia',
+    miasto: 'Rumia',
+    dzielnica: 'Biała Rzeka',
     northStarDevRowMapper: rowMapper
 });
 

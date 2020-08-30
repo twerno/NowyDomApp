@@ -11,8 +11,8 @@ export interface IInproDataProviderProps {
     url: string;
     data: IInproDataProviderBuilderData;
     listaLokaliUrl: string;
-    lokalizacja: string;
-
+    miasto: string;
+    dzielnica: string | undefined;
 }
 
 export interface IInproDataProviderBuilderData {
@@ -31,7 +31,8 @@ export const InproDataProviderBuilder = (props: IInproDataProviderProps): IInpro
         inwestycjaId: props.inwestycjaId,
         url: props.url,
         data: props.data,
-        lokalizacja: props.lokalizacja,
+        miasto: props.miasto,
+        dzielnica: props.dzielnica,
 
         getListUrl: () => props.listaLokaliUrl,
         parseListHtml: InproParser.listMapper,

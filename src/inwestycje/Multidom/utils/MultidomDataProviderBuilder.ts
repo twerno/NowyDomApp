@@ -12,7 +12,8 @@ interface IBuilderProps {
     url: string;
     data: IMultidomDataProviderBuilderData;
     listaLokaliUrl: string;
-    lokalizacja: string;
+    miasto: string;
+    dzielnica: string | undefined;
 }
 
 interface IMultidomDataProviderBuilderData {
@@ -29,7 +30,8 @@ export const MultidomDataProviderBuilder = (props: IBuilderProps): IMultiDomData
         inwestycjaId: props.inwestycjaId,
         url: props.url,
         data: props.data,
-        lokalizacja: props.lokalizacja,
+        miasto: props.miasto,
+        dzielnica: props.dzielnica,
 
         getListUrl: () => props.listaLokaliUrl,
         parseListHtml: MultidomTabelaLokaliParser,

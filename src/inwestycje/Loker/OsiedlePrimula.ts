@@ -8,5 +8,6 @@ export default LokerDataProviderBuilder({
         typ: Typ.DOM,
     },
     url: 'http://www.loker.com.pl/?action=oferta&ido=10',
-    lokalizacja: 'Starogard'
+    miasto: 'Starogard',
+    dzielnica: undefined
 });

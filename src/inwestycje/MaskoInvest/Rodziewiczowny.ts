@@ -8,5 +8,6 @@ export default MaskoInvestDataProviderBuilder({
         typ: Typ.MIESZKANIE,
     },
     url: 'https://maskoinvest.pl/oferta/rumia-rodziewiczowny/',
-    lokalizacja: 'Rumia'
+    miasto: 'Rumia',
+    dzielnica: undefined
 });

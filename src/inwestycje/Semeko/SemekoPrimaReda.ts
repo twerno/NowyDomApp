@@ -5,5 +5,6 @@ export default SemekoDataProviderBuilder({
     listaLokaliUrl: 'https://www.semeko.pl/oferta/Prima-Reda-Reda/tabela-lokali',
     data: {},
     url: 'https://www.semeko.pl/oferta/Prima-Reda-Reda',
-    lokalizacja: 'Reda'
+    miasto: 'Reda',
+    dzielnica: undefined
 });

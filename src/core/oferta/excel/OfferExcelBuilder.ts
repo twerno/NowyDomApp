@@ -76,7 +76,7 @@ async function prepareOfertaStanSheet(sheet: Excel.Worksheet, stanList: IOfertaR
                     'Oferta': ExcelUtils.ofertaUrl(v),
                     'Odbiór': OdbiorTypeHelper.odbior2Str(v.data.odbior),
                     'Piętro': ExcelUtils.number2Excel(v.data.pietro),
-                    'Lokalizacja': inwestycjeMap[v.inwestycjaId]?.lokalizacja,
+                    'Lokalizacja': inwestycjeMap[v.inwestycjaId]?.miasto,
                     'Typ': TypHelper.typ2str(v.data.typ),
                     'Strony świata': v.data.stronySwiata?.map(StronaSwiataHelper.stronaSwiata2Short).join(', '),
                     "Id": v.ofertaId,
@@ -123,7 +123,7 @@ async function prepareZmianaStanSheet(sheet: Excel.Worksheet, stanList: IOfertaR
         .sort(opeLogSort)
         .forEach(v => sheet.addRow({
             'Kiedy': new Date(v.timestamp).toLocaleDateString(),
-            'Gdzie': inwestycjeMap[v.inwestycjaId]?.lokalizacja,
+            'Gdzie': inwestycjeMap[v.inwestycjaId]?.miasto,
             'Developer': v.stan?.developerId,
             'Mieszkanie': v.ofertaId,
             'Metraż': v.typ === 'grupa' ? '' : v.stan?.data.metraz,

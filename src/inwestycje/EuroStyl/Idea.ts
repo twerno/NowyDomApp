@@ -8,5 +8,6 @@ export default EuroStylDataProviderBuilder({
         typ: Typ.MIESZKANIE,
     },
     url: 'https://www.eurostyl.com.pl/osiedle-idea-etap-iv-gdansk-oliwa.html',
-    lokalizacja: 'Gdańsk Oliwa'
+    miasto: 'Gdańsk',
+    dzielnica: 'Oliwa'
 });

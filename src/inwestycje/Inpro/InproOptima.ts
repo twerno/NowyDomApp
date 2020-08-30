@@ -11,5 +11,6 @@ export default InproDataProviderBuilder({
         },
         typ: Typ.MIESZKANIE,
     },
-    lokalizacja: 'Gdańsk Jasień',
+    miasto: 'Gdańsk',
+    dzielnica: 'Jasień'
 });

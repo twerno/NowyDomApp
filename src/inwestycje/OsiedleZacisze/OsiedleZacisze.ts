@@ -9,5 +9,5 @@ export default ZaciszeDataProviderBuilder({
         odbior: { kwartal: 2, rok: 2021 }
     },
     url: 'https://osiedle-zacisze.com.pl',
-    lokalizacja: 'Reda'
+    miasto: 'Reda'
 });

@@ -99,7 +99,7 @@ function buildRow(row: Excel.Row, inwestycja: IDataProvider, months: TMonths, fi
 
     // row header
     ExcelUtils.addNextCell(row, inwestycja.inwestycjaId);
-    ExcelUtils.addNextCell(row, inwestycja.lokalizacja);
+    ExcelUtils.addNextCell(row, inwestycja.miasto);
     ExcelUtils.addNextCell(row, RowFilterLabelConv[filter]);
     nextCell(ofertyByLpPokoj, ofertaByStatusFilter(null), null);
     nextCell(ofertyByLpPokoj, ofertaByStatusFilter(Status.WOLNE), Status.WOLNE);

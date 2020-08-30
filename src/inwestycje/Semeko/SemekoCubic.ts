@@ -5,5 +5,6 @@ export default SemekoDataProviderBuilder({
     listaLokaliUrl: 'https://www.semeko.pl/oferta/Osiedle-Cubic-Rumia/tabela-lokali',
     data: {},
     url: 'https://www.semeko.pl/oferta/Osiedle-Cubic-Rumia',
-    lokalizacja: 'Rumia Biała Rzeka'
+    miasto: 'Rumia',
+    dzielnica: 'Biała Rzeka',
 });

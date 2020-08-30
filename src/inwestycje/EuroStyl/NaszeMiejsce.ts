@@ -8,5 +8,6 @@ export default EuroStylDataProviderBuilder({
         typ: Typ.MIESZKANIE,
     },
     url: 'https://www.eurostyl.com.pl/naszemiejsce.html',
-    lokalizacja: 'Gdańsk Ujeścisko',
+    miasto: 'Gdańsk',
+    dzielnica: 'Ujeścisko'
 });

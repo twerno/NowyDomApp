@@ -10,9 +10,9 @@ import { OdbiorType } from "@src/core/oferta/model/OdbiorType";
 interface IBuilderProps {
     inwestycjaId: string;
     url: string;
-    data: IZaciszeDataProviderBuilderData,
-    listaLokaliUrl: string | string[],
-    lokalizacja: string,
+    data: IZaciszeDataProviderBuilderData;
+    listaLokaliUrl: string | string[];
+    miasto: string
 }
 
 interface IZaciszeDataProviderBuilderData {
@@ -30,7 +30,7 @@ export const ZaciszeDataProviderBuilder = (props: IBuilderProps): IZaciszeDataPr
         inwestycjaId: props.inwestycjaId,
         url: props.url,
         data: props.data,
-        lokalizacja: props.lokalizacja,
+        miasto: props.miasto,
 
         getListUrl: () => props.listaLokaliUrl,
         parseListHtml: ZaciszeTabelaLokaliParser,

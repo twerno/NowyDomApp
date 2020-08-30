@@ -8,5 +8,6 @@ export default LokerDataProviderBuilder({
         typ: Typ.MIESZKANIE,
     },
     url: 'http://www.loker.com.pl/?action=oferta&ido=14',
-    lokalizacja: 'Rumia'
+    miasto: 'Rumia',
+    dzielnica: 'Biała Rzeka'
 });

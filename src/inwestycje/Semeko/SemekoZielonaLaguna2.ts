@@ -5,5 +5,6 @@ export default SemekoDataProviderBuilder({
     listaLokaliUrl: 'https://www.semeko.pl/oferta/Zielona-Laguna-II-Gdynia/tabela-lokali',
     data: {},
     url: 'https://www.semeko.pl/oferta/Zielona-Laguna-II-Gdynia',
-    lokalizacja: 'Gdynia Wielki Kack'
+    miasto: 'Gdynia',
+    dzielnica: 'Wielki Kack'
 });

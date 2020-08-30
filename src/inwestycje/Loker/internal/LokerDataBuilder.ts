@@ -10,7 +10,8 @@ interface IBuilderProps {
     url: string;
     data: ILokerDataProviderBuilderData,
     listaLokaliUrl: string | string[],
-    lokalizacja: string,
+    miasto: string,
+    dzielnica: string | undefined
 }
 
 interface ILokerDataProviderBuilderData {
@@ -27,7 +28,8 @@ export const LokerDataProviderBuilder = (props: IBuilderProps): ILokerDataProvid
         inwestycjaId: props.inwestycjaId,
         url: props.url,
         data: props.data,
-        lokalizacja: props.lokalizacja,
+        miasto: props.miasto,
+        dzielnica: props.dzielnica,
 
         getListUrl: () => props.listaLokaliUrl,
         parseListHtml: LokerTabelaLokaliParser,

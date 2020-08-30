@@ -10,7 +10,8 @@ export interface ISemekoDataProviderProps {
     url: string;
     data: ISemekoDataProviderBuilderData;
     listaLokaliUrl: string;
-    lokalizacja: string;
+    miasto: string;
+    dzielnica: string | undefined;
 }
 
 interface ISemekoDataProviderBuilderData {
@@ -27,7 +28,8 @@ export const SemekoDataProviderBuilder = (props: ISemekoDataProviderProps): ISem
         inwestycjaId: props.inwestycjaId,
         url: props.url,
         data: props.data,
-        lokalizacja: props.lokalizacja,
+        miasto: props.miasto,
+        dzielnica: props.dzielnica,
 
         getListUrl: () => props.listaLokaliUrl,
         parseListHtml: semekoTabelaLokaliParser,

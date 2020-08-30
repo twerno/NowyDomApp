@@ -8,5 +8,6 @@ export default EuroStylDataProviderBuilder({
         typ: Typ.MIESZKANIE,
     },
     url: 'https://www.eurostyl.com.pl/osiedle-perspektywa-gdansk-siedlce/',
-    lokalizacja: 'Gdańsk Śródmieście',
+    miasto: 'Gdańsk',
+    dzielnica: 'Śródmieście'
 });

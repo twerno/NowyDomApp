@@ -5,5 +5,6 @@ export default SemekoDataProviderBuilder({
     listaLokaliUrl: 'https://www.semeko.pl/oferta/aquasfera/tabela-lokali',
     data: {},
     url: 'https://www.semeko.pl/oferta/aquasfera',
-    lokalizacja: 'Reda'
+    miasto: 'Reda',
+    dzielnica: undefined,
 });

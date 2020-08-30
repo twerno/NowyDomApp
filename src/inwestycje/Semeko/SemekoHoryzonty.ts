@@ -5,5 +5,6 @@ export default SemekoDataProviderBuilder({
     listaLokaliUrl: 'https://www.semeko.pl/oferta/Horyzonty-Gdyni/tabela-lokali',
     data: {},
     url: 'https://www.semeko.pl/oferta/Horyzonty-Gdyni',
-    lokalizacja: 'Gdynia Grabówek',
+    miasto: 'Gdynia',
+    dzielnica: 'Grabówek'
 });

@@ -12,5 +12,6 @@ export default LokerDataProviderBuilder({
         typ: Typ.MIESZKANIE,
     },
     url: 'http://www.loker.com.pl/?action=oferta&ido=11',
-    lokalizacja: 'Starogard'
+    miasto: 'Starogard',
+    dzielnica: undefined
 });

@@ -11,5 +11,6 @@ export default InproDataProviderBuilder({
         },
         typ: Typ.MIESZKANIE,
     },
-    lokalizacja: 'Pruszcz Gdański',
+    miasto: 'Pruszcz Gdański',
+    dzielnica: undefined
 });

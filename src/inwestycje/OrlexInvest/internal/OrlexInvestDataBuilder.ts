@@ -8,9 +8,10 @@ import OrlexInvestTabelaLokaliParser from "./OrlexInvestTabelaLokaliParser";
 interface IBuilderProps {
     inwestycjaId: string;
     url: string;
-    data: IOrlexInvestDataProviderBuilderData,
-    listaLokaliUrl: string | string[],
-    lokalizacja: string,
+    data: IOrlexInvestDataProviderBuilderData;
+    listaLokaliUrl: string | string[];
+    miasto: string;
+    dzielnica: string | undefined;
 }
 
 interface IOrlexInvestDataProviderBuilderData {
@@ -28,7 +29,8 @@ export const OrlexInvestDataProviderBuilder = (props: IBuilderProps): IOrlexInve
         inwestycjaId: props.inwestycjaId,
         url: props.url,
         data: props.data,
-        lokalizacja: props.lokalizacja,
+        miasto: props.miasto,
+        dzielnica: props.dzielnica,
 
         getListUrl: () => props.listaLokaliUrl,
         parseListHtml: OrlexInvestTabelaLokaliParser,

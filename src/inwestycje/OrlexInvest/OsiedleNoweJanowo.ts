@@ -6,7 +6,8 @@ export default OrlexInvestDataProviderBuilder({
         'https://www.orlexinvest.pl/inwestycje/osiedle-nowe-janowo'
     ],
     inwestycjaId: 'OsiedleNoweJanowo',
-    lokalizacja: 'Rumia Janowo',
+    miasto: 'Rumia',
+    dzielnica: 'Janowo Park',
     url: 'https://www.orlexinvest.pl/inwestycje/osiedle-nowe-janowo',
     data: {
         typ: Typ.MIESZKANIE,

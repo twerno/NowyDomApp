@@ -5,5 +5,6 @@ export default SemekoDataProviderBuilder({
     listaLokaliUrl: 'https://www.semeko.pl/oferta/Remoda-Reda/tabela-lokali',
     data: {},
     url: 'https://www.semeko.pl/oferta/Remoda-Reda',
-    lokalizacja: 'Reda Ciechocino',
+    miasto: 'Reda',
+    dzielnica: 'Ciechocino'
 });

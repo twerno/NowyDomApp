@@ -13,7 +13,8 @@ export interface IDataProvider<T extends IListElement = IListElement, Details = 
     readonly developerId: string;
     readonly url: string;
     readonly data: Data;
-    readonly lokalizacja: string;
+    readonly miasto: string;
+    readonly dzielnica?: string;
 
     getListUrl: () => string | string[],
     parseListHtml: (html: string, errors: any[], props: IDataProviderParserProps<T, Details, Data>) => { items: T[], tasks?: IAsyncTask[] };

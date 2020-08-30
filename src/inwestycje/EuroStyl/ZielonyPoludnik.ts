@@ -8,5 +8,6 @@ export default EuroStylDataProviderBuilder({
         typ: Typ.MIESZKANIE,
     },
     url: 'https://www.eurostyl.com.pl/zielony-poludnik-gdansk-poludnie.html',
-    lokalizacja: 'Gdańsk południe'
+    miasto: 'Gdańsk',
+    dzielnica: 'Południe'
 });

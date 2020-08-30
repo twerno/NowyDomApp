@@ -9,7 +9,8 @@ export interface IMaskoInvestDataProviderProps {
     url: string;
     data: IMaskoInvestDataProviderBuilderData;
     listaLokaliUrl: string;
-    lokalizacja: string;
+    miasto: string;
+    dzielnica: string | undefined;
 }
 
 export interface IMaskoInvestDataProviderBuilderData {
@@ -26,7 +27,8 @@ export const MaskoInvestDataProviderBuilder = (props: IMaskoInvestDataProviderPr
         inwestycjaId: props.inwestycjaId,
         url: props.url,
         data: props.data,
-        lokalizacja: props.lokalizacja,
+        miasto: props.miasto,
+        dzielnica: props.dzielnica,
 
         getListUrl: () => props.listaLokaliUrl,
         parseListHtml: MaskoInvestParser.listMapper,

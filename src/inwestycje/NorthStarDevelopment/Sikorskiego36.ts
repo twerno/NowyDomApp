@@ -14,7 +14,8 @@ export default NorthStarDevDataProviderBuilder({
         typ: Typ.MIESZKANIE,
     },
     url: 'https://www.nsdevelopment.pl',
-    lokalizacja: 'Pruszcz Gdański',
+    miasto: 'Pruszcz Gdański',
+    dzielnica: undefined,
     northStarDevRowMapper: rowMapper
 });
 

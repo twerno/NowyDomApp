@@ -8,5 +8,6 @@ export default MaskoInvestDataProviderBuilder({
         typ: Typ.DOM,
     },
     url: 'https://maskoinvest.pl/oferta/lesna-zatoka-oferta/',
-    lokalizacja: 'Rumia'
+    miasto: 'Rumia',
+    dzielnica: undefined
 });

@@ -8,10 +8,11 @@ import LokerOfertaBuilder from "./NorthStarDevOfertaBuilder";
 interface IBuilderProps {
     inwestycjaId: string;
     url: string;
-    data: INorthStarDevDataProviderBuilderData,
-    listaLokaliUrl: string | string[],
-    lokalizacja: string,
-    northStarDevRowMapper: NorthStarDevRowMapper
+    data: INorthStarDevDataProviderBuilderData;
+    listaLokaliUrl: string | string[];
+    miasto: string;
+    dzielnica: string | undefined;
+    northStarDevRowMapper: NorthStarDevRowMapper;
 }
 
 interface INorthStarDevDataProviderBuilderData {
@@ -28,7 +29,7 @@ export const NorthStarDevDataProviderBuilder = (props: IBuilderProps): INorthSta
         inwestycjaId: props.inwestycjaId,
         url: props.url,
         data: props.data,
-        lokalizacja: props.lokalizacja,
+        miasto: props.miasto,
 
         getListUrl: () => props.listaLokaliUrl,
         parseListHtml: LokerTabelaLokaliParser(props.northStarDevRowMapper),

@@ -5,5 +5,6 @@ export default SemekoDataProviderBuilder({
     listaLokaliUrl: 'https://www.semeko.pl/oferta/Porto-Bianco-III/tabela-lokali',
     data: {},
     url: 'https://www.semeko.pl/oferta/Porto-Bianco-III',
-    lokalizacja: 'Rumia, Reda'
+    miasto: 'Rumia',
+    dzielnica: 'Biała Rzeka'
 });
