@@ -8,7 +8,7 @@ import { TypHelper } from '../model/Typ';
 import { IEnv } from '../tasks/IEnv';
 import ExcelUtils from './ExcelUtils';
 import { buildOpeLogList, buildOpeRecordLogMap, opeLogSort } from './OpeLogBuilder';
-import { OfferExcelStatsBuilder } from './OfferExcelStatsBuilder';
+import { buildStatsSheet } from './OfferExcelStatsBuilder';
 
 export async function buildExcel(env: IEnv) {
 
@@ -17,18 +17,24 @@ export async function buildExcel(env: IEnv) {
     const zmianySheet = workbook.addWorksheet('Zmiany');
     const statsSheet = workbook.addWorksheet('Statystyki');
 
-    const stanList = await env.stanService.getAll();
+    const stanList = (await env.stanService.getAll())
+        .filter(v => {
+            const inwestycja = inwestycjeMap[v.inwestycjaId];
 
-    await prepareOfertaStanSheet(sheet, stanList);
-    await prepareZmianaStanSheet(zmianySheet, stanList, env);
-    OfferExcelStatsBuilder(statsSheet, stanList);
+            return inwestycja?.miasto === 'Reda'
+                || (inwestycja?.miasto === 'Rumia' && inwestycja?.dzielnica === 'Biała Rzeka');
+        });
+
+    await buildStanSheet(sheet, stanList);
+    await buildZmianaSheet(zmianySheet, stanList, env);
+    buildStatsSheet(statsSheet, stanList);
 
     console.log('plik raport.xlsx został wygenerowany');
 
     return workbook.xlsx.writeBuffer();
 }
 
-async function prepareOfertaStanSheet(sheet: Excel.Worksheet, stanList: IOfertaRecord[]) {
+async function buildStanSheet(sheet: Excel.Worksheet, stanList: IOfertaRecord[]) {
 
     sheet.views = [
         { state: 'frozen', xSplit: 2, ySplit: 1, activeCell: 'A1' }
@@ -98,7 +104,7 @@ async function prepareOfertaStanSheet(sheet: Excel.Worksheet, stanList: IOfertaR
         );
 }
 
-async function prepareZmianaStanSheet(sheet: Excel.Worksheet, stanList: IOfertaRecord[], env: IEnv) {
+async function buildZmianaSheet(sheet: Excel.Worksheet, stanList: IOfertaRecord[], env: IEnv) {
 
     const opeList = await env.opeService.getAll();
 

@@ -10,7 +10,7 @@ import TypeUtils from '@src/utils/TypeUtils';
 
 const startMonth = new Date('06.01.2020');
 
-export const OfferExcelStatsBuilder = (statsSheet: Excel.Worksheet, stanList: IOfertaRecord[]) => {
+export const buildStatsSheet = (statsSheet: Excel.Worksheet, stanList: IOfertaRecord[]) => {
 
     statsSheet.views = [
         { state: 'frozen', ySplit: 2, xSplit: 3, activeCell: 'A1' }
@@ -78,6 +78,10 @@ const buildRows = (statsSheet: Excel.Worksheet, months: TMonths, stanList: IOfer
 
         const oferty = stanList
             .filter(o => o.inwestycjaId === inwestycja.inwestycjaId);
+
+        if (oferty.length === 0) {
+            continue;
+        }
 
         ExcelUtils.emptyLine(statsSheet);
         buildRow(ExcelUtils.getNextRow(statsSheet), inwestycja, months, RowFilter.ALL, oferty)
