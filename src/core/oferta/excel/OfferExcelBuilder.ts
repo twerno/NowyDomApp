@@ -68,10 +68,12 @@ async function buildStanSheet(sheet: Excel.Worksheet, stanList: IOfertaRecord[])
     stanList
         .sort(sortFn)
         .forEach(v => {
+            const inwestycja = inwestycjeMap[v.inwestycjaId];
+
             const row = sheet.addRow(
                 {
-                    'Inwestycja': v.inwestycjaId,
-                    'Lokal': v.ofertaId.replace(`${v.inwestycjaId}-`, ''),
+                    'Inwestycja': ExcelUtils.cellUrl(v.inwestycjaId, inwestycja?.url),
+                    'Lokal': ExcelUtils.cellUrl(v.ofertaId.replace(`${v.inwestycjaId}-`, ''), v.data.offerDetailsUrl),
                     'Dodane': new Date(v.created_at),
                     'Sprzedane': v.data.sprzedaneData ? new Date(v.data.sprzedaneData) : undefined,
                     'Status': StatusHelper.status2string(v.data.status),

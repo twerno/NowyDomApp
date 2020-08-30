@@ -24,7 +24,8 @@ export default {
     addNextCell,
     emptyLine,
     nextRowIdx,
-    getNextRow
+    getNextRow,
+    cellUrl,
 };
 
 function valOrRaw2Str<T>(valOrRaw: T | IRawData, mapper?: (val: T) => string): string | null {
@@ -116,10 +117,17 @@ function ofertaUrl(record: IOfertaRecord) {
         return null;
     }
 
-    return {
-        text: filename.id,
-        hyperlink: `https://nowydom.s3-eu-west-1.amazonaws.com/${record.inwestycjaId}/${filename.s3Filename}`,
-    };
+    return cellUrl(
+        filename.id,
+        `https://nowydom.s3-eu-west-1.amazonaws.com/${record.inwestycjaId}/${filename.s3Filename}`
+    );
+}
+
+function cellUrl(text: string, hyperlink: string | undefined) {
+
+    return hyperlink
+        ? { text, hyperlink }
+        : text;
 }
 
 export interface IAddNextCellOptions {
