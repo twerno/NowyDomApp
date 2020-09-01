@@ -129,8 +129,8 @@ export function buildOpeLogList(stanList: IOfertaRecord[], opeRecordLogMap: IStr
                 }
             }
 
-            prevCena = cena;
-            prevStatus = status;
+            prevCena = cena ?? prevCena;
+            prevStatus = status ?? prevStatus;
 
             if (messagePart.length > 0) {
                 result.push({
