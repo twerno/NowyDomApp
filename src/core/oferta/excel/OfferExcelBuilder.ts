@@ -10,6 +10,7 @@ import ExcelUtils from './ExcelUtils';
 import { buildOpeLogList, buildOpeRecordLogMap, opeLogSort } from './OpeLogBuilder';
 import { buildStatsSheet } from './OfferExcelStatsBuilder';
 import moment from 'moment-timezone';
+import { IStringMap } from '@src/utils/IMap';
 
 export async function buildExcel(env: IEnv) {
 
@@ -112,7 +113,10 @@ async function buildStanSheet(sheet: Excel.Worksheet, stanList: IOfertaRecord[])
 
 async function buildZmianaSheet(sheet: Excel.Worksheet, stanList: IOfertaRecord[], env: IEnv) {
 
-    const opeList = await env.opeService.getAll();
+    const ofertyMap = stanList.reduce<IStringMap>((map, curr) => ({ ...map, [curr.ofertaId]: '' }), {});
+
+    const opeList = (await env.opeService.getAll())
+        .filter(v => ofertyMap[v.ofertaId] === '');
 
     const opeLogMap = buildOpeRecordLogMap(stanList, opeList);
 
