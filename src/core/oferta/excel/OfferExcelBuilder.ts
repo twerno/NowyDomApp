@@ -9,6 +9,7 @@ import { IEnv } from '../tasks/IEnv';
 import ExcelUtils from './ExcelUtils';
 import { buildOpeLogList, buildOpeRecordLogMap, opeLogSort } from './OpeLogBuilder';
 import { buildStatsSheet } from './OfferExcelStatsBuilder';
+import moment from 'moment-timezone';
 
 export async function buildExcel(env: IEnv) {
 
@@ -69,13 +70,16 @@ async function buildStanSheet(sheet: Excel.Worksheet, stanList: IOfertaRecord[])
         .sort(sortFn)
         .forEach(v => {
             const inwestycja = inwestycjeMap[v.inwestycjaId];
+            const sprzedane = v.data.sprzedaneData
+                ? moment(v.data.sprzedaneData).tz('Poland').format('YYYY-MM-DD')
+                : undefined
 
             const row = sheet.addRow(
                 {
                     'Inwestycja': ExcelUtils.cellUrl(v.inwestycjaId, inwestycja?.url),
                     'Lokal': ExcelUtils.cellUrl(v.ofertaId.replace(`${v.inwestycjaId}-`, ''), v.data.offerDetailsUrl),
-                    'Dodane': new Date(v.created_at),
-                    'Sprzedane': v.data.sprzedaneData ? new Date(v.data.sprzedaneData) : undefined,
+                    'Dodane': moment(v.created_at).tz('Poland').format('YYYY-MM-DD'),
+                    'Sprzedane': sprzedane,
                     'Status': StatusHelper.status2string(v.data.status),
                     'Metraż': ExcelUtils.number2Excel(v.data.metraz),
                     'Cena': ExcelUtils.number2Excel(v.data.cena),
@@ -130,7 +134,7 @@ async function buildZmianaSheet(sheet: Excel.Worksheet, stanList: IOfertaRecord[
     logList
         .sort(opeLogSort)
         .forEach(v => sheet.addRow({
-            'Kiedy': new Date(v.timestamp).toLocaleDateString(),
+            'Kiedy': moment(v.timestamp).tz('Poland').format('YYYY-MM-DD'),
             'Gdzie': inwestycjeMap[v.inwestycjaId]?.miasto,
             'Developer': v.stan?.developerId,
             'Mieszkanie': v.ofertaId,
