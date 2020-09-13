@@ -31,6 +31,7 @@ export enum ZASOBY {
     PDF = 'ofertaPdf',
     IMG = 'planImg',
     IMG_GARAZ = 'garazImg',
+    IMG_WIZUALIZACJA = 'wizualizacjaImg',
 }
 
 export interface IOfertaDane {

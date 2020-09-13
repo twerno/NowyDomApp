@@ -15,6 +15,8 @@ export default {
     cena,
 }
 
+const liczebniki = ['parter', 'pierwsze', 'drugie', 'trzecie', 'czwarte'];
+
 function pietro(rawText: string | null | undefined): number | null | IRawData {
     if (rawText === null || rawText === undefined) {
         return null;
@@ -30,6 +32,12 @@ function pietro(rawText: string | null | undefined): number | null | IRawData {
     // wyłapujemy słowo "parter"
     if (text === 'parter' || text === 'p') {
         return 0;
+    }
+
+    // wyłapujemy liczebniki
+    const idx = liczebniki.findIndex(item => item === text);
+    if (idx !== -1) {
+        return idx;
     }
 
     // wyłapujemy ciągi "XX piętro"

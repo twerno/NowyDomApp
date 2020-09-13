@@ -45,6 +45,7 @@ import ZielonaDolina from "./Loker/ZielonaDolina";
 import Formeli17 from "./NorthStarDevelopment/Formeli17";
 import Sikorskiego36 from "./NorthStarDevelopment/Sikorskiego36";
 import OsiedleZacisze from "./OsiedleZacisze/OsiedleZacisze";
+import HsDom_Novum from "./HSDom/HSDom_Novum";
 
 export const inwestycje: IDataProvider<any>[] = [
     //<-- Inpro
@@ -57,9 +58,9 @@ export const inwestycje: IDataProvider<any>[] = [
     InproAzymut,
     // Inpro -->
 
-    //<-- HS
-    Novum,
-    // HS -->
+    //<-- HSDom
+    HsDom_Novum,
+    // HSDom -->
 
     //<-- DS Development
     GarvenaPark,
