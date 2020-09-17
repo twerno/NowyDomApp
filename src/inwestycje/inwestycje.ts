@@ -1,51 +1,50 @@
-import { IDataProvider, IListElement } from "../core/oferta/IOfertaProvider";
-import { Novum } from "./Novum/Novum";
-import SemekoZielonaLaguna2 from "./Semeko/SemekoZielonaLaguna2";
-import SemekoRemoda from "./Semeko/SemekoRemoda";
-import SemekoPrimaReda from "./Semeko/SemekoPrimaReda";
-import SemekoPortoBianco3 from "./Semeko/SemekoPortoBianco3";
-import SemekoOsiedleMarine from "./Semeko/SemekoOsiedleMarine";
-import SemekoLightTower from "./Semeko/SemekoLightTower";
-import SemekoHoryzonty from "./Semeko/SemekoHoryzonty";
-import SemekoCubic from "./Semeko/SemekoCubic";
-import SemekoAquasfera from "./Semeko/SemekoAquasfera";
+import { IStringMap } from "@src/utils/IMap";
+import { IDataProvider } from "../core/oferta/IOfertaProvider";
+import Idea from "./EuroStyl/Idea";
+import NaszeMiejsce from "./EuroStyl/NaszeMiejsce";
+import OsiedleBeauforta from "./EuroStyl/OsiedleBeauforta";
+import OsiedleCis from "./EuroStyl/OsiedleCis";
+import OsiedleLocus from "./EuroStyl/OsiedleLocus";
+import OsiedlePerspektywa from "./EuroStyl/OsiedlePerspektywa";
+import OsiedlePrzyBloniach from "./EuroStyl/OsiedlePrzyBloniach";
+import ZielonyPoludnik from "./EuroStyl/ZielonyPoludnik";
 import { GarvenaPark } from "./Garvena/GarvenaPark";
+import HSDom_Novum from "./HSDom/HSDom_Novum";
+import InproAzymut from "./Inpro/InproAzymut";
+import InproBravo from "./Inpro/InproBravo";
+import InproDebiut from "./Inpro/InproDebiut";
+import InproHarmoniaOliwska from "./Inpro/InproHarmoniaOliwska";
+import InproOptima from "./Inpro/InproOptima";
+import InproOstoja from "./Inpro/InproOstoja";
+import InproStart from "./Inpro/InproStart";
+import OsiedleKocanki from "./Loker/OsiedleKocanki";
+import OsiedlePrimula from "./Loker/OsiedlePrimula";
+import VelaPark from "./Loker/VelaPark";
+import ZielonaDolina from "./Loker/ZielonaDolina";
+import LesnaZatoka from "./MaskoInvest/LesnaZatoka";
+import Rodziewiczowny from "./MaskoInvest/Rodziewiczowny";
+import LesneTarasy from "./MatBud/LesneTarasy";
+import PrzystanRumia from "./MatBud/PrzystanRumia";
 import ApartamentyMarengo from "./Multidom/ApartamentyMarengo";
 import LipovaParkIEtap from "./Multidom/LipovaParkIEtap";
 import LipovaParkIIEtap from "./Multidom/LipovaParkIIEtap";
-import InproBravo from "./Inpro/InproBravo";
-import InproOstoja from "./Inpro/InproOstoja";
-import InproStart from "./Inpro/InproStart";
-import InproOptima from "./Inpro/InproOptima";
-import InproHarmoniaOliwska from "./Inpro/InproHarmoniaOliwska";
-import InproDebiut from "./Inpro/InproDebiut";
-import InproAzymut from "./Inpro/InproAzymut";
-import OsiedleBeauforta from "./EuroStyl/OsiedleBeauforta";
-import OsiedlePrzyBloniach from "./EuroStyl/OsiedlePrzyBloniach";
-import OsiedleLocus from "./EuroStyl/OsiedleLocus";
-import NaszeMiejsce from "./EuroStyl/NaszeMiejsce";
-import ZielonyPoludnik from "./EuroStyl/ZielonyPoludnik";
-import OsiedlePerspektywa from "./EuroStyl/OsiedlePerspektywa";
-import OsiedleCis from "./EuroStyl/OsiedleCis";
-import Idea from "./EuroStyl/Idea";
-import { IStringMap } from "@src/utils/IMap";
-import LesnaZatoka from "./MaskoInvest/LesnaZatoka";
-import Rodziewiczowny from "./MaskoInvest/Rodziewiczowny";
-import OsiedleKosciuszkiV from "./OrlexInvest/OsiedleKosciuszkiV";
-import OsiedleNoweJanowo from "./OrlexInvest/OsiedleNoweJanowo";
-import Osiedle3Towers from "./OrlexInvest/Osiedle3Towers";
-import OsiedleNoweGoscicino from "./OrlexInvest/OsiedleNoweGoscicino";
-import OsiedlePolna from "./OrlexInvest/OsiedlePolna";
-import PrzystanRumia from "./MatBud/PrzystanRumia";
-import LesneTarasy from "./MatBud/LesneTarasy";
-import OsiedleKocanki from "./Loker/OsiedleKocanki";
-import VelaPark from "./Loker/VelaPark";
-import OsiedlePrimula from "./Loker/OsiedlePrimula";
-import ZielonaDolina from "./Loker/ZielonaDolina";
 import Formeli17 from "./NorthStarDevelopment/Formeli17";
 import Sikorskiego36 from "./NorthStarDevelopment/Sikorskiego36";
+import Osiedle3Towers from "./OrlexInvest/Osiedle3Towers";
+import OsiedleKosciuszkiV from "./OrlexInvest/OsiedleKosciuszkiV";
+import OsiedleNoweGoscicino from "./OrlexInvest/OsiedleNoweGoscicino";
+import OsiedleNoweJanowo from "./OrlexInvest/OsiedleNoweJanowo";
+import OsiedlePolna from "./OrlexInvest/OsiedlePolna";
 import OsiedleZacisze from "./OsiedleZacisze/OsiedleZacisze";
-import HsDom_Novum from "./HSDom/HSDom_Novum";
+import SemekoAquasfera from "./Semeko/SemekoAquasfera";
+import SemekoCubic from "./Semeko/SemekoCubic";
+import SemekoHoryzonty from "./Semeko/SemekoHoryzonty";
+import SemekoLightTower from "./Semeko/SemekoLightTower";
+import SemekoOsiedleMarine from "./Semeko/SemekoOsiedleMarine";
+import SemekoPortoBianco3 from "./Semeko/SemekoPortoBianco3";
+import SemekoPrimaReda from "./Semeko/SemekoPrimaReda";
+import SemekoRemoda from "./Semeko/SemekoRemoda";
+import SemekoZielonaLaguna2 from "./Semeko/SemekoZielonaLaguna2";
 
 export const inwestycje: IDataProvider<any>[] = [
     //<-- Inpro
@@ -59,7 +58,7 @@ export const inwestycje: IDataProvider<any>[] = [
     // Inpro -->
 
     //<-- HSDom
-    HsDom_Novum,
+    HSDom_Novum,
     // HSDom -->
 
     //<-- DS Development
