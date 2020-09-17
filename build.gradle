@@ -27,7 +27,11 @@ npm_install {
   args = ['--no-optional']
 }
 
-task build(type: NpmTask, dependsOn: 'npmInstall') { 
+task clean(type: Delete) {
+	delete 'dist', 'build', 'lambda.zip'
+}
+
+task build(type: NpmTask, dependsOn: ['clean', 'npmInstall']) { 
 
   environment = [
     'APP_VERSION': version
