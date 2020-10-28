@@ -9,6 +9,7 @@ import OsiedlePerspektywa from "./EuroStyl/OsiedlePerspektywa";
 import OsiedlePrzyBloniach from "./EuroStyl/OsiedlePrzyBloniach";
 import ZielonyPoludnik from "./EuroStyl/ZielonyPoludnik";
 import { GarvenaPark } from "./Garvena/GarvenaPark";
+import HSDom_Bratkowa from "./HSDom/HSDom_Bratkowa";
 import HSDom_Novum from "./HSDom/HSDom_Novum";
 import InproAzymut from "./Inpro/InproAzymut";
 import InproBravo from "./Inpro/InproBravo";
@@ -59,6 +60,7 @@ export const inwestycje: IDataProvider<any>[] = [
 
     //<-- HSDom
     HSDom_Novum,
+    HSDom_Bratkowa,
     // HSDom -->
 
     //<-- DS Development
