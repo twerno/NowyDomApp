@@ -5,7 +5,7 @@ export default HSDomDataProviderBuilder({
     inwestycjaId: 'Reda Bratkowa',
     listaLokaliUrl: 'https://hsdom.pl/oferta/reda-bratkowa/lista-mieszkan',
     data: {
-        typ: Typ.MIESZKANIE,
+        typ: Typ.DOM_SZEREGOWY,
     },
     url: 'https://hsdom.pl/',
     miasto: 'Reda',

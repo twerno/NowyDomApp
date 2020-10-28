@@ -24,7 +24,8 @@ export async function buildExcel(env: IEnv) {
             const inwestycja = inwestycjeMap[v.inwestycjaId];
 
             return inwestycja?.miasto === 'Reda'
-                || (inwestycja?.miasto === 'Rumia' && inwestycja?.dzielnica === 'Biała Rzeka');
+                || (inwestycja?.miasto === 'Rumia' && inwestycja?.dzielnica === 'Biała Rzeka')
+                || (inwestycja?.miasto === 'Rumia' && inwestycja?.dzielnica === 'Janowo');
         });
 
     await buildStanSheet(sheet, stanList);

@@ -1,5 +1,6 @@
 import { IStringMap } from "@src/utils/IMap";
 import { IDataProvider } from "../core/oferta/IOfertaProvider";
+import Archipelag from "./Domapart/Archipelag";
 import Idea from "./EuroStyl/Idea";
 import NaszeMiejsce from "./EuroStyl/NaszeMiejsce";
 import OsiedleBeauforta from "./EuroStyl/OsiedleBeauforta";
@@ -128,8 +129,12 @@ export const inwestycje: IDataProvider<any>[] = [
     // North Star Development -->
 
     // <-- Osiedle Zacisze Sp. z.o.o.
-    OsiedleZacisze
+    OsiedleZacisze,
     // Osiedle Zacisze Sp. z.o.o. -->
+
+    // <-- Domapart
+    Archipelag,
+    // Domapart -->
 
 ];
 

@@ -6,7 +6,8 @@ export interface IFileService {
 }
 
 export const s3FileService: IFileService = {
-    writeFile: async (path, filename, body, contentType) => S3Utils.putFile(path, filename, body, contentType),
+    writeFile: async (path, filename, body, contentType) =>
+        S3Utils.putFile(path, filename, typeof body === 'string' ? body : JSON.stringify(body), contentType),
 }
 
 export const devFileService: IFileService = {

@@ -17,9 +17,13 @@ export default {
 
 const liczebniki = ['parter', 'pierwsze', 'drugie', 'trzecie', 'czwarte'];
 
-function pietro(rawText: string | null | undefined): number | null | IRawData {
+function pietro(rawText: string | number | null | undefined): number | null | IRawData {
     if (rawText === null || rawText === undefined) {
         return null;
+    }
+
+    if (typeof rawText === 'number') {
+        return rawText;
     }
 
     // może raw jest po prostu liczbą?
@@ -54,6 +58,11 @@ function pietro(rawText: string | null | undefined): number | null | IRawData {
 
     // wyłapujemy ciąg "poddasze"
     if (text.toLowerCase() === 'poddasze') {
+        return { raw: text };
+    }
+
+    // wyłapujemy ciąg "Parter i Piętro"
+    if (text.toLowerCase() === 'parter i piętro') {
         return { raw: text };
     }
 

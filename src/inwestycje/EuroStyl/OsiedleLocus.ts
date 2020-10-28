@@ -9,5 +9,5 @@ export default EuroStylDataProviderBuilder({
     },
     url: 'https://www.eurostyl.com.pl/osiedle-locus-rumia-janowo.html',
     miasto: 'Rumia',
-    dzielnica: undefined
+    dzielnica: 'Janowo'
 });

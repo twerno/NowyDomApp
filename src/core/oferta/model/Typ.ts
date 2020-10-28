@@ -2,7 +2,8 @@ import { IRawData, isRawData } from "./IOfertaModel";
 
 export enum Typ {
     'MIESZKANIE',
-    'DOM'
+    'DOM',
+    'DOM_SZEREGOWY'
 }
 
 export const TypHelper = {
