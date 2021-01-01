@@ -5,7 +5,8 @@ import Methods from "./Methods";
 import S3Utils from "./core/aws/S3Utils";
 import * as fs from 'fs';
 import Utils from "./core/utils/Utils";
-import { awsEnv, devEnv } from "./config/env";
+import { awsEnv, devEnv, dummyEnv } from "./config/env";
+import HSDom_Bratkowa from "./inwestycje/HSDom/HSDom_Bratkowa";
 
 const filename = 'raport.xlsx';
 
@@ -28,5 +29,11 @@ async function localBuildRaport() {
     // await S3Utils.putFile('', filename, buffer);
     fs.writeFileSync(filename, Buffer.from(buffer));
     Utils.startFile(filename);
+}
+
+async function dummyBuildRaport() {
+    const { summary } = await Methods.runOne(HSDom_Bratkowa, dummyEnv);
+    console.log(JSON.stringify(summary, null, 2));
+    return summary;
 }
 
