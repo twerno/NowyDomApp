@@ -30,4 +30,3 @@ async function localBuildRaport() {
     Utils.startFile(filename);
 }
 
-localBuildRaport();
