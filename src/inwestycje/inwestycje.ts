@@ -1,4 +1,4 @@
-import { IStringMap } from "@src/utils/IMap";
+import { IStringMap } from "@src/core/utils/IMap";
 import { IDataProvider } from "../core/oferta/IOfertaProvider";
 import Archipelag from "./Domapart/Archipelag";
 import Idea from "./EuroStyl/Idea";

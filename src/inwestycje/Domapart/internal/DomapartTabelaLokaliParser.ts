@@ -1,6 +1,6 @@
 import { OdbiorType } from '@src/core/oferta/model/OdbiorType';
 import { Status } from '@src/core/oferta/model/Status';
-import CommConv from '@src/core/utils/CommConv';
+import CommConv from '@src/inwestycje/utils/CommConv';
 import { HTMLElement } from 'node-html-parser';
 import { IAsyncTask } from "../../../core/asyncTask/IAsyncTask";
 import { ofertaIdBuilderExcept } from '../../../core/oferta/IOfertaProvider';

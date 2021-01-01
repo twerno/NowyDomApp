@@ -1,7 +1,8 @@
 import parse, { HTMLElement } from 'node-html-parser';
 import { parseDOM, DomUtils } from 'htmlparser2';
-import { IRawData, MapWithRawType, isRawData, ListWithRawType } from '../../core/oferta/model/IOfertaModel';
-import TypeUtils, { PropertiesOfTheType as PropertiesByTheType } from '../../utils/TypeUtils';
+import { MapWithRawType, ListWithRawType } from '../../core/oferta/model/IOfertaModel';
+import TypeUtils, { PropertiesOfTheType as PropertiesByTheType } from '../../core/utils/TypeUtils';
+import { IRawData, isRawData } from '@src/core/oferta/model/IRawData';
 
 export interface IElReaderOptions {
     /**

@@ -1,8 +1,9 @@
 import { HTMLElement, parse } from 'node-html-parser';
-import { IRawData, ZASOBY } from "../../../core/oferta/model/IOfertaModel";
+import { ZASOBY } from "../../../core/oferta/model/IOfertaModel";
 import { ISemekoDetails } from "./SemekoModel";
 import { StronaSwiata } from '../../../core/oferta/model/StronySwiata';
 import { ISemekoParserProps } from './SemekoDataProviderBuilder';
+import { IRawData } from '@src/core/oferta/model/IRawData';
 
 export default async (
     html: string[] | string,

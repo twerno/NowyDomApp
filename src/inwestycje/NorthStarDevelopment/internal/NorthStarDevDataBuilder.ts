@@ -35,7 +35,7 @@ export const NorthStarDevDataProviderBuilder = (props: IBuilderProps): INorthSta
         parseListHtml: LokerTabelaLokaliParser(props.northStarDevRowMapper),
         getOfferUrl: (item: INorthStarDevListElement) => undefined,
         parseOfferHtml: null,
-        offerBuilder: LokerOfertaBuilder
+        offerModelBuilder: LokerOfertaBuilder
     }
 
 }

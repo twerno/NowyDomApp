@@ -3,7 +3,7 @@ import { IDataProvider, IListElement } from "../IOfertaProvider";
 import { IOfertaDane, IOfertaRecord } from "../model/IOfertaModel";
 import { OfertaUpdateHelper, IOfertaWyliczonaZmina } from "./OfertaUpdateService";
 import { IProvideOfferTaskProps } from "./ProvideOfferTask1";
-import { IStringMap } from "../../../utils/IMap";
+import { IStringMap } from "../../utils/IMap";
 import { defaultDateService } from "../service/IDateService";
 
 export interface IProvideOfferStats {

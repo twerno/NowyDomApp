@@ -1,8 +1,10 @@
 import { IListElement } from "../../../core/oferta/IOfertaProvider";
-import { IRawData, ICechy, MapWithRawType } from "../../../core/oferta/model/IOfertaModel";
+import { MapWithRawType } from "../../../core/oferta/model/IOfertaModel";
 import { StronaSwiata } from "../../../core/oferta/model/StronySwiata";
 import { Status } from "../../../core/oferta/model/Status";
 import { OdbiorType } from "../../../core/oferta/model/OdbiorType";
+import { IRawData } from "@src/core/oferta/model/IRawData";
+import { ICechy } from "@src/core/oferta/model/ICechy";
 
 export interface ISemekoListElement extends IListElement {
     budynek: string;

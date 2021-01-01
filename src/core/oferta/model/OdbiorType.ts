@@ -1,5 +1,5 @@
-import { IRawData, isRawData } from "./IOfertaModel";
-import CommConv from "../../../core/utils/CommConv";
+import CommConv from "../../../inwestycje/utils/CommConv";
+import { IRawData, isRawData } from "./IRawData";
 
 type OdbiorKwartalType = { rok: number, kwartal: number };
 type OdbiorMiesiacType = { rok: number, miesiac: number };

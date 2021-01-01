@@ -1,16 +1,16 @@
 import { inwestycjeMap } from '@src/inwestycje/inwestycje';
 import Excel from 'exceljs';
-import { IOfertaRecord } from '../model/IOfertaModel';
-import { OdbiorTypeHelper } from '../model/OdbiorType';
-import { StatusHelper } from '../model/Status';
-import { StronaSwiataHelper } from '../model/StronySwiata';
-import { TypHelper } from '../model/Typ';
-import { IEnv } from '../tasks/IEnv';
+import { IOfertaRecord } from '../oferta/model/IOfertaModel';
+import { OdbiorTypeHelper } from '../oferta/model/OdbiorType';
+import { StatusHelper } from '../oferta/model/Status';
+import { StronaSwiataHelper } from '../oferta/model/StronySwiata';
+import { TypHelper } from '../oferta/model/Typ';
+import { IEnv } from '../oferta/tasks/IEnv';
 import ExcelUtils from './ExcelUtils';
 import { buildOpeLogList, buildOpeRecordLogMap, opeLogSort } from './OpeLogBuilder';
 import { buildStatsSheet } from './OfferExcelStatsBuilder';
 import moment from 'moment-timezone';
-import { IStringMap } from '@src/utils/IMap';
+import { IStringMap } from '@src/core/utils/IMap';
 
 export async function buildExcel(env: IEnv) {
 
@@ -20,13 +20,13 @@ export async function buildExcel(env: IEnv) {
     const statsSheet = workbook.addWorksheet('Statystyki');
 
     const stanList = (await env.stanService.getAll())
-        .filter(v => {
-            const inwestycja = inwestycjeMap[v.inwestycjaId];
+    // .filter(v => {
+    //     const inwestycja = inwestycjeMap[v.inwestycjaId];
 
-            return inwestycja?.miasto === 'Reda'
-                || (inwestycja?.miasto === 'Rumia' && inwestycja?.dzielnica === 'Biała Rzeka')
-                || (inwestycja?.miasto === 'Rumia' && inwestycja?.dzielnica === 'Janowo');
-        });
+    //     return inwestycja?.miasto === 'Reda'
+    //         || (inwestycja?.miasto === 'Rumia' && inwestycja?.dzielnica === 'Biała Rzeka')
+    //         || (inwestycja?.miasto === 'Rumia' && inwestycja?.dzielnica === 'Janowo');
+    // });
 
     await buildStanSheet(sheet, stanList);
     await buildZmianaSheet(zmianySheet, stanList, env);

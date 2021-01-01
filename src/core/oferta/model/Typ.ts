@@ -1,4 +1,4 @@
-import { IRawData, isRawData } from "./IOfertaModel";
+import { IRawData, isRawData } from "./IRawData";
 
 export enum Typ {
     'MIESZKANIE',

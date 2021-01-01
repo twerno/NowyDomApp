@@ -1,5 +1,5 @@
-import TypeUtils from "../../../utils/TypeUtils";
-import WebDownloader from "../../../utils/WebDownloader";
+import TypeUtils from "../../utils/TypeUtils";
+import WebDownloader from "../../utils/WebDownloader";
 import { IAsyncTask } from "../../asyncTask/IAsyncTask";
 import TaskHelper from '../../asyncTask/TaskHelper';
 import { IDataProvider, IListElement, IDataProviderParserProps } from "../IOfertaProvider";
@@ -86,7 +86,7 @@ class ProvideOfferTask2<T extends IListElement = IListElement, D = any> implemen
         detail: D | null,
         errors: any[]
     ) {
-        return this.dataProvider.offerBuilder(
+        return this.dataProvider.offerModelBuilder(
             this.offer,
             detail,
             { dataProvider: this.dataProvider, priority: this.priority }

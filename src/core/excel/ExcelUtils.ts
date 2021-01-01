@@ -1,5 +1,7 @@
 import Excel from 'exceljs';
-import { IOfertaRecord, IRawData, isRawData, ZASOBY } from '../model/IOfertaModel';
+import awsConfig from '@src/config/awsConfig';
+import { IOfertaRecord, ZASOBY } from '../oferta/model/IOfertaModel';
+import { IRawData, isRawData } from '../oferta/model/IRawData';
 
 const colors = {
     wolnyColor: 'd4ea6b',
@@ -119,7 +121,7 @@ function ofertaUrl(record: IOfertaRecord) {
 
     return cellUrl(
         filename.id,
-        `https://nowydom.s3-eu-west-1.amazonaws.com/${record.inwestycjaId}/${filename.s3Filename}`
+        `https://${awsConfig.Bucket}.s3-${awsConfig.region}.amazonaws.com/${record.inwestycjaId}/${filename.s3Filename}`
     );
 }
 

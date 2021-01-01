@@ -1,7 +1,9 @@
+import { ICechy } from "@src/core/oferta/model/ICechy";
+import { IRawData } from "@src/core/oferta/model/IRawData";
 import { OdbiorType } from "@src/core/oferta/model/OdbiorType";
 import { StronaSwiata } from "@src/core/oferta/model/StronySwiata";
 import { IListElement } from "../../../core/oferta/IOfertaProvider";
-import { ICechy, IRawData, ListWithRawType, MapWithRawType } from "../../../core/oferta/model/IOfertaModel";
+import { ListWithRawType, MapWithRawType } from "../../../core/oferta/model/IOfertaModel";
 import { Status } from "../../../core/oferta/model/Status";
 import { Typ } from "../../../core/oferta/model/Typ";
 

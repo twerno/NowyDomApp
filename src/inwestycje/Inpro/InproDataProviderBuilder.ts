@@ -1,10 +1,12 @@
 import { IDataProvider, IDataProviderParserProps } from "../../core/oferta/IOfertaProvider";
-import { isRawData, MapWithRawType, ICechy } from "../../core/oferta/model/IOfertaModel";
+import { MapWithRawType } from "../../core/oferta/model/IOfertaModel";
 import { IInproListElement, IInproOfferDetails } from "./internal/InproModel";
 import InproParser from "./internal/InproParser";
 import InproOfertaBuilder from "./internal/InproOfertaBuilder";
 import { Typ } from "@src/core/oferta/model/Typ";
 import { OdbiorType } from "@src/core/oferta/model/OdbiorType";
+import { isRawData } from "@src/core/oferta/model/IRawData";
+import { ICechy } from "@src/core/oferta/model/ICechy";
 
 export interface IInproDataProviderProps {
     inwestycjaId: string;
@@ -38,7 +40,7 @@ export const InproDataProviderBuilder = (props: IInproDataProviderProps): IInpro
         parseListHtml: InproParser.listMapper,
         getOfferUrl: item => isRawData(item.offerDetailsUrl) ? undefined : item.offerDetailsUrl,
         parseOfferHtml: InproParser.detailMapper,
-        offerBuilder: InproOfertaBuilder
+        offerModelBuilder: InproOfertaBuilder
     }
 
 }

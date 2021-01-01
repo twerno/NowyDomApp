@@ -1,17 +1,12 @@
-import S3Utils from "../../../utils/S3Utils";
-import { safeSaveFile } from "../../../utils/FileSave";
+import S3Utils from "../../aws/S3Utils";
+import { safeSaveFile } from "../../utils/FileSave";
+import { s3FileService } from "@src/core/aws/S3FileService";
 
 export interface IFileService {
     writeFile(path: string, fileName: string, body: any, contentType?: string): Promise<any>;
 }
 
-export const s3FileService: IFileService = {
-    writeFile: async (path, filename, body, contentType) =>
-        S3Utils.putFile(path, filename, typeof body === 'string' ? body : JSON.stringify(body), contentType),
-}
-
 export const devFileService: IFileService = {
-    ...s3FileService,
 
     writeFile: async (path, filename, body) => {
         safeSaveFile(`tmp/${path}`, filename, body);
@@ -19,3 +14,5 @@ export const devFileService: IFileService = {
     }
 
 }
+
+

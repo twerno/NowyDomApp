@@ -1,13 +1,15 @@
+import { ICechy } from '@src/core/oferta/model/ICechy';
+import { IRawData } from '@src/core/oferta/model/IRawData';
+import TypeUtils from '@src/core/utils/TypeUtils';
 import cheerio from 'cheerio';
 import { HTMLElement } from 'node-html-parser';
-import { ICechy, IRawData, MapWithRawType } from '../../../core/oferta/model/IOfertaModel';
+import { MapWithRawType } from '../../../core/oferta/model/IOfertaModel';
 import { Status } from '../../../core/oferta/model/Status';
-import { raw2StronaSwiata, StronaSwiata, StronaSwiataHelper } from '../../../core/oferta/model/StronySwiata';
+import { StronaSwiata, StronaSwiataHelper } from '../../../core/oferta/model/StronySwiata';
 import { HtmlParser } from '../../../inwestycje/helpers/HtmlParser';
 import ParserHelper from '../../../inwestycje/helpers/ParserHelper';
 import { IInproDataProvider, IInproParserProps } from '../InproDataProviderBuilder';
 import { IInproListElement, IInproOfferDetails } from './InproModel';
-import TypeUtils from '@src/utils/TypeUtils';
 
 export default {
     listMapper,

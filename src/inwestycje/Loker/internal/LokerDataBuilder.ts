@@ -35,7 +35,7 @@ export const LokerDataProviderBuilder = (props: IBuilderProps): ILokerDataProvid
         parseListHtml: LokerTabelaLokaliParser,
         getOfferUrl: (item: ILokerListElement) => undefined,
         parseOfferHtml: null,
-        offerBuilder: LokerOfertaBuilder
+        offerModelBuilder: LokerOfertaBuilder
     }
 
 }

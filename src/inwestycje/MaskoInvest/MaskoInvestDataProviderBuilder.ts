@@ -34,7 +34,7 @@ export const MaskoInvestDataProviderBuilder = (props: IMaskoInvestDataProviderPr
         parseListHtml: MaskoInvestParser.listMapper,
         getOfferUrl: () => undefined,
         parseOfferHtml: () => Promise.resolve(),
-        offerBuilder: MaskoInvestOfertaBuilder
+        offerModelBuilder: MaskoInvestOfertaBuilder
     }
 
 }

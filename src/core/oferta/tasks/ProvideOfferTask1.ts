@@ -1,4 +1,4 @@
-import WebDownloader from "../../../utils/WebDownloader";
+import WebDownloader from "../../utils/WebDownloader";
 import { IAsyncTask } from "../../asyncTask/IAsyncTask";
 import TaskHelper from '../../asyncTask/TaskHelper';
 import { IDataProvider, IListElement } from "../IOfertaProvider";

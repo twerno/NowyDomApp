@@ -1,11 +1,12 @@
 import { HTMLElement, parse } from 'node-html-parser';
-import { ZASOBY, IRawData } from "../../core/oferta/model/IOfertaModel";
+import { ZASOBY } from "../../core/oferta/model/IOfertaModel";
 import { OdbiorType } from '../../core/oferta/model/OdbiorType';
 import DataParserHelper from '../helpers/ParserHelper';
 import { HtmlParser } from '../helpers/HtmlParser';
 import { IGarvenaParkParserProps } from './GarvenaPark';
 import { IGarvenaParkListElement } from './GarvenaParkModel';
-import { IStringMap } from '@src/utils/IMap';
+import { IStringMap } from '@src/core/utils/IMap';
+import { IRawData } from '@src/core/oferta/model/IRawData';
 
 export default (
     html: string,

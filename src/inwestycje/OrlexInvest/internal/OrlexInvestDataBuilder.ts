@@ -37,7 +37,7 @@ export const OrlexInvestDataProviderBuilder = (props: IBuilderProps): IOrlexInve
         // na stronie z detalami nie ma nic ciekawego
         getOfferUrl: () => undefined,
         parseOfferHtml: null,
-        offerBuilder: OrlexInvestOfertaBuilder
+        offerModelBuilder: OrlexInvestOfertaBuilder
     }
 
 }

@@ -1,9 +1,10 @@
-import { IStringMap } from '@src/utils/IMap';
-import { IOfertaRecord, IOfertaRecordOpe, IRawData, isRawData, valueOfRaw } from '../model/IOfertaModel';
-import { Status, StatusHelper } from '../model/Status';
+import { IStringMap } from '@src/core/utils/IMap';
+import { IOfertaRecord, IOfertaRecordOpe } from '../oferta/model/IOfertaModel';
+import { Status, StatusHelper } from '../oferta/model/Status';
 import { inwestycjeMap } from '@src/inwestycje/inwestycje';
-import Utils from '@src/utils/Utils';
+import Utils from '@src/core/utils/Utils';
 import ExcelUtils from './ExcelUtils';
+import { IRawData, isRawData } from '../oferta/model/IRawData';
 
 interface IOpeRecordLogListEl {
     version: number,

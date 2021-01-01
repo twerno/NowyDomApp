@@ -35,7 +35,7 @@ export const DomapartDataProviderBuilder = (props: IBuilderProps): IDomapartData
         parseListHtml: DomapartTabelaLokaliParser,
         getOfferUrl: (item: IDomapartListElement) => item.offerDetailsUrl,
         parseOfferHtml: DomapartDetailsParser,
-        offerBuilder: DomapartOfertaBuilder,
+        offerModelBuilder: DomapartOfertaBuilder,
     }
 
 }

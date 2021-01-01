@@ -36,7 +36,7 @@ export const ZaciszeDataProviderBuilder = (props: IBuilderProps): IZaciszeDataPr
         parseListHtml: ZaciszeTabelaLokaliParser,
         getOfferUrl: (item: IZaciszeListElement) => item.offerDetailsUrl,
         parseOfferHtml: ZaciszeDetailsParser,
-        offerBuilder: ZaciszeOfertaBuilder
+        offerModelBuilder: ZaciszeOfertaBuilder
     }
 
 }

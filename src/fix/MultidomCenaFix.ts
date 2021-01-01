@@ -1,6 +1,6 @@
+import { IOfertaDane, IOfertaRecord, IOfertaRecordOpe } from "../core/oferta/model/IOfertaModel";
 import { IEnv } from "../core/oferta/tasks/IEnv";
 import { inwestycje } from "../inwestycje/inwestycje";
-import { IOfertaRecord, IOfertaRecordOpe, IOfertaDane } from "../core/oferta/model/IOfertaModel";
 
 export async function multidomCenaFix(env: IEnv) {
     const promises = inwestycje

@@ -94,9 +94,9 @@ function runTasks<P>(
         return;
     }
 
-    const taskToBeExecuted = Math.min(taskLimit - ref.runningTasks, tasks.length);
+    const tasksToBeExecuted = Math.min(taskLimit - ref.runningTasks, tasks.length);
 
-    for (let i = 0; i < taskToBeExecuted; i++) {
+    for (let i = 0; i < tasksToBeExecuted; i++) {
         runNextTask(tasks, props, ref, errors)
             .then(runTasksFn);
     }

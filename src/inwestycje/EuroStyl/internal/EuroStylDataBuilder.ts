@@ -1,5 +1,5 @@
 import { IDataProvider, IDataProviderParserProps } from "../../../core/oferta/IOfertaProvider";
-import { isRawData } from "../../../core/oferta/model/IOfertaModel";
+import { isRawData } from "../../../core/oferta/model/IRawData";
 import { Typ } from "../../../core/oferta/model/Typ";
 import { IEuroStylListElement, IEuroStylOfferDetails } from "./EuroStylModel";
 import EuroStylOfertaBuilder from "./EuroStylOfertaBuilder";
@@ -37,7 +37,7 @@ export const EuroStylDataProviderBuilder = (props: IBuilderProps): IEuroStylData
         parseListHtml: EuroStylTabelaLokaliParser,
         getOfferUrl: (element) => isRawData(element.offerDetailsUrl) ? undefined : element.offerDetailsUrl,
         parseOfferHtml: EuroStylOfertaParser,
-        offerBuilder: EuroStylOfertaBuilder
+        offerModelBuilder: EuroStylOfertaBuilder
     }
 
 }

@@ -1,12 +1,15 @@
+import awsConfig from '@src/config/awsConfig';
 import * as AWS from 'aws-sdk';
 import { CredentialProviderChain, SharedIniFileCredentials } from 'aws-sdk';
-import { IStringMap } from './IMap';
+import { IStringMap } from '../utils/IMap';
 
 // TODO - wybadać: https://github.com/awslabs/dynamodb-data-mapper-js
 
+
+
 const db = new AWS.DynamoDB.DocumentClient(
     {
-        region: 'eu-west-1',
+        region: awsConfig.region,
         credentialProvider: new CredentialProviderChain([
             function () {
                 return new AWS.SharedIniFileCredentials({

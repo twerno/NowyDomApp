@@ -1,5 +1,7 @@
+import { ICechy } from "@src/core/oferta/model/ICechy";
+import { IRawData } from "@src/core/oferta/model/IRawData";
 import { IListElement } from "../../../core/oferta/IOfertaProvider";
-import { ICechy, IRawData, MapWithRawType } from "../../../core/oferta/model/IOfertaModel";
+import { MapWithRawType } from "../../../core/oferta/model/IOfertaModel";
 import { Status } from "../../../core/oferta/model/Status";
 import { Typ } from "../../../core/oferta/model/Typ";
 

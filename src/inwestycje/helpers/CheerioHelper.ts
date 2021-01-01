@@ -1,5 +1,5 @@
 import cheerio from 'cheerio';
-import { IRawData } from '@src/core/oferta/model/IOfertaModel';
+import { IRawData } from '@src/core/oferta/model/IRawData';
 
 export default {
     loadString,

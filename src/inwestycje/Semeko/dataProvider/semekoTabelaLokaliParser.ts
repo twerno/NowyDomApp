@@ -1,7 +1,7 @@
 import { HTMLElement, parse } from 'node-html-parser';
 import { IAsyncTask } from "../../../core/asyncTask/IAsyncTask";
 import { IDataProviderParserProps } from "../../../core/oferta/IOfertaProvider";
-import { ICechy } from '../../../core/oferta/model/IOfertaModel';
+import { ICechy } from '../../../core/oferta/model/ICechy';
 import { OdbiorType } from '../../../core/oferta/model/OdbiorType';
 import { Status } from '../../../core/oferta/model/Status';
 import ProvideOfferTask1 from "../../../core/oferta/tasks/ProvideOfferTask1";

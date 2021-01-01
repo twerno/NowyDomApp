@@ -1,11 +1,13 @@
-import CommConv from '@src/core/utils/CommConv';
+import CommConv from '@src/inwestycje/utils/CommConv';
 import { HTMLElement } from 'node-html-parser';
-import { ICechy, IRawData, MapWithRawType } from '../../../core/oferta/model/IOfertaModel';
+import { MapWithRawType } from '../../../core/oferta/model/IOfertaModel';
 import { HtmlParser } from '../../helpers/HtmlParser';
 import ParserHelper from '../../helpers/ParserHelper';
 import { IMaskoInvestDataProvider, IMaskoInvestParserProps } from '../MaskoInvestDataProviderBuilder';
 import { IMaskoInvestListElement } from './MaskoInvestModel';
 import { ofertaIdBuilderExcept } from '@src/core/oferta/IOfertaProvider';
+import { IRawData } from '@src/core/oferta/model/IRawData';
+import { ICechy } from '@src/core/oferta/model/ICechy';
 
 export default {
     listMapper

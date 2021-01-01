@@ -1,11 +1,13 @@
-import { ICechy, IOfertaDane, IRawData, ZASOBY, MapWithRawType } from '../../core/oferta/model/IOfertaModel';
+import { IOfertaDane, ZASOBY, MapWithRawType } from '../../core/oferta/model/IOfertaModel';
 import { Novum } from './Novum';
 import { INovumDetails, INovumListElement } from './NovumSchema';
 import { StronaSwiata, StronaSwiataHelper } from '../../core/oferta/model/StronySwiata';
 import { Status } from '../../core/oferta/model/Status';
 import { Typ } from '../../core/oferta/model/Typ';
-import CommConv from '@src/core/utils/CommConv';
-import TypeUtils from '@src/utils/TypeUtils';
+import CommConv from '@src/inwestycje/utils/CommConv';
+import TypeUtils from '@src/core/utils/TypeUtils';
+import { IRawData } from '@src/core/oferta/model/IRawData';
+import { ICechy } from '@src/core/oferta/model/ICechy';
 
 export default (listItem: INovumListElement, detale: INovumDetails | null): { id: string, dane: IOfertaDane } => {
 

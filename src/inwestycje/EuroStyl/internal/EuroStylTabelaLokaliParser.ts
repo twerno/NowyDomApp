@@ -1,13 +1,13 @@
 import { HTMLElement } from 'node-html-parser';
 import { IAsyncTask } from "../../../core/asyncTask/IAsyncTask";
-import { ICechy } from '../../../core/oferta/model/IOfertaModel';
+import { ICechy } from '../../../core/oferta/model/ICechy';
 import DataParserHelper from '../../helpers/ParserHelper';
 import { HtmlParser } from '../../helpers/HtmlParser';
 import { ofertaIdBuilderExcept } from '../../../core/oferta/IOfertaProvider';
 import { IEuroStylListElement } from './EuroStylModel';
 import { IEuroStylParserProps, IEuroStylDataProvider } from './EuroStylDataBuilder';
 import { OdbiorType } from '@src/core/oferta/model/OdbiorType';
-import CommConv from '@src/core/utils/CommConv';
+import CommConv from '@src/inwestycje/utils/CommConv';
 import { Status } from '@src/core/oferta/model/Status';
 import { StronaSwiataHelper } from '@src/core/oferta/model/StronySwiata';
 

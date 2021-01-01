@@ -35,7 +35,7 @@ export const MatBudDataProviderBuilder = (props: IBuilderProps): IMatBudDataProv
         parseListHtml: MatBudTabelaLokaliParser,
         getOfferUrl: () => undefined,
         parseOfferHtml: null,
-        offerBuilder: MatBudOfertaBuilder
+        offerModelBuilder: MatBudOfertaBuilder
     }
 
 }

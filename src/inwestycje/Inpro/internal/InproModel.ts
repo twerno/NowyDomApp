@@ -1,5 +1,6 @@
+import { IRawData } from "@src/core/oferta/model/IRawData";
 import { IListElement } from "../../../core/oferta/IOfertaProvider";
-import { IRawData, ICechy } from "../../../core/oferta/model/IOfertaModel";
+import { ICechy } from "../../../core/oferta/model/ICechy";
 import { Status } from "../../../core/oferta/model/Status";
 import { StronaSwiata } from "../../../core/oferta/model/StronySwiata";
 import { Typ } from "../../../core/oferta/model/Typ";

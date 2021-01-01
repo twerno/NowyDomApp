@@ -1,6 +1,7 @@
-import { IOfertaDane, ICechy, IRawData, isRawData } from "../../core/oferta/model/IOfertaModel";
+import { IOfertaDane } from "../../core/oferta/model/IOfertaModel";
 import { IAsyncTask } from "../asyncTask/IAsyncTask";
-import TypeUtils from "../../utils/TypeUtils";
+import TypeUtils from "../utils/TypeUtils";
+import { IRawData, isRawData } from "./model/IRawData";
 import ProviderOfferHelper from "./tasks/ProviderOfferHelper";
 
 export interface IDataProviderParserProps<T extends IListElement = IListElement, Details = any, Data = any> {
@@ -22,7 +23,7 @@ export interface IDataProvider<T extends IListElement = IListElement, Details = 
     getOfferUrl: (listItem: T) => string | string[] | undefined;
     parseOfferHtml: ((html: string[] | string, errors: any[], offerId: string, props: IDataProviderParserProps<T, Details, Data>) => Promise<Details>) | null;
 
-    offerBuilder: (listItem: T, details: Details | null, props: IDataProviderParserProps<T, Details, Data>) => { id: string, dane: IOfertaDane };
+    offerModelBuilder: (listItem: T, details: Details | null, props: IDataProviderParserProps<T, Details, Data>) => { id: string, dane: IOfertaDane };
 }
 
 export interface IListElement {

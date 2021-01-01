@@ -1,7 +1,8 @@
-import { IOfertaStateService, dynamoDbOfertaStateService, devOfertaStateService } from "../service/IOfertaStateService";
-import { IOfertaRepoKey } from "../repo/OfertaRecordRepo";
-import { IOfertaOpeService, dynamoDbOfertaOpeService, devOfertaOpeService } from "../service/IOfertaOpeService";
-import { IFileService, s3FileService, devFileService } from "../service/IFileService";
+import { IOfertaStateService } from "../service/IOfertaStateService";
+import { IOfertaRepoKey } from "../../aws/repo/OfertaRecordRepo";
+import { IOfertaOpeService } from "../service/IOfertaOpeService";
+import { IFileService } from "../service/IFileService";
+
 
 export interface IEnv {
     readonly stanService: IOfertaStateService<IOfertaRepoKey>,
@@ -9,14 +10,3 @@ export interface IEnv {
     readonly fileService: IFileService,
 }
 
-export const awsEnv: IEnv = {
-    stanService: dynamoDbOfertaStateService,
-    opeService: dynamoDbOfertaOpeService,
-    fileService: s3FileService,
-}
-
-export const devEnv: IEnv = {
-    stanService: devOfertaStateService,
-    opeService: devOfertaOpeService,
-    fileService: devFileService,
-}

@@ -2,6 +2,8 @@ import { StronaSwiata } from "./StronySwiata";
 import { Status } from "./Status";
 import { OdbiorType } from "./OdbiorType";
 import { Typ } from "./Typ";
+import { IRawData } from "./IRawData";
+import { ICechy } from "./ICechy";
 
 export interface IOfertaRecord {
     inwestycjaId: string; // partition_key
@@ -35,54 +37,47 @@ export enum ZASOBY {
 }
 
 export interface IOfertaDane {
+    // kind - house, apartment
     typ: Typ | IRawData;
+    // house number
     budynek: string | IRawData | undefined;
+    // apartment number
     nrLokalu: string | IRawData | undefined;
+    // apartment size
     metraz: number | IRawData;
+    // number of rooms
     lpPokoj: number | IRawData | undefined;
+    // number of floors in the apartment
     pietro: number | IRawData | undefined;
+    // number of floors in the building
     liczbaKondygnacji: number | IRawData | undefined;
+    // the directions of the world
     stronySwiata: Array<StronaSwiata | IRawData> | undefined;
+    // additional properties
     cechy: MapWithRawType<ICechy>;
 
     status: Status | IRawData;
+    // when its ready
     odbior: OdbiorType | undefined;
+    // price
     cena: number | IRawData | undefined;
 
+    // url of details page
     offerDetailsUrl: string | undefined;
 
-    // id zasobu x url 
+    // Map<id, url>
+    // additional resources (pdf, etc) to download
     zasobyDoPobrania: { id: string, url: string | string[] }[];
 
     // id zasobu x sciazka na s3
+    // additional resources (pdf, etc) already downloaded
     zasobyPobrane?: { id: string, s3Filename: string }[];
 
+    // data of sale
     sprzedaneData?: number;
 }
 
-export function isRawData(x: any): x is IRawData {
-    return x instanceof Object
-        && (x.raw === null || typeof x.raw === 'string');
-}
 
-export interface IRawData {
-    raw: string | null;
-}
 
-export interface ICechy {
-    ogrzewanie?: 'miejskie' | 'gazowe';
-    winda?: boolean;
-    balkon?: boolean;
-    ogród?: boolean;
-    taras?: boolean;
-    piwnica?: number | 'w cenie' | 'brak';
-    "miejsce parkingowe"?: 'parking ogólnodostępny' | number;
-    "hala garażowa"?: number;
-    "garaż indywidualny"?: number;
-}
 
-export function valueOfRaw<T>(val: T | IRawData | undefined | null): T | string | undefined | null {
-    return isRawData(val)
-        ? val.raw
-        : val;
-}
+

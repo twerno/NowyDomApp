@@ -1,6 +1,7 @@
 
 import { IMultidomDetails, IMultiDomListElement } from './MultidomModel';
-import { IOfertaDane, isRawData } from '../../../core/oferta/model/IOfertaModel';
+import { IOfertaDane } from '../../../core/oferta/model/IOfertaModel';
+import { isRawData } from '@src/core/oferta/model/IRawData';
 
 
 export default (listItem: IMultiDomListElement, detale: IMultidomDetails | null): { id: string, dane: IOfertaDane } => {

@@ -1,7 +1,8 @@
 
-import { IOfertaDane, isRawData, IRawData } from '../../../core/oferta/model/IOfertaModel';
+import { IOfertaDane } from '../../../core/oferta/model/IOfertaModel';
 import { IEuroStylListElement, IEuroStylOfferDetails } from './EuroStylModel';
 import { StronaSwiata } from '@src/core/oferta/model/StronySwiata';
+import { IRawData, isRawData } from '@src/core/oferta/model/IRawData';
 
 
 export default (listItem: IEuroStylListElement, detale: IEuroStylOfferDetails | null): { id: string, dane: IOfertaDane } => {

@@ -5,9 +5,10 @@ import { HtmlParser } from '../../helpers/HtmlParser';
 import DataParserHelper from '../../helpers/ParserHelper';
 import { IMatBudDataProvider, IMatBudParserProps } from './MatBudDataBuilder';
 import { IMatBudListElement } from './MatBudModel';
-import { ZASOBY, valueOfRaw } from '@src/core/oferta/model/IOfertaModel';
-import TypeUtils from '@src/utils/TypeUtils';
+import { ZASOBY } from '@src/core/oferta/model/IOfertaModel';
+import TypeUtils from '@src/core/utils/TypeUtils';
 import { Status } from '@src/core/oferta/model/Status';
+import { valueOfRaw } from '@src/core/oferta/model/IRawData';
 
 export default (
     html: string,

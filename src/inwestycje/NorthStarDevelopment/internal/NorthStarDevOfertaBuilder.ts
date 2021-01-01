@@ -1,6 +1,5 @@
 
-import { StronaSwiata } from '@src/core/oferta/model/StronySwiata';
-import { IOfertaDane, IRawData } from '../../../core/oferta/model/IOfertaModel';
+import { IOfertaDane } from '../../../core/oferta/model/IOfertaModel';
 import { INorthStarDevListElement, INorthStarDevOfferDetails } from './NorthStarDevModel';
 
 

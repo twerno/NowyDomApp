@@ -1,8 +1,7 @@
-import { IEnv } from "@src/core/oferta/tasks/IEnv";
-import { ofertaRepo } from "@src/core/oferta/repo/OfertaRecordRepo";
-import { ofertaOpeRepo } from "@src/core/oferta/repo/OfertaRecordOpeRepo";
-import { IStringMap } from "@src/utils/IMap";
 import { Status } from "@src/core/oferta/model/Status";
+import { ofertaRepo } from "@src/core/aws/repo/OfertaRecordRepo";
+import { IEnv } from "@src/core/oferta/tasks/IEnv";
+import { ofertaOpeRepo } from "@src/core/aws/repo/OfertaRecordOpeRepo";
 
 export const oznaczOpeAsTech = async (ofertaId: string, version: number, env: IEnv) => {
     const ope = await env.opeService.load({ ofertaId, version });

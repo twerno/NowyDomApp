@@ -1,4 +1,4 @@
-import { ICechy, isRawData } from "../../../core/oferta/model/IOfertaModel"
+import { isRawData } from "../../../core/oferta/model/IRawData"
 import { IDataProvider, IDataProviderParserProps } from "../../../core/oferta/IOfertaProvider"
 import { IMultiDomListElement, IMultidomDetails } from "./MultidomModel"
 import MultidomTabelaLokaliParser from "./MultidomTabelaLokaliParser"
@@ -37,7 +37,7 @@ export const MultidomDataProviderBuilder = (props: IBuilderProps): IMultiDomData
         parseListHtml: MultidomTabelaLokaliParser,
         getOfferUrl: (element) => isRawData(element.offerDetailsUrl) ? undefined : element.offerDetailsUrl,
         parseOfferHtml: MultidomOfertaParser,
-        offerBuilder: MultidomOfertaBuilder
+        offerModelBuilder: MultidomOfertaBuilder
     }
 
 }

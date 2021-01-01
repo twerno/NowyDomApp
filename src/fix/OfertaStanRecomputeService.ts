@@ -1,10 +1,7 @@
+import { IOfertaRecord } from "../core/oferta/model/IOfertaModel";
 import { IEnv } from "../core/oferta/tasks/IEnv";
-import { OfertaUpdateHelper, IOfertaWyliczonaZmina } from "../core/oferta/tasks/OfertaUpdateService";
+import TypeUtils from "../core/utils/TypeUtils";
 import { inwestycje } from "../inwestycje/inwestycje";
-import { IOfertaRecord, IOfertaDane } from "../core/oferta/model/IOfertaModel";
-import { Status } from "../core/oferta/model/Status";
-import TypeUtils from "../utils/TypeUtils";
-import { Typ } from "../core/oferta/model/Typ";
 
 export class OfertaStanRecomputeService {
 

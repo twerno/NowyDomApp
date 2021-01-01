@@ -5,7 +5,8 @@ import { HtmlParser } from '../../helpers/HtmlParser';
 import DataParserHelper from '../../helpers/ParserHelper';
 import { IZaciszeDataProvider, IZaciszeParserProps } from './ZaciszeDataBuilder';
 import { IZaciszeListElement } from './ZaciszeModel';
-import { ICechy, MapWithRawType } from '@src/core/oferta/model/IOfertaModel';
+import { MapWithRawType } from '@src/core/oferta/model/IOfertaModel';
+import { ICechy } from '@src/core/oferta/model/ICechy';
 
 export default (
     html: string,

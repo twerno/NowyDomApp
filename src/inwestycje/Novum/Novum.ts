@@ -2,7 +2,8 @@ import { IDataProvider, IDataProviderParserProps } from "../../core/oferta/IOfer
 import NovumMapper from "./NovumMapper";
 import NovumOfertaBuilder from "./NovumOfertaBuilder";
 import { INovumDetails, INovumListElement } from "./NovumSchema";
-import { ICechy, MapWithRawType } from "@src/core/oferta/model/IOfertaModel";
+import { MapWithRawType } from "@src/core/oferta/model/IOfertaModel";
+import { ICechy } from "@src/core/oferta/model/ICechy";
 
 // import { MapWithRawType, ICechy } from "core/oferta/model/IOfertaModel";
 
@@ -46,5 +47,5 @@ export const Novum: INovumDataProvider = {
 
     parseOfferHtml: NovumMapper.detailMapper,
 
-    offerBuilder: NovumOfertaBuilder,
+    offerModelBuilder: NovumOfertaBuilder,
 };

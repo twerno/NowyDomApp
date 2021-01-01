@@ -1,6 +1,7 @@
 import { Status } from "../../core/oferta/model/Status";
-import { ICechy, IRawData } from "../../core/oferta/model/IOfertaModel";
-import CommConv from "@src/core/utils/CommConv";
+import { ICechy } from "../../core/oferta/model/ICechy";
+import CommConv from "@src/inwestycje/utils/CommConv";
+import { IRawData } from "@src/core/oferta/model/IRawData";
 
 export default {
     pietro,

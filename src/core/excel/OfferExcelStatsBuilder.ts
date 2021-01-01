@@ -1,12 +1,12 @@
-import CommConv from '@src/core/utils/CommConv';
+import CommConv from '@src/inwestycje/utils/CommConv';
 import { inwestycjeMap } from '@src/inwestycje/inwestycje';
 import Excel from 'exceljs';
-import { IDataProvider } from '../IOfertaProvider';
-import { IOfertaRecord } from '../model/IOfertaModel';
-import { Status } from '../model/Status';
+import { IDataProvider } from '../oferta/IOfertaProvider';
+import { IOfertaRecord } from '../oferta/model/IOfertaModel';
+import { Status } from '../oferta/model/Status';
 import ExcelUtils, { IAddNextCellOptions } from './ExcelUtils';
-import Utils from '@src/utils/Utils';
-import TypeUtils from '@src/utils/TypeUtils';
+import Utils from '@src/core/utils/Utils';
+import TypeUtils from '@src/core/utils/TypeUtils';
 
 const startMonth = new Date('06.01.2020');
 

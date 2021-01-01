@@ -1,9 +1,11 @@
 import { IListElement } from "../../../core/oferta/IOfertaProvider";
-import { IRawData, ICechy, ListWithRawType, MapWithRawType } from "../../../core/oferta/model/IOfertaModel";
+import { ListWithRawType, MapWithRawType } from "../../../core/oferta/model/IOfertaModel";
 import { Status } from "../../../core/oferta/model/Status";
 import { StronaSwiata } from "../../../core/oferta/model/StronySwiata";
 import { Typ } from "../../../core/oferta/model/Typ";
 import { OdbiorType } from "@src/core/oferta/model/OdbiorType";
+import { IRawData } from "@src/core/oferta/model/IRawData";
+import { ICechy } from "@src/core/oferta/model/ICechy";
 
 export interface IEuroStylListElement extends IListElement {
     typ: Typ,

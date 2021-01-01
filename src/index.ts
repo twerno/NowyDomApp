@@ -1,11 +1,11 @@
 // tslint:disable-next-line:no-var-requires
 require('module-alias/register');
-import { buildExcel } from "./core/oferta/excel/OfferExcelBuilder";
-import { devEnv, awsEnv } from "./core/oferta/tasks/IEnv";
+import { buildExcel } from "./core/excel/OfferExcelBuilder";
 import Methods from "./Methods";
-import S3Utils from "./utils/S3Utils";
+import S3Utils from "./core/aws/S3Utils";
 import * as fs from 'fs';
-import Utils from "./utils/Utils";
+import Utils from "./core/utils/Utils";
+import { awsEnv, devEnv } from "./config/env";
 
 const filename = 'raport.xlsx';
 
@@ -25,7 +25,9 @@ async function localRunAllAndBuildRaport() {
 
 async function localBuildRaport() {
     const buffer = await buildExcel(devEnv);
-    await S3Utils.putFile('', filename, buffer);
+    // await S3Utils.putFile('', filename, buffer);
     fs.writeFileSync(filename, Buffer.from(buffer));
     Utils.startFile(filename);
 }
+
+localBuildRaport();

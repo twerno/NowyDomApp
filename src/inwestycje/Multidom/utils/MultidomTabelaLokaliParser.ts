@@ -1,6 +1,6 @@
 import { HTMLElement, parse } from 'node-html-parser';
 import { IAsyncTask } from "../../../core/asyncTask/IAsyncTask";
-import { ICechy } from '../../../core/oferta/model/IOfertaModel';
+import { ICechy } from '../../../core/oferta/model/ICechy';
 import DataParserHelper from '../../helpers/ParserHelper';
 import { HtmlParser } from '../../helpers/HtmlParser';
 import { IMultiDomDataProvider, IMultiDomParserProps } from './MultidomDataProviderBuilder';

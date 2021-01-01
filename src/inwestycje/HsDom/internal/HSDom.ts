@@ -35,7 +35,7 @@ export const HSDomDataProviderBuilder = (props: IBuilderProps): IHSDomDataProvid
         parseListHtml: HSDomTabelaLokaliParser,
         getOfferUrl: (item: IHSDomListElement) => item.offerDetailsUrl,
         parseOfferHtml: HSDomDetailsParser,
-        offerBuilder: HSDomOfertaBuilder,
+        offerModelBuilder: HSDomOfertaBuilder,
     }
 
 }

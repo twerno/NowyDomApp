@@ -1,7 +1,7 @@
-import { IStringMap } from "../../../utils/IMap";
-import TypeUtils from "../../../utils/TypeUtils";
+import { IStringMap } from "../../utils/IMap";
+import TypeUtils from "../../utils/TypeUtils";
 import { IDataProvider } from "../IOfertaProvider";
-import { IOfertaDane, IOfertaRecord, IOfertaRecordOpe, IRawData, isRawData } from "../model/IOfertaModel";
+import { IOfertaDane, IOfertaRecord, IOfertaRecordOpe } from "../model/IOfertaModel";
 import { Status, StatusHelper } from "../model/Status";
 import { IProvideOfferStats } from "./AbstractZapiszZmianyTask";
 import { IEnv } from "./IEnv";

@@ -1,5 +1,6 @@
 
-import { IOfertaDane, isRawData } from '../../../core/oferta/model/IOfertaModel';
+import { isRawData } from '@src/core/oferta/model/IRawData';
+import { IOfertaDane } from '../../../core/oferta/model/IOfertaModel';
 import { IOrlexInvestListElement, IOrlexInvestOfferDetails } from './OrlexInvestModel';
 
 export default (listItem: IOrlexInvestListElement, detale: IOrlexInvestOfferDetails | null): { id: string, dane: IOfertaDane } => {
