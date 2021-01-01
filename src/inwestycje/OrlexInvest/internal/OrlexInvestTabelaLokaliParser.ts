@@ -1,8 +1,8 @@
 import { HTMLElement } from 'node-html-parser';
 import { IAsyncTask } from "../../../core/asyncTask/IAsyncTask";
 import { ofertaIdBuilderExcept } from '../../../core/oferta/IOfertaProvider';
-import { HtmlParser } from '../../helpers/HtmlParser';
-import DataParserHelper from '../../helpers/ParserHelper';
+import { HtmlParser } from '../../utils/HtmlParser';
+import DataParserHelper from '../../utils/ParserHelper';
 import { IOrlexInvestDataProvider, IOrlexInvestParserProps } from './OrlexInvestDataBuilder';
 import { IOrlexInvestListElement } from './OrlexInvestModel';
 import { ZASOBY } from '@src/core/oferta/model/IOfertaModel';

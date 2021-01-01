@@ -1,8 +1,8 @@
 import { HTMLElement } from 'node-html-parser';
 import { IAsyncTask } from "../../../core/asyncTask/IAsyncTask";
 import { ofertaIdBuilderExcept } from '../../../core/oferta/IOfertaProvider';
-import { HtmlParser } from '../../helpers/HtmlParser';
-import DataParserHelper from '../../helpers/ParserHelper';
+import { HtmlParser } from '../../utils/HtmlParser';
+import DataParserHelper from '../../utils/ParserHelper';
 import { IHSDomDataProvider, IHSDomParserProps } from './HSDom';
 import { IHSDomListElement } from './HSDomModel';
 

@@ -1,6 +1,6 @@
 import { HTMLElement, parse } from 'node-html-parser';
 import { ZASOBY } from '../../../core/oferta/model/IOfertaModel';
-import { HtmlParser } from '../../helpers/HtmlParser';
+import { HtmlParser } from '../../utils/HtmlParser';
 import { IMultiDomParserProps } from './MultidomDataProviderBuilder';
 import { IMultidomDetails } from './MultidomModel';
 

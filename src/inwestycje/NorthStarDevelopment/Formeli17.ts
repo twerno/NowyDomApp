@@ -2,8 +2,8 @@ import { ofertaIdBuilderExcept } from "@src/core/oferta/IOfertaProvider";
 import { ZASOBY } from "@src/core/oferta/model/IOfertaModel";
 import { HTMLElement } from 'node-html-parser';
 import { Typ } from "../../core/oferta/model/Typ";
-import { HtmlParser } from "../helpers/HtmlParser";
-import DataParserHelper from '../helpers/ParserHelper';
+import { HtmlParser } from "../utils/HtmlParser";
+import DataParserHelper from '../utils/ParserHelper';
 import { INorthStarDevDataProvider, NorthStarDevDataProviderBuilder } from "./internal/NorthStarDevDataBuilder";
 import { INorthStarDevListElement } from "./internal/NorthStarDevModel";
 

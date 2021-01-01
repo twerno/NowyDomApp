@@ -1,5 +1,5 @@
 import { ZASOBY } from "@src/core/oferta/model/IOfertaModel";
-import { HtmlParser } from "@src/inwestycje/helpers/HtmlParser";
+import { HtmlParser } from "@src/inwestycje/utils/HtmlParser";
 import { IHSDomParserProps } from "./HSDom";
 import { IHSDomOfferDetails } from "./HSDomModel";
 

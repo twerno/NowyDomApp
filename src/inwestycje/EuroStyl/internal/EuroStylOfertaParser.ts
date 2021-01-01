@@ -1,9 +1,9 @@
 import { HTMLElement } from 'node-html-parser';
 import { ZASOBY } from '../../../core/oferta/model/IOfertaModel';
-import { HtmlParser } from '../../helpers/HtmlParser';
+import { HtmlParser } from '../../utils/HtmlParser';
 import { IEuroStylOfferDetails } from './EuroStylModel';
 import { IEuroStylParserProps } from './EuroStylDataBuilder';
-import ParserHelper from '@src/inwestycje/helpers/ParserHelper';
+import ParserHelper from '@src/inwestycje/utils/ParserHelper';
 
 export default async (
     html: string[] | string,

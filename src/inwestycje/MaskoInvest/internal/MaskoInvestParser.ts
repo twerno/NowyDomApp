@@ -1,8 +1,8 @@
 import CommConv from '@src/inwestycje/utils/CommConv';
 import { HTMLElement } from 'node-html-parser';
 import { MapWithRawType } from '../../../core/oferta/model/IOfertaModel';
-import { HtmlParser } from '../../helpers/HtmlParser';
-import ParserHelper from '../../helpers/ParserHelper';
+import { HtmlParser } from '../../utils/HtmlParser';
+import ParserHelper from '../../utils/ParserHelper';
 import { IMaskoInvestDataProvider, IMaskoInvestParserProps } from '../MaskoInvestDataProviderBuilder';
 import { IMaskoInvestListElement } from './MaskoInvestModel';
 import { ofertaIdBuilderExcept } from '@src/core/oferta/IOfertaProvider';

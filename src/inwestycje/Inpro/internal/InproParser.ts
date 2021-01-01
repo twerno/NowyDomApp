@@ -6,8 +6,8 @@ import { HTMLElement } from 'node-html-parser';
 import { MapWithRawType } from '../../../core/oferta/model/IOfertaModel';
 import { Status } from '../../../core/oferta/model/Status';
 import { StronaSwiata, StronaSwiataHelper } from '../../../core/oferta/model/StronySwiata';
-import { HtmlParser } from '../../../inwestycje/helpers/HtmlParser';
-import ParserHelper from '../../../inwestycje/helpers/ParserHelper';
+import { HtmlParser } from '../../utils/HtmlParser';
+import ParserHelper from '../../utils/ParserHelper';
 import { IInproDataProvider, IInproParserProps } from '../InproDataProviderBuilder';
 import { IInproListElement, IInproOfferDetails } from './InproModel';
 

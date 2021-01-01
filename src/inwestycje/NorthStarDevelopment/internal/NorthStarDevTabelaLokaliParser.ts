@@ -1,9 +1,7 @@
 import { HTMLElement } from 'node-html-parser';
 import { IAsyncTask } from "../../../core/asyncTask/IAsyncTask";
-import { ofertaIdBuilderExcept } from '../../../core/oferta/IOfertaProvider';
 import { ZASOBY } from '../../../core/oferta/model/IOfertaModel';
-import { HtmlParser } from '../../helpers/HtmlParser';
-import DataParserHelper from '../../helpers/ParserHelper';
+import { HtmlParser } from '../../utils/HtmlParser';
 import { INorthStarDevDataProvider, INorthStarDevParserProps } from './NorthStarDevDataBuilder';
 import { INorthStarDevListElement } from './NorthStarDevModel';
 

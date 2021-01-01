@@ -1,8 +1,8 @@
 import { HTMLElement } from 'node-html-parser';
 import { IAsyncTask } from "../../../core/asyncTask/IAsyncTask";
 import { ICechy } from '../../../core/oferta/model/ICechy';
-import DataParserHelper from '../../helpers/ParserHelper';
-import { HtmlParser } from '../../helpers/HtmlParser';
+import DataParserHelper from '../../utils/ParserHelper';
+import { HtmlParser } from '../../utils/HtmlParser';
 import { ofertaIdBuilderExcept } from '../../../core/oferta/IOfertaProvider';
 import { IEuroStylListElement } from './EuroStylModel';
 import { IEuroStylParserProps, IEuroStylDataProvider } from './EuroStylDataBuilder';

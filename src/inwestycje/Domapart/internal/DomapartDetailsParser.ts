@@ -1,7 +1,7 @@
 import { ZASOBY } from "@src/core/oferta/model/IOfertaModel";
 import { StronaSwiataHelper } from "@src/core/oferta/model/StronySwiata";
-import { HtmlParser } from "@src/inwestycje/helpers/HtmlParser";
-import ParserHelper from "@src/inwestycje/helpers/ParserHelper";
+import { HtmlParser } from "@src/inwestycje/utils/HtmlParser";
+import ParserHelper from "@src/inwestycje/utils/ParserHelper";
 import { IDomapartParserProps } from "./Domapart";
 import { IDomapartOfferDetails } from "./DomapartModel";
 

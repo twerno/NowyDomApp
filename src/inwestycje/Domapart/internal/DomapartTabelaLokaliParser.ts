@@ -1,12 +1,10 @@
 import { OdbiorType } from '@src/core/oferta/model/OdbiorType';
 import { Status } from '@src/core/oferta/model/Status';
 import CommConv from '@src/inwestycje/utils/CommConv';
-import { HTMLElement } from 'node-html-parser';
 import { IAsyncTask } from "../../../core/asyncTask/IAsyncTask";
 import { ofertaIdBuilderExcept } from '../../../core/oferta/IOfertaProvider';
-import { HtmlParser } from '../../helpers/HtmlParser';
-import DataParserHelper from '../../helpers/ParserHelper';
-import { IDomapartDataProvider, IDomapartParserProps } from './Domapart';
+import DataParserHelper from '../../utils/ParserHelper';
+import { IDomapartParserProps } from './Domapart';
 import { IDomapartListElement } from './DomapartModel';
 
 export default (

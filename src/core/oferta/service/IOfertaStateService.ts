@@ -9,3 +9,12 @@ export interface IOfertaStateService<T> {
     getAll(): Promise<IOfertaRecord[]>
 }
 
+export const dummyOfertaStateService: IOfertaStateService<IOfertaRepoKey> = {
+    save: async (record) => {
+        safeSaveFile(`tmp/${record.inwestycjaId}`, record.ofertaId, JSON.stringify(record, null, 2));
+        return Promise.resolve();
+    },
+    getByInwestycja: async (partitionKey) => [],
+    getOne: async (key) => undefined,
+    getAll: async () => [],
+};

@@ -1,6 +1,6 @@
 import { IZaciszeParserProps } from "./ZaciszeDataBuilder";
 import { IZaciszeOfferDetails } from "./ZaciszeModel";
-import { HtmlParser } from "@src/inwestycje/helpers/HtmlParser";
+import { HtmlParser } from "@src/inwestycje/utils/HtmlParser";
 import { ZASOBY } from "@src/core/oferta/model/IOfertaModel";
 
 export default async function (

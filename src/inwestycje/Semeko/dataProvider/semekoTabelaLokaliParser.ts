@@ -5,10 +5,10 @@ import { ICechy } from '../../../core/oferta/model/ICechy';
 import { OdbiorType } from '../../../core/oferta/model/OdbiorType';
 import { Status } from '../../../core/oferta/model/Status';
 import ProvideOfferTask1 from "../../../core/oferta/tasks/ProvideOfferTask1";
-import { HtmlParser } from '../../helpers/HtmlParser';
+import { HtmlParser } from '../../utils/HtmlParser';
 import { ISemekoDataProvider, ISemekoParserProps } from './SemekoDataProviderBuilder';
 import { ISemekoDetails, ISemekoListElement } from "./SemekoModel";
-import ParserHelper from '../../../inwestycje/helpers/ParserHelper';
+import ParserHelper from '../../utils/ParserHelper';
 
 export default (
     html: string,
